@@ -1,6 +1,7 @@
 import { Button, Container, Grid, Group, Image } from "@mantine/core";
 import heroStyles from "./Hero.module.css";
 import { IconArrowRight, IconCircleCheckFilled } from "@tabler/icons-react";
+import heroImage from "../../assets/images/hero_image.png"; // Import the image
 
 const Hero = () => {
   return (
@@ -26,7 +27,7 @@ const Hero = () => {
             </div>
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }} className={heroStyles.right}>
-            <Image src="https://picsum.photos/1000" />
+            <Image src={heroImage} />
           </Grid.Col>
         </Grid>
       </Container>

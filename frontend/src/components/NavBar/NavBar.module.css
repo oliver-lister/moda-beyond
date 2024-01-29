@@ -5,6 +5,8 @@
 
 .list {
   list-style-type: none;
+  display: flex;
+  gap: 3rem;
 }
 
 .link {
@@ -15,4 +17,10 @@
 .link.active {
   text-decoration: underline;
   font-weight: bold;
+}
+
+@media (min-width: 850px) {
+  .burger {
+    display: none;
+  }
 }

@@ -1,0 +1,36 @@
+.item {
+}
+
+.imageBox {
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.content {
+  display: grid;
+  padding: 0.5rem;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.price {
+  font-weight: bold;
+}
+
+.lastPrice {
+  text-decoration: line-through;
+}
+
+.item:hover {
+  cursor: pointer;
+}
+
+.item:hover .image {
+  transform: scale(1.1);
+}

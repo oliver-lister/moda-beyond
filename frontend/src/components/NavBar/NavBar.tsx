@@ -1,4 +1,13 @@
-import { Container, Flex, Image, Button, Indicator } from "@mantine/core";
+import {
+  Container,
+  Flex,
+  Image,
+  Button,
+  Indicator,
+  Group,
+  Burger,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconShoppingCart } from "@tabler/icons-react";
 import navStyles from "./NavBar.module.css";
 
@@ -13,6 +22,7 @@ const navMenu = [
 
 const NavBar = () => {
   const { pathname } = useLocation();
+  const [opened, { toggle }] = useDisclosure();
 
   return (
     <nav className={navStyles.nav}>
@@ -23,30 +33,36 @@ const NavBar = () => {
             <h1>Really Rad Rings</h1>
           </Link>
           <ul className={navStyles.list}>
-            <Flex align="center" gap={60} justify="center">
-              {navMenu.map((link) => (
-                <li>
-                  <Link
-                    to={link.path}
-                    className={`${navStyles.link} ${
-                      pathname === link.path && navStyles.active
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </Flex>
+            {navMenu.map((link) => (
+              <li>
+                <Link
+                  to={link.path}
+                  className={`${navStyles.link} ${
+                    pathname === link.path && navStyles.active
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
           <Flex align="center" gap={20}>
             <Link to="/login">
               <Button>Login</Button>
             </Link>
-            <Link to="/cart">
-              <Indicator inline label="2" size={16}>
-                <IconShoppingCart size={30} />
-              </Indicator>
+            <Link to="/cart" className={navStyles.cart}>
+              <Group>
+                <Indicator inline label="2" size={16}>
+                  <IconShoppingCart size={30} />
+                </Indicator>
+              </Group>
             </Link>
+            <Burger
+              className={navStyles.burger}
+              opened={opened}
+              onClick={toggle}
+              aria-label="Toggle navigation"
+            />
           </Flex>
         </Flex>
       </Container>
