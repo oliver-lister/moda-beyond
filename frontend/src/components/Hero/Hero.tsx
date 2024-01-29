@@ -1,4 +1,4 @@
-import { Button, Container, Grid, Group, Image } from "@mantine/core";
+import { Button, Container, Group, Image } from "@mantine/core";
 import heroStyles from "./Hero.module.css";
 import { IconArrowRight, IconCircleCheckFilled } from "@tabler/icons-react";
 import heroImage from "../../assets/images/hero_image.png"; // Import the image
@@ -7,8 +7,13 @@ const Hero = () => {
   return (
     <section className={heroStyles.hero}>
       <Container size="xl">
-        <Grid overflow="hidden" className={heroStyles.grid}>
-          <Grid.Col span={{ base: 12, md: 6 }} className={heroStyles.left}>
+        <Group
+          gap="xl"
+          justify="space-around"
+          align="center"
+          className={heroStyles.grid}
+        >
+          <div className={heroStyles.left}>
             <div>
               <h2>New Arrivals Only</h2>
               <div>
@@ -25,11 +30,11 @@ const Hero = () => {
                 Latest Collection
               </Button>
             </div>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 6 }} className={heroStyles.right}>
+          </div>
+          <div className={heroStyles.right}>
             <Image src={heroImage} />
-          </Grid.Col>
-        </Grid>
+          </div>
+        </Group>
       </Container>
     </section>
   );

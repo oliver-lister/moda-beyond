@@ -33,8 +33,8 @@ const NavBar = () => {
             <h1>Really Rad Rings</h1>
           </Link>
           <ul className={navStyles.list}>
-            {navMenu.map((link) => (
-              <li>
+            {navMenu.map((link, index) => (
+              <li key={index}>
                 <Link
                   to={link.path}
                   className={`${navStyles.link} ${

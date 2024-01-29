@@ -1,0 +1,18 @@
+.offers {
+  background: linear-gradient(180deg, #fde1ff, #e1ffea22 60%);
+  padding: 0 10rem;
+  width: 100%;
+}
+
+.left .heading {
+  font-weight: bold;
+  font-size: 3rem;
+}
+
+.left .subheading {
+  text-transform: uppercase;
+}
+
+.left button {
+  width: min-content;
+}

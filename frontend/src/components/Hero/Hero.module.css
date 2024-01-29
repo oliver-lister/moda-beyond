@@ -4,6 +4,7 @@
 
 .grid {
   min-height: calc(100vh - 8rem);
+  overflow: h;
 }
 
 .left {

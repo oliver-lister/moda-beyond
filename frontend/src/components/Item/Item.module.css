@@ -12,19 +12,30 @@
 
 .content {
   display: grid;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
+  font-size: 14px;
 }
 
-.title {
-  font-weight: bold;
+.brand {
+  font-weight: 600;
+}
+
+.name {
 }
 
 .price {
+  font-weight: 600;
   font-weight: bold;
+}
+
+.price.sale {
+  color: red;
 }
 
 .lastPrice {
   text-decoration: line-through;
+  text-decoration-color: gray;
+  color: gray;
 }
 
 .item:hover {
@@ -33,4 +44,8 @@
 
 .item:hover .image {
   transform: scale(1.1);
+}
+
+.item:hover .content {
+  text-decoration: underline;
 }
