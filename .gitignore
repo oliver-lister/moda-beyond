@@ -1,0 +1,38 @@
+# Ignore node_modules directories anywhere in the project
+**/node_modules
+
+# Ignore build output
+build/
+dist/
+out/
+
+# Ignore environment variables file (if applicable)
+.env
+
+# Ignore production build files
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Ignore frontend build artifacts (if using a specific build tool)
+/frontend/build
+/frontend/dist
+
+# Ignore backend build artifacts (if using a specific build tool)
+/backend/build
+/backend/dist
+
+# Ignore dependency lock files
+yarn.lock
+package-lock.json
+
+# Ignore user-specific files
+.DS_Store
+.idea/
+
+# Ignore any other files or directories specific to your development environment
+# ...
+
+# Ignore local configuration files
+config.local.json

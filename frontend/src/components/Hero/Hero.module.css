@@ -1,0 +1,31 @@
+.hero {
+  background: linear-gradient(180deg, #fde1ff, #e1ffea22 60%);
+}
+
+.grid {
+  height: calc(100vh - 8rem);
+  display: flex;
+}
+
+.left {
+  display: grid;
+  align-content: center;
+  gap: 2rem;
+}
+
+.left h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.left p {
+  font-size: 4rem;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
