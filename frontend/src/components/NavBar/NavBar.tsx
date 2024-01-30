@@ -22,7 +22,7 @@ const NavBar = () => {
           <Group gap="xl">
             <Link
               to="/"
-              className={styles.logo}
+              className={`${styles.logo} ${pathname === "/" && styles.active}`}
               onClick={() => opened && toggle()}
             >
               <h1>The Shopper</h1>

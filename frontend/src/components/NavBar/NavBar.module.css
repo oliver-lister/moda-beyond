@@ -1,7 +1,6 @@
 .nav {
-  box-shadow: 0 1px 3px -2px black;
   background-color: var(--mantine-color-dark-7);
-  color: var(--mantine-color-gray-1);
+  color: white;
   padding: 1rem 0;
 }
 
@@ -10,7 +9,18 @@
   text-transform: uppercase;
   text-decoration: none;
   font-weight: bold;
-  color: var(--mantine-color-gray-1);
+  color: white;
+  position: relative;
+}
+
+.logo.active::before {
+  background-color: white;
+  bottom: 0;
+  content: "";
+  height: 2px;
+  left: 0;
+  position: absolute;
+  width: 100%;
 }
 
 .logo:hover {
@@ -39,13 +49,13 @@
   text-decoration: none;
   text-transform: uppercase;
   font-weight: bold;
-  color: var(--mantine-color-gray-1);
+  color: white;
   display: block;
   padding: 1rem 2rem;
 }
 
 .link.active::before {
-  background-color: var(--mantine-color-gray-1);
+  background-color: white;
   bottom: 0;
   content: "";
   height: 2px;
@@ -60,7 +70,7 @@
 
 .profile svg,
 .cart svg {
-  color: var(--mantine-color-gray-1);
+  color: white;
 }
 
 .profile:hover svg,

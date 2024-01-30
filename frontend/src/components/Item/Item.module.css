@@ -1,5 +1,6 @@
 .item {
   max-width: 200px;
+  background-color: inherit;
 }
 
 .imageBox {
@@ -21,12 +22,8 @@
   font-weight: 600;
 }
 
-.name {
-}
-
 .price {
   font-weight: 600;
-  font-weight: bold;
 }
 
 .price.sale {
@@ -35,8 +32,8 @@
 
 .lastPrice {
   text-decoration: line-through;
-  text-decoration-color: gray;
-  color: gray;
+  text-decoration-color: var(--mantine-color-gray-4);
+  color: var(--mantine-color-gray-6);
 }
 
 .item:hover {

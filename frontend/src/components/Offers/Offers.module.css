@@ -1,13 +1,15 @@
 .offers {
   background: linear-gradient(180deg, #fde1ff, #e1ffea22 60%);
+  padding: 2rem;
 }
 
-.left .heading {
-  font-weight: bold;
+.left p {
   font-size: 3rem;
+  font-weight: bold;
+  line-height: 1.1;
 }
 
-.left .subheading {
+h4 {
   text-transform: uppercase;
 }
 

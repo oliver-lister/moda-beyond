@@ -16,12 +16,10 @@ const Hero = () => {
           <div className={styles.left}>
             <div>
               <h2>New Arrivals Only</h2>
-              <div>
-                <Group>
-                  <p>new</p>
-                  <IconCircleCheckFilled size={50} />
-                </Group>
-              </div>
+              <Group>
+                <p>new</p>
+                <IconCircleCheckFilled size={50} />
+              </Group>
               <p>collections</p>
               <p>for everyone</p>
             </div>

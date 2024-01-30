@@ -1,18 +1,38 @@
 .footer {
   background-color: var(--mantine-color-dark-7);
-  color: var(--mantine-color-gray-1);
+  color: white;
   padding: 1rem 0;
 }
 
-.newsletter h4 {
+.heading {
   text-transform: uppercase;
   font-weight: 600;
+  text-decoration: none;
+  color: white;
 }
 
 .newsletter p {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
-.newsletter_input p {
+.error {
   position: absolute;
+}
+
+.list_item {
+  list-style: none;
+}
+
+.link {
+  text-decoration: none;
+  color: white;
+  opacity: 0.8;
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.link:hover {
+  opacity: 1;
 }

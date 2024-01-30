@@ -4,6 +4,8 @@ import Root from "./routes/Root.tsx";
 
 // CSS Imports
 import "@mantine/core/styles.css";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import "./index.css";
 
@@ -71,6 +73,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MantineProvider theme={theme}>
+      <Notifications />
       <RouterProvider router={router} />
     </MantineProvider>
   </React.StrictMode>

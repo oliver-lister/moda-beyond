@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar/NavBar";
 import MessageBar from "../components/MessageBar/MessageBar";
 import Footer from "../components/Footer/Footer";
+import Copyright from "../components/Copyright/Copyright";
 
 const Root = () => {
   return (
@@ -17,6 +18,7 @@ const Root = () => {
       </main>
       <footer>
         <Footer />
+        <Copyright />
       </footer>
     </>
   );
