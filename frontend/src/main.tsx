@@ -35,11 +35,11 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       {
-        path: "/mens",
-        element: <ShopCategory category="mens" />,
+        path: "/men",
+        element: <ShopCategory category="men" />,
       },
       {
-        path: "/womens",
+        path: "/women",
         element: <ShopCategory category="women" />,
       },
       {

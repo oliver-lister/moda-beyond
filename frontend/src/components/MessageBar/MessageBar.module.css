@@ -1,0 +1,4 @@
+.messagebar {
+  padding-block: 0.5rem;
+  background-color: var(--mantine-color-gray-1);
+}

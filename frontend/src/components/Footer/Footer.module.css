@@ -1,0 +1,18 @@
+.footer {
+  background-color: var(--mantine-color-dark-7);
+  color: var(--mantine-color-gray-1);
+  padding: 1rem 0;
+}
+
+.newsletter h4 {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.newsletter p {
+  opacity: 0.9;
+}
+
+.newsletter_input p {
+  position: absolute;
+}

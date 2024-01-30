@@ -1,42 +1,51 @@
 .nav {
-  padding: 1rem 0;
   box-shadow: 0 1px 3px -2px black;
-  background-color: black;
+  background-color: var(--mantine-color-dark-7);
+  color: var(--mantine-color-gray-1);
+  padding: 1rem 0;
 }
 
 .logo {
-  font-size: 1.8rem;
+  font-size: 1.2rem;
   text-transform: uppercase;
   text-decoration: none;
-  color: white;
+  font-weight: bold;
+  color: var(--mantine-color-gray-1);
+}
+
+.logo:hover {
+  color: var(--mantine-color-dark-1);
 }
 
 .list {
   list-style-type: none;
   display: grid;
-  /* justify-items: center; */
   align-items: center;
   text-align: center;
-  grid-template-columns: repeat(3, 1fr);
+  position: absolute;
+  z-index: 10;
+  top: 66px;
+  left: -100%;
+  background-color: var(--mantine-color-dark-7);
+  width: 100%;
+}
+
+.list.opened {
+  left: 0;
 }
 
 .link {
+  position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 14px;
   font-weight: bold;
-  color: white;
+  color: var(--mantine-color-gray-1);
   display: block;
-  padding: 0.75rem 1.5rem;
-  position: relative;
-}
-
-.link:hover {
-  background-color: gray;
+  padding: 1rem 2rem;
 }
 
 .link.active::before {
-  background-color: #fff;
+  background-color: var(--mantine-color-gray-1);
   bottom: 0;
   content: "";
   height: 2px;
@@ -45,8 +54,39 @@
   width: 100%;
 }
 
+.link:hover {
+  background-color: var(--mantine-color-dark-4);
+}
+
+.profile svg,
+.cart svg {
+  color: var(--mantine-color-gray-1);
+}
+
+.profile:hover svg,
+.cart:hover svg {
+  color: var(--mantine-color-dark-1);
+}
+
+/* for desktops */
+
 @media (min-width: 850px) {
+  .nav {
+    padding: 0;
+  }
+
+  .logo {
+    font-size: 1.8rem;
+  }
+
   .burger {
     display: none;
+  }
+
+  .list {
+    position: static;
+    grid-template-columns: repeat(3, 1fr);
+    background-color: inherit;
+    width: auto;
   }
 }

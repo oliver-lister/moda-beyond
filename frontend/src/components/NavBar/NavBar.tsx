@@ -1,21 +1,13 @@
-import {
-  Container,
-  Flex,
-  Image,
-  Button,
-  Indicator,
-  Group,
-  Burger,
-} from "@mantine/core";
+import { Container, Flex, Indicator, Group, Burger } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconShoppingCart } from "@tabler/icons-react";
+import { IconShoppingCart, IconUserCircle } from "@tabler/icons-react";
 import styles from "./NavBar.module.css";
 
 import { Link, useLocation } from "react-router-dom";
 
 const navMenu = [
-  { label: "Mens", path: "/mens" },
-  { label: "Womens", path: "/womens" },
+  { label: "Women", path: "/women" },
+  { label: "Men", path: "/men" },
   { label: "Kids", path: "/kids" },
 ];
 
@@ -28,11 +20,14 @@ const NavBar = () => {
       <Container size="xl">
         <Flex justify="space-between" align="center">
           <Group gap="xl">
-            <Link to="/">
-              <Image />
-              <h1 className={styles.logo}>The Shopper</h1>
+            <Link
+              to="/"
+              className={styles.logo}
+              onClick={() => opened && toggle()}
+            >
+              <h1>The Shopper</h1>
             </Link>
-            <ul className={styles.list}>
+            <ul className={`${styles.list} ${opened && styles.opened}`}>
               {navMenu.map((link, index) => (
                 <li key={index} className={styles.list_item}>
                   <Link
@@ -40,6 +35,7 @@ const NavBar = () => {
                     className={`${styles.link} ${
                       pathname === link.path && styles.active
                     }`}
+                    onClick={toggle}
                   >
                     {link.label}
                   </Link>
@@ -48,10 +44,18 @@ const NavBar = () => {
             </ul>
           </Group>
           <Flex align="center" gap={20}>
-            <Link to="/login">
-              <Button>Login</Button>
+            <Link
+              to="/login"
+              onClick={() => opened && toggle()}
+              className={styles.profile}
+            >
+              <IconUserCircle size={30} />
             </Link>
-            <Link to="/cart" className={styles.cart}>
+            <Link
+              to="/cart"
+              className={styles.cart}
+              onClick={() => opened && toggle()}
+            >
               <Group>
                 <Indicator inline label="2" size={16}>
                   <IconShoppingCart size={30} />
@@ -62,6 +66,7 @@ const NavBar = () => {
               className={styles.burger}
               opened={opened}
               onClick={toggle}
+              color="white"
               aria-label="Toggle navigation"
             />
           </Flex>
