@@ -9,12 +9,11 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconShoppingCart } from "@tabler/icons-react";
-import navStyles from "./NavBar.module.css";
+import styles from "./NavBar.module.css";
 
 import { Link, useLocation } from "react-router-dom";
 
 const navMenu = [
-  { label: "Home", path: "/" },
   { label: "Mens", path: "/mens" },
   { label: "Womens", path: "/womens" },
   { label: "Kids", path: "/kids" },
@@ -25,32 +24,34 @@ const NavBar = () => {
   const [opened, { toggle }] = useDisclosure();
 
   return (
-    <nav className={navStyles.nav}>
+    <nav className={styles.nav}>
       <Container size="xl">
-        <Flex justify="space-between" align="center" className={navStyles.logo}>
-          <Link to="/">
-            <Image />
-            <h1>Really Rad Rings</h1>
-          </Link>
-          <ul className={navStyles.list}>
-            {navMenu.map((link, index) => (
-              <li key={index}>
-                <Link
-                  to={link.path}
-                  className={`${navStyles.link} ${
-                    pathname === link.path && navStyles.active
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <Flex justify="space-between" align="center">
+          <Group gap="xl">
+            <Link to="/">
+              <Image />
+              <h1 className={styles.logo}>The Shopper</h1>
+            </Link>
+            <ul className={styles.list}>
+              {navMenu.map((link, index) => (
+                <li key={index} className={styles.list_item}>
+                  <Link
+                    to={link.path}
+                    className={`${styles.link} ${
+                      pathname === link.path && styles.active
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Group>
           <Flex align="center" gap={20}>
             <Link to="/login">
               <Button>Login</Button>
             </Link>
-            <Link to="/cart" className={navStyles.cart}>
+            <Link to="/cart" className={styles.cart}>
               <Group>
                 <Indicator inline label="2" size={16}>
                   <IconShoppingCart size={30} />
@@ -58,7 +59,7 @@ const NavBar = () => {
               </Group>
             </Link>
             <Burger
-              className={navStyles.burger}
+              className={styles.burger}
               opened={opened}
               onClick={toggle}
               aria-label="Toggle navigation"

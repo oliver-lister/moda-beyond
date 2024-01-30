@@ -18,6 +18,13 @@ import LoginSignup from "./routes/LoginSignup.tsx";
 
 const theme = createTheme({
   fontFamily: "Figtree, sans-serif",
+  breakpoints: {
+    xs: "450px",
+    sm: "640px",
+    md: "768px",
+    lg: "1024px",
+    xl: "1280px",
+  },
 });
 
 const router = createBrowserRouter([

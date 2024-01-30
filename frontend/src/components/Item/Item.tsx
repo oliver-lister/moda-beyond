@@ -1,22 +1,20 @@
 import { Image, Card, Group, Badge, Stack } from "@mantine/core";
-import itemStyles from "./Item.module.css";
+import styles from "./Item.module.css";
 import { itemProps } from "../../types/itemProps";
 
 const Item = ({ image, name, brand, price, lastPrice }: itemProps) => {
   return (
-    <Card padding="lg" radius="none" className={itemStyles.item}>
-      <Card.Section className={itemStyles.imageBox}>
-        <Image src={image} className={itemStyles.image} />
+    <Card padding="lg" radius="none" className={styles.item}>
+      <Card.Section className={styles.imageBox}>
+        <Image src={image} className={styles.image} />
       </Card.Section>
-      <Card.Section className={itemStyles.content}>
-        <p className={itemStyles.brand}>{brand}</p>
-        <p className={itemStyles.name}>{name}</p>
+      <Card.Section className={styles.content}>
+        <p className={styles.brand}>{brand}</p>
+        <p className={styles.name}>{name}</p>
         <Stack gap="xs">
-          <Group gap="xs" className={itemStyles.prices}>
-            {lastPrice && <p className={itemStyles.lastPrice}>${lastPrice}</p>}
-            <p
-              className={`${itemStyles.price} ${lastPrice && itemStyles.sale}`}
-            >
+          <Group gap="xs" className={styles.prices}>
+            {lastPrice && <p className={styles.lastPrice}>${lastPrice}</p>}
+            <p className={`${styles.price} ${lastPrice && styles.sale}`}>
               ${price}
             </p>
           </Group>
