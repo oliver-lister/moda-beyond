@@ -1,7 +1,7 @@
-import Hero from "../components/hero/Hero";
-import Popular from "../components/popular/Popular";
-import Offers from "../components/offers/Offers";
-import NewCollections from "../components/newCollections/NewCollections";
+import Hero from "../../components/Hero/Hero";
+import Popular from "../../components/Popular/Popular";
+import Offers from "../../components/Offers/Offers";
+import NewCollections from "../../components/NewCollections/NewCollections";
 import { Container, Stack } from "@mantine/core";
 import styles from "./Home.module.css";
 

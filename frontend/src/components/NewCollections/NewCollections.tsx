@@ -1,7 +1,7 @@
 import styles from "./NewCollections.module.css";
 import { Stack, SimpleGrid } from "@mantine/core";
-import Product from "../../types/product.ts";
-import Item from "../item/Item.tsx";
+import ProductProps from "../../types/ProductProps.ts";
+import Item from "../Item/Item.tsx";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
 
@@ -15,7 +15,7 @@ const NewCollections = () => {
         <h2 className={styles.title}>New Collections</h2>
         <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
           {newCollections.map(
-            ({ id, name, image, brand, price, lastPrice }: Product) => (
+            ({ id, name, image, brand, price, lastPrice }: ProductProps) => (
               <Item
                 key={id}
                 id={id}

@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
-import NavBar from "../components/navBar/NavBar";
-import MessageBar from "../components/messageBar/MessageBar";
-import Footer from "../components/footer/Footer";
-import Copyright from "../components/copyright/Copyright";
 
-const Root = () => {
+import NavBar from "../components/NavBar/NavBar";
+import MessageBar from "../components/MessageBar/MessageBar";
+import Footer from "../components/Footer/Footer";
+import Copyright from "../components/Copyright/Copyright";
+
+const Layout = () => {
   return (
     <>
       <header>
@@ -24,4 +25,4 @@ const Root = () => {
   );
 };
 
-export default Root;
+export default Layout;

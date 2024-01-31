@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@mantine/core": "^7.5.0",
+    "@mantine/dates": "^7.5.0",
     "@mantine/form": "^7.5.0",
     "@mantine/hooks": "^7.5.0",
     "@mantine/notifications": "^7.5.0",
     "@reduxjs/toolkit": "^2.1.0",
     "@tabler/icons-react": "^2.46.0",
+    "dayjs": "^1.11.10",
     "flickity": "^2.3.0",
     "install": "^0.13.0",
     "npm": "^10.4.0",

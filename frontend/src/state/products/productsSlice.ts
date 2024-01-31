@@ -1,10 +1,10 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import Product from "../../types/product";
-import all_product from "../../assets/data/all_products";
+import ProductProps from "../../types/ProductProps";
+import all_product from "../../assets/data/all_products.ts";
 import { AppDispatch } from "../store";
 
 interface Products {
-  items: Product[];
+  items: ProductProps[];
   loading: boolean;
 }
 
@@ -24,7 +24,7 @@ const productsSlice = createSlice({
       })
       .addCase(
         fetchProducts.fulfilled,
-        (state, action: PayloadAction<Product[]>) => {
+        (state, action: PayloadAction<ProductProps[]>) => {
           state.items = action.payload;
           state.loading = false;
         }

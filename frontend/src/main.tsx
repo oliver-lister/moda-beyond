@@ -1,22 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Layout from "./routes/Layout.tsx";
 import { useEffect } from "react";
 
 // React Router
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ErrorPage from "./error-page";
-import Home from "./routes/Home.tsx";
-import ShopCategory from "./routes/ShopCategory.tsx";
-import Product from "./routes/Product.tsx";
-import Cart from "./routes/Cart.tsx";
-import LoginSignup from "./routes/LoginSignup.tsx";
+import Layout from "./routes/Layout.tsx";
+import ErrorPage from "./routes/error-page.tsx";
+import Home from "./routes/Home/Home.tsx";
+import ShopCategory from "./routes/ShopCategory/ShopCategory.tsx";
+import Product from "./routes/Product/Product.tsx";
+import Cart from "./routes/Cart/Cart.tsx";
+import Login from "./routes/Login/Login.tsx";
 
 // Mantine
 import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
+import "@mantine/dates/styles.css";
+
 import "./index.css";
 
 // Overriding orignal Mantine theme
@@ -45,19 +47,19 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       {
         path: "/men",
-        element: <ShopCategory category="men" />,
+        element: <ShopCategory shopCategory="men" />,
       },
       {
         path: "/women",
-        element: <ShopCategory category="women" />,
+        element: <ShopCategory shopCategory="women" />,
       },
       {
         path: "/kids",
-        element: <ShopCategory category="kids" />,
+        element: <ShopCategory shopCategory="kids" />,
       },
       {
         path: "/product",
-        element: <ShopCategory category="kids" />,
+        element: <ShopCategory shopCategory="kids" />,
         children: [
           {
             path: ":productId",
@@ -71,7 +73,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <LoginSignup />,
+        element: <Login />,
       },
     ],
   },

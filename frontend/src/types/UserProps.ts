@@ -1,4 +1,4 @@
-import Product from "./product";
+import ProductProps from "./ProductProps";
 
 interface Address {
   street: string;
@@ -6,13 +6,14 @@ interface Address {
   zipCode: string;
 }
 
-export default interface User {
+export default interface UserProps {
   id: number;
-  username: string;
   email: string;
   firstName: string;
   lastName: string;
+  birthday?: string;
+  shoppingPreference: string;
   age?: number;
   address?: Address;
-  cart: Product[];
+  cart: ProductProps[];
 }
