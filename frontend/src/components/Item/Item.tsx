@@ -1,8 +1,8 @@
 import { Image, Card, Group, Badge, Stack } from "@mantine/core";
 import styles from "./Item.module.css";
-import { itemProps } from "../../types/itemProps";
+import Product from "../../types/product";
 
-const Item = ({ image, name, brand, price, lastPrice }: itemProps) => {
+const Item = ({ image, name, brand, price, lastPrice }: Product) => {
   return (
     <Card padding="lg" radius="none" className={styles.item}>
       <Card.Section className={styles.imageBox}>

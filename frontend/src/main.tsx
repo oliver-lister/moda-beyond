@@ -1,15 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Root from "./routes/Root.tsx";
+import Layout from "./routes/Layout.tsx";
+import { useEffect } from "react";
 
-// CSS Imports
-import "@mantine/core/styles.css";
-import { Notifications } from "@mantine/notifications";
-import "@mantine/notifications/styles.css";
-import { createTheme, MantineProvider } from "@mantine/core";
-import "./index.css";
-
-// Page imports for React Router
+// React Router
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
 import Home from "./routes/Home.tsx";
@@ -18,6 +12,14 @@ import Product from "./routes/Product.tsx";
 import Cart from "./routes/Cart.tsx";
 import LoginSignup from "./routes/LoginSignup.tsx";
 
+// Mantine
+import "@mantine/core/styles.css";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
+import { createTheme, MantineProvider } from "@mantine/core";
+import "./index.css";
+
+// Overriding orignal Mantine theme
 const theme = createTheme({
   fontFamily: "Figtree, sans-serif",
   breakpoints: {
@@ -29,10 +31,15 @@ const theme = createTheme({
   },
 });
 
+// Redux
+import { Provider } from "react-redux";
+import { store } from "./state/store.ts";
+import { initializeProducts } from "./state/products/productsSlice.ts";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
@@ -70,11 +77,22 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <MantineProvider theme={theme}>
-      <Notifications />
-      <RouterProvider router={router} />
-    </MantineProvider>
-  </React.StrictMode>
-);
+const Root = () => {
+  useEffect(() => {
+    // Dispatch the initializeProducts action when the component mounts
+    store.dispatch(initializeProducts());
+  }, []);
+
+  return (
+    <React.StrictMode>
+      <Provider store={store}>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <RouterProvider router={router} />
+        </MantineProvider>
+      </Provider>
+    </React.StrictMode>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")!).render(<Root />);
