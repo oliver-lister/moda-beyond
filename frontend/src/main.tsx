@@ -10,7 +10,7 @@ import Home from "./routes/Home/Home.tsx";
 import ShopCategory from "./routes/ShopCategory/ShopCategory.tsx";
 import Product from "./routes/Product/Product.tsx";
 import Cart from "./routes/Cart/Cart.tsx";
-import Login from "./routes/Login/Login.tsx";
+import LoginSignup from "./routes/Login/LoginSignup.tsx";
 
 // Mantine
 import "@mantine/core/styles.css";
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        element: <LoginSignup />,
       },
     ],
   },
