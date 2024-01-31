@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import styles from "./login.module.css";
+import styles from "./loginsignup.module.css";
 import { IconCake, IconLock } from "@tabler/icons-react";
 import { useState } from "react";
 
