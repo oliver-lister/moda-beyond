@@ -1,6 +1,8 @@
 import styles from "./MessageBar.module.css";
-import Flickity from "react-flickity-component";
-import "./flickity.css";
+
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
+import { Carousel } from "@mantine/carousel";
 
 const messageBarItems = [
   "Limited Time Offer: Free Shipping on Orders Over $100!",
@@ -8,36 +10,21 @@ const messageBarItems = [
   " New Arrivals Alert: Discover Fresh Fashion Picks! 👗🆕",
 ];
 
-const flickityOptions = {
-  contain: true,
-  autoPlay: 5000,
-  prevNextButtons: false,
-  pageDots: false,
-};
-
-const Carousel = ({
-  items,
-  flickityOptions,
-}: {
-  items: string[];
-  flickityOptions?: object;
-}) => {
-  return (
-    <Flickity options={flickityOptions}>
-      {items.map((item, i) => (
-        <div key={i} className="flickity-cell">
-          {item}
-        </div>
-      ))}
-    </Flickity>
-  );
-};
-
 const MessageBar = () => {
+  const autoplay = useRef(Autoplay({ delay: 6000 }));
+
   return (
-    <div className={styles.messagebar}>
-      <Carousel items={messageBarItems} flickityOptions={flickityOptions} />
-    </div>
+    <Carousel
+      withControls={false}
+      plugins={[autoplay.current]}
+      onMouseEnter={autoplay.current.stop}
+      onMouseLeave={autoplay.current.reset}
+      className={styles.messagebar}
+    >
+      {messageBarItems.map((item, index) => (
+        <Carousel.Slide key={index}>{item}</Carousel.Slide>
+      ))}
+    </Carousel>
   );
 };
 
