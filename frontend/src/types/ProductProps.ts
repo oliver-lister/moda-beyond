@@ -1,6 +1,6 @@
 export default interface ProductProps {
   id: number;
-  image: string;
+  image: string[];
   name: string;
   category?: string;
   brand: string;

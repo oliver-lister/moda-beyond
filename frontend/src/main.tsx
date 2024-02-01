@@ -18,6 +18,7 @@ import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import "@mantine/dates/styles.css";
+import "@mantine/carousel/styles.css";
 
 import "./index.css";
 
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/product",
-        element: <ShopCategory shopCategory="kids" />,
+        element: <Product />,
         children: [
           {
             path: ":productId",
