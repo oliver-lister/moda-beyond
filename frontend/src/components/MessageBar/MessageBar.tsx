@@ -16,6 +16,7 @@ const MessageBar = () => {
   return (
     <Carousel
       withControls={false}
+      loop
       plugins={[autoplay.current]}
       onMouseEnter={autoplay.current.stop}
       onMouseLeave={autoplay.current.reset}

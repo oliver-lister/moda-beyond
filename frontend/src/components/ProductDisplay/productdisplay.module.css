@@ -1,10 +1,42 @@
 .product_display {
-  overflow: hidden;
 }
 
-.collage {
-  overflow-y: scroll;
+/* THUMBNAILS */
+
+.thumbnails {
+  overflow-y: auto;
 }
 
-img {
+/* CAROUSEL */
+
+/* PRODUCT INFO */
+
+.brand {
+  font-size: 1rem;
 }
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.price {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.price.sale {
+  color: red;
+}
+
+.lastPrice {
+  text-decoration: line-through;
+  text-decoration-color: var(--mantine-color-gray-4);
+  color: var(--mantine-color-gray-6);
+}
+
+.selected_color {
+  font-weight: 600;
+}
+
+/* FORM */

@@ -3,11 +3,21 @@
   box-shadow: 0 1px 3px -2px var(--mantine-color-dark-7);
   color: white;
   text-align: center;
-  padding-block: 0.5rem;
+
   text-transform: uppercase;
   font-size: 12px;
 
   @media (min-width: 675px) {
     font-size: 14px;
   }
+}
+
+.messagebar div {
+  height: 100%;
+  padding: 0.2rem 0;
+  cursor: grab;
+}
+
+.messagebar div:active {
+  cursor: grabbing;
 }
