@@ -4,6 +4,8 @@ import { IconShoppingCart, IconUserCircle } from "@tabler/icons-react";
 import styles from "./NavBar.module.css";
 
 import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store.ts";
 
 const navMenu = [
   { label: "Women", path: "/women" },
@@ -12,8 +14,14 @@ const navMenu = [
 ];
 
 const NavBar = () => {
+  const cart = useSelector((state: RootState) => state.cart.items);
   const { pathname } = useLocation();
   const [opened, { toggle }] = useDisclosure();
+
+  const findTotalCartQuantity = cart.reduce(
+    (accumulator, currentItem) => accumulator + currentItem.quantity,
+    0
+  );
 
   return (
     <nav className={styles.nav}>
@@ -57,9 +65,13 @@ const NavBar = () => {
               onClick={() => opened && toggle()}
             >
               <Group>
-                <Indicator inline label="2" size={16}>
+                {cart.length > 0 ? (
+                  <Indicator inline label={findTotalCartQuantity} size={16}>
+                    <IconShoppingCart size={30} />
+                  </Indicator>
+                ) : (
                   <IconShoppingCart size={30} />
-                </Indicator>
+                )}
               </Group>
             </Link>
             <Burger

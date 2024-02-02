@@ -60,7 +60,6 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
       size: null,
       quantity: 1,
     },
-
     validate: {
       size: (value) => (value ? null : "Please pick a size."),
     },
@@ -70,11 +69,8 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
     setSelectedColor(hex === selectedColor ? null : hex);
   };
 
-  useEffect(() => {
-    form.setValues({ ...form.values, selectedColor });
-  }, [form, selectedColor]);
-
   const handleSubmit = () => {
+    form.setValues({ ...form.values, selectedColor });
     dispatch(addItem(form.values));
     notifications.show({
       title: "Success! You've added an item to your cart.",
