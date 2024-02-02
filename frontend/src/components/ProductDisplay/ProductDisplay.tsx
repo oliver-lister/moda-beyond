@@ -29,15 +29,12 @@ const colors = [
 ];
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
+  const mobile = useMediaQuery("(max-width: 768px");
+
+  // THUMBNAIL CLICKS MOVE IMAGE EMBLA CAROSUEL
   const { width } = useViewportSize();
   const [colHeight, setColHeight] = useState<number | null>(null);
   const [embla, setEmbla] = useState<Embla | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(
-    colors[0].label
-  );
-
-  const mobile = useMediaQuery("(max-width: 768px");
-
   const handleImageClick = useCallback(
     (index: number) => {
       if (embla) {
@@ -48,11 +45,16 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   );
 
   // ADD TO CART FORM
+  const [selectedColor, setSelectedColor] = useState<string | null>(
+    colors[0].label
+  );
 
   const form = useForm({
     initialValues: {
+      ...product,
       selectedColor: selectedColor,
       size: "",
+      quantity: 1,
     },
 
     validate: {
@@ -64,10 +66,14 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
     setSelectedColor(hex === selectedColor ? null : hex);
   };
 
+  useEffect(() => {
+    form.setValues({ ...form.values, selectedColor });
+  }, [form, selectedColor]);
+
   const handleSubmit = () => {
     notifications.show({
-      title: "Success! ",
-      message: `You've added a ${form.values.size} ${product.name} to your cart.`,
+      title: "Success! You've added an item to your cart.",
+      message: `${form.values.size} ${form.values.brand} ${form.values.selectedColor} ${product.name}`,
       icon: <IconShoppingCart />,
     });
   };
@@ -171,6 +177,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                         <ColorSwatch
                           key={color.label}
                           component="button"
+                          type="button"
                           color={color.hex}
                           onClick={() => handleColorClick(color.label)}
                           style={{ color: "#fff", cursor: "pointer" }}
@@ -196,7 +203,37 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
               </Stack>
             </form>
           </Stack>
-          <Accordion></Accordion>
+          <Accordion>
+            <Accordion.Item value="Description">
+              <Accordion.Control>Description</Accordion.Control>
+              <Accordion.Panel className={styles.accordion_content}>
+                Mid-weight cotton-rich denim; minimal stretch; unlined; opaque -
+                Slim fit; tapered leg - Zip fly with button fastening - Classic
+                five-pocket design
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="Size & Fit">
+              <Accordion.Control>Size & Fit</Accordion.Control>
+              <Accordion.Panel className={styles.accordion_content}>
+                Length: Inside Leg: 77cm, Front Rise: 27cm, Leg Opening: 32cm
+                (size W32/L32). Our model is 186.7cm (6’1.5”) tall with a 96.5cm
+                (38”) chest and a 81.3cm (32”) waist.
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="Material">
+              <Accordion.Control>Material</Accordion.Control>
+              <Accordion.Panel className={styles.accordion_content}>
+                Main: 99% Cotton & 1% Elastane
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="Returns">
+              <Accordion.Control>Returns</Accordion.Control>
+              <Accordion.Panel className={styles.accordion_content}>
+                *THE SHOPPER returns are free for 30 days unless marked. Find
+                out more about our return policy.
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         </Stack>
       </GridCol>
     </Grid>

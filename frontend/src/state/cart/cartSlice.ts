@@ -2,6 +2,8 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import ProductProps from "../../types/ProductProps";
 
 interface CartItem extends ProductProps {
+  selectedColor: string;
+  size: string;
   quantity: number;
 }
 
