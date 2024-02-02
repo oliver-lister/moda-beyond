@@ -44,7 +44,10 @@ const cartSlice = createSlice({
     },
     updateSize: (
       state,
-      action: PayloadAction<{ cartId: string; size: string }>
+      action: PayloadAction<{
+        cartId: CartItem["cartId"];
+        size: CartItem["size"];
+      }>
     ) => {
       const { cartId, size } = action.payload;
 
@@ -75,7 +78,10 @@ const cartSlice = createSlice({
     },
     updateQuantity: (
       state,
-      action: PayloadAction<{ cartId: string; quantity: number }>
+      action: PayloadAction<{
+        cartId: CartItem["cartId"];
+        quantity: CartItem["quantity"];
+      }>
     ) => {
       const { cartId, quantity } = action.payload;
 
@@ -87,21 +93,7 @@ const cartSlice = createSlice({
         // Check if item we're updating exists
         const updatedItem = { ...state.items[itemToUpdateIndex], quantity };
 
-        const matchingItemIndex = state.items.findIndex(
-          (item) =>
-            item.product.id === updatedItem.product.id &&
-            item.size === updatedItem.size &&
-            item.selectedColor === updatedItem.selectedColor
-        );
-
-        if (matchingItemIndex !== -1) {
-          // If matching item exists, update its quantity and delete the duplicate.
-          state.items[matchingItemIndex].quantity += updatedItem.quantity;
-          state.items.splice(itemToUpdateIndex, 1);
-        } else {
-          // If matching item doesn't exist, update the item
-          state.items[itemToUpdateIndex] = updatedItem;
-        }
+        state.items[itemToUpdateIndex] = updatedItem;
       }
     },
     clearCart: (state) => {
