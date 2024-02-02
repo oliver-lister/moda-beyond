@@ -1,6 +1,6 @@
 import styles from "./Offers.module.css";
 import { Button, Group, Image, Stack } from "@mantine/core";
-import exclusiveImg from "../../assets/images/exclusive_image.png";
+import exclusiveImg from "../../../assets/images/exclusive_image.png";
 import { IconHeart } from "@tabler/icons-react";
 
 const Offers = () => {

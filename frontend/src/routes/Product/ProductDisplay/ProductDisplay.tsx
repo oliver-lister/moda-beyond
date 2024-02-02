@@ -18,9 +18,12 @@ import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { useViewportSize } from "@mantine/hooks";
 import { useMediaQuery } from "@mantine/hooks";
-import ProductProps from "../../types/ProductProps";
+import ProductProps from "../../../types/ProductProps";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { IconShoppingCart } from "@tabler/icons-react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../state/store";
+import { addItem } from "../../../state/cart/cartSlice";
 
 const colors = [
   { label: "Burgundy", hex: "#800020" },
@@ -45,15 +48,16 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   );
 
   // ADD TO CART FORM
+  const dispatch = useDispatch<AppDispatch>();
   const [selectedColor, setSelectedColor] = useState<string | null>(
     colors[0].label
   );
 
   const form = useForm({
     initialValues: {
-      ...product,
+      product,
       selectedColor: selectedColor,
-      size: "",
+      size: null,
       quantity: 1,
     },
 
@@ -71,9 +75,10 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   }, [form, selectedColor]);
 
   const handleSubmit = () => {
+    dispatch(addItem(form.values));
     notifications.show({
       title: "Success! You've added an item to your cart.",
-      message: `${form.values.size} ${form.values.brand} ${form.values.selectedColor} ${product.name}`,
+      message: `${form.values.size} ${product.brand} ${form.values.selectedColor} ${product.name}`,
       icon: <IconShoppingCart />,
     });
   };

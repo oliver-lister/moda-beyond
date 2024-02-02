@@ -3,7 +3,8 @@ import { RootState } from "../../state/store.ts";
 import { Link, useParams } from "react-router-dom";
 import { Breadcrumbs, Anchor, Container, Stack } from "@mantine/core";
 import styles from "./product.module.css";
-import ProductDisplay from "../../components/ProductDisplay/ProductDisplay.tsx";
+import ProductDisplay from "./ProductDisplay/ProductDisplay.tsx";
+import SimilarProducts from "./SimilarProducts/SimilarProducts.tsx";
 
 const Product = () => {
   const products = useSelector((state: RootState) => state.products.items);
@@ -35,6 +36,7 @@ const Product = () => {
         <Stack gap="lg">
           <Breadcrumbs className={styles.breadcrumbs}>{items}</Breadcrumbs>
           <ProductDisplay product={product} />
+          <SimilarProducts />
         </Stack>
       </Container>
     </section>

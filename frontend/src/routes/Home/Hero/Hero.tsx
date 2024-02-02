@@ -1,7 +1,7 @@
 import { Button, Container, Group, Image } from "@mantine/core";
 import styles from "./Hero.module.css";
 import { IconArrowRight, IconCircleCheckFilled } from "@tabler/icons-react";
-import heroImage from "../../assets/images/hero_image.png"; // Import the image
+import heroImage from "../../../assets/images/hero_image.png";
 
 const Hero = () => {
   return (

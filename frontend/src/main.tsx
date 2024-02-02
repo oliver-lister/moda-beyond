@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { useEffect } from "react";
 
 // React Router
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -37,7 +36,6 @@ const theme = createTheme({
 // Redux
 import { Provider } from "react-redux";
 import { store } from "./state/store.ts";
-import { initializeProducts } from "./state/products/productsSlice.ts";
 
 const router = createBrowserRouter([
   {
@@ -80,22 +78,16 @@ const router = createBrowserRouter([
   },
 ]);
 
-const Root = () => {
-  useEffect(() => {
-    // Dispatch the initializeProducts action when the component mounts
-    store.dispatch(initializeProducts());
-  }, []);
+const rootContainer = document.getElementById("root")!;
+const root = ReactDOM.createRoot(rootContainer);
 
-  return (
-    <React.StrictMode>
-      <Provider store={store}>
-        <MantineProvider theme={theme}>
-          <Notifications />
-          <RouterProvider router={router} />
-        </MantineProvider>
-      </Provider>
-    </React.StrictMode>
-  );
-};
-
-ReactDOM.createRoot(document.getElementById("root")!).render(<Root />);
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <MantineProvider theme={theme}>
+        <Notifications />
+        <RouterProvider router={router} />
+      </MantineProvider>
+    </Provider>
+  </React.StrictMode>
+);

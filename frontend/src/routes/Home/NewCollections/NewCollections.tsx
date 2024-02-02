@@ -1,9 +1,9 @@
 import styles from "./NewCollections.module.css";
 import { Stack, SimpleGrid } from "@mantine/core";
-import ProductProps from "../../types/ProductProps.ts";
-import Item from "../Item/Item.tsx";
+import ProductProps from "../../../types/ProductProps.ts";
+import Item from "../../../components/Item/Item.tsx";
 import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
+import { RootState } from "../../../state/store.ts";
 
 const NewCollections = () => {
   const products = useSelector((state: RootState) => state.products.items);

@@ -1,20 +1,20 @@
-import styles from "./Popular.module.css";
-import { SimpleGrid, Stack } from "@mantine/core";
-import Item from "../Item/Item.tsx";
-import ProductProps from "../../types/ProductProps.ts";
+import Item from "../../../components/Item/Item";
 import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
+import { RootState } from "../../../state/store.ts";
+import styles from "./similarproducts.module.css";
+import { Stack, SimpleGrid } from "@mantine/core";
+import ProductProps from "../../../types/ProductProps.ts";
 
-const Popular = () => {
+const SimilarProducts = () => {
   const products = useSelector((state: RootState) => state.products.items);
-  const popularProducts = products.slice(1, 7);
+  const similarProducts = products.slice(12, 18);
 
   return (
-    <section className={styles.popular}>
-      <Stack gap="sm">
-        <h2 className={styles.title}>Trending Now</h2>
+    <section className={styles.similar_products}>
+      <Stack>
+        <h2 className={styles.title}>Similar Products</h2>
         <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
-          {popularProducts.map(
+          {similarProducts.map(
             ({ id, name, image, brand, price, lastPrice }: ProductProps) => (
               <Item
                 key={id}
@@ -33,4 +33,4 @@ const Popular = () => {
   );
 };
 
-export default Popular;
+export default SimilarProducts;

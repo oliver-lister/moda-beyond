@@ -5,7 +5,11 @@ import { Link } from "react-router-dom";
 
 const Item = ({ id, image, name, brand, price, lastPrice }: ProductProps) => {
   return (
-    <Link to={`/product/${id}`} className={styles.link}>
+    <Link
+      to={`/product/${id}`}
+      className={styles.link}
+      onClick={() => window.scrollTo(0, 0)}
+    >
       <Card padding="lg" radius="none" className={styles.item}>
         <Card.Section className={styles.imageBox}>
           <Image src={image[0]} className={styles.image} />
