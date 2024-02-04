@@ -22,7 +22,6 @@ const Product = () => {
 
   const items = [
     { title: product.category, href: `/${product.category}` },
-    { title: "Jumpers & Cardigans", href: "#" },
     { title: product.name, href: "#" },
   ].map((item, index) => (
     <Anchor component={Link} to={item.href} key={index}>

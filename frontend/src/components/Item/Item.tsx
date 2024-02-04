@@ -23,8 +23,8 @@ const Item = ({ id, image, name, brand, price, lastPrice }: ProductProps) => {
               <p className={`${styles.price} ${lastPrice && styles.sale}`}>
                 ${price}
               </p>
+              {lastPrice && <Badge color="red">Sale</Badge>}
             </Group>
-            {lastPrice && <Badge color="red">Sale</Badge>}
           </Stack>
         </Card.Section>
       </Card>
