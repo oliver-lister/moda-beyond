@@ -3,7 +3,7 @@
 }
 
 .item {
-  background-color: inherit;
+  background-color: transparent;
 }
 
 .imageBox {
@@ -19,6 +19,7 @@
   display: grid;
   padding: 0.5rem 0;
   font-size: 14px;
+  color: black;
 }
 
 .brand {

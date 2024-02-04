@@ -1,6 +1,6 @@
 import Hero from "./Hero/Hero";
 import Popular from "./Popular/Popular";
-import Offers from "./Offers/Offers";
+import ExclusiveOffers from "./Offers/ExclusiveOffers";
 import NewCollections from "./NewCollections/NewCollections";
 import { Container, Stack } from "@mantine/core";
 import styles from "./Home.module.css";
@@ -13,7 +13,7 @@ const Home = () => {
           <Stack gap="lg">
             <Hero />
             <Popular />
-            <Offers />
+            <ExclusiveOffers />
             <NewCollections />
           </Stack>
         </Container>

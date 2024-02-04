@@ -1,4 +1,4 @@
-import { Image, Card, Group, Badge, Stack } from "@mantine/core";
+import { Image, Group, Badge, Stack } from "@mantine/core";
 import styles from "./Item.module.css";
 import ProductProps from "../../types/ProductProps";
 import { Link } from "react-router-dom";
@@ -10,11 +10,11 @@ const Item = ({ id, image, name, brand, price, lastPrice }: ProductProps) => {
       className={styles.link}
       onClick={() => window.scrollTo(0, 0)}
     >
-      <Card padding="lg" radius="none" className={styles.item}>
-        <Card.Section className={styles.imageBox}>
+      <article className={styles.item}>
+        <div className={styles.imageBox}>
           <Image src={image[0]} className={styles.image} />
-        </Card.Section>
-        <Card.Section className={styles.content}>
+        </div>
+        <div className={styles.content}>
           <p className={styles.brand}>{brand}</p>
           <p className={styles.name}>{name}</p>
           <Stack gap="xs">
@@ -26,8 +26,8 @@ const Item = ({ id, image, name, brand, price, lastPrice }: ProductProps) => {
               {lastPrice && <Badge color="red">Sale</Badge>}
             </Group>
           </Stack>
-        </Card.Section>
-      </Card>
+        </div>
+      </article>
     </Link>
   );
 };

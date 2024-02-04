@@ -36,7 +36,7 @@ const CartItem = ({
   return (
     <li key={cartId}>
       <Grid align="center" className={styles.grid_row}>
-        <GridCol span={{ base: 11, md: 7 }} order={{ base: 1 }}>
+        <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
           <Link to={`/product/${productId}`} className={styles.link}>
             <Group wrap="nowrap">
               <Image src={image} height={100} className={styles.image} />
@@ -81,7 +81,7 @@ const CartItem = ({
             />
           </Group>
         </GridCol>
-        <GridCol span={{ base: 1, md: 1 }} order={{ base: 2, md: 3 }}>
+        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
           <Stack align="flex-end">
             <p className={styles.price}>${price * quantity}</p>
             <button
