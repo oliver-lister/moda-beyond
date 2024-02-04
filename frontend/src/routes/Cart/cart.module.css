@@ -1,10 +1,10 @@
-.shopping_cart {
+.container {
   padding-block: 1rem;
   min-height: 60vh;
 }
 
-.cart_inner {
-  @media (min-width: 1023px) {
+.cart {
+  @media (min-width: $mantine-breakpoint-md) {
     padding: 0 1rem 0 0;
   }
 }
@@ -23,126 +23,6 @@
   padding: 1rem;
 }
 
-/* CART ITEM ROW */
-
-.grid_row {
-  padding-block: 1rem;
-}
-
-.grid_row {
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-.link {
-  text-decoration: none;
-}
-
-.link:hover,
-.link:active {
-  text-decoration: underline;
-  text-decoration-color: black;
-}
-
-.image {
-  border: 1px solid black/80;
-}
-
-.select {
-  width: 100px;
-}
-
-.title {
-  color: black;
-  font-weight: 600;
-}
-
-.color {
-  font-size: 14px;
-  color: black;
-  opacity: 0.6;
-}
-
-.price {
-  margin-bottom: 1rem;
-}
-
-.remove {
-  background-color: inherit;
-  border: none;
-  cursor: pointer;
-}
-
-.remove:hover,
-.remove:active {
-  color: red;
-}
-
-/* DELIVERY */
-
-.delivery {
-  min-width: 50%;
-  max-width: 375px;
-  margin-left: auto;
-}
-
-.delivery_estimate {
-  font-size: 0.8rem;
-}
-
-.delivery .radio_item {
-  padding-block: 0.5rem;
-}
-
-.delivery .radio_item:not(.delivery .radio_item:last-of-type) {
-  border-bottom: 1px solid var(--mantine-color-gray-2);
-}
-
-/* CHECKOUT */
-
-.checkout {
-  font-weight: 600;
-  @media (min-width: 1023px) {
-    border-left: 1px solid var(--mantine-color-gray-2);
-  }
-}
-
-.checkout_inner {
-  @media (min-width: 1023px) {
-    margin: 4rem 0 0 1rem;
-    position: sticky;
-    top: 20px;
-  }
-}
-
-.checkout .coupon {
-  text-align: center;
-}
-
-.checkout .summary {
-  border: 1px solid var(--mantine-color-gray-3);
-  padding: 1rem;
-}
-
-.checkout h3 {
-  text-transform: uppercase;
-  font-size: 1.5rem;
-}
-
-.checkout .total {
-  font-size: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--mantine-color-gray-2);
-}
-
-.checkout button {
-  text-transform: uppercase;
-}
-
-.checkout .terms {
-  font-weight: 400;
-  font-size: 0.7rem;
-}
-
 /* IF SHOPPING CART HAS NO ITEMS */
 
 .no_items {
@@ -155,6 +35,6 @@
 
 .no_items_content {
   text-align: center;
-  border: 1px solid black;
+  border: 1px solid var(--mantine-color-gray-3);
   padding: 2rem;
 }

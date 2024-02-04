@@ -1,0 +1,57 @@
+/* CART ITEM ROW */
+
+li {
+  list-style-type: none;
+}
+
+.grid_row {
+  padding-block: 1rem;
+}
+
+.grid_row {
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.link {
+  text-decoration: none;
+}
+
+.link:hover,
+.link:active {
+  text-decoration: underline;
+  text-decoration-color: black;
+}
+
+.image {
+  border: 1px solid black/80;
+}
+
+.select {
+  width: 100px;
+}
+
+.title {
+  color: black;
+  font-weight: 600;
+}
+
+.color {
+  font-size: 14px;
+  color: black;
+  opacity: 0.6;
+}
+
+.price {
+  margin-bottom: 1rem;
+}
+
+.remove {
+  background-color: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+.remove:hover,
+.remove:active {
+  color: red;
+}

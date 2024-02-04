@@ -1,0 +1,37 @@
+.container {
+  font-weight: 600;
+  @media (min-width: 1023px) {
+    padding: 4rem 0 0 1rem;
+    position: sticky;
+    top: 20px;
+  }
+}
+
+.coupon {
+  text-align: center;
+}
+
+.summary {
+  border: 1px solid var(--mantine-color-gray-3);
+  padding: 1rem;
+}
+
+.summary h3 {
+  text-transform: uppercase;
+  font-size: 1.5rem;
+}
+
+.summary .total {
+  font-size: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+button {
+  text-transform: uppercase;
+}
+
+.terms {
+  font-weight: 400;
+  font-size: 0.7rem;
+}

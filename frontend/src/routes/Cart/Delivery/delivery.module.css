@@ -1,0 +1,20 @@
+/* DELIVERY */
+
+.container {
+  @media (min-width: $mantine-breakpoint-xs) {
+    min-width: 50%;
+    margin-left: auto;
+  }
+}
+
+.delivery_estimate {
+  font-size: 0.8rem;
+}
+
+.radio_item {
+  padding-block: 0.5rem;
+}
+
+.radio_item:not(.radio_item:last-of-type) {
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
