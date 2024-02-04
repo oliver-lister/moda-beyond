@@ -12,10 +12,24 @@ interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  productTotal: number;
+  totalQuantity: number;
+  deliveryFee: number;
+  deliveryType: "standard" | "express" | "pickup";
 }
+
+const deliveryFees = {
+  standard: 16,
+  express: 22,
+  pickup: 6,
+};
 
 const initialState: CartState = {
   items: [],
+  productTotal: 0,
+  totalQuantity: 0,
+  deliveryFee: deliveryFees["standard"],
+  deliveryType: "standard",
 };
 
 const cartSlice = createSlice({
@@ -37,10 +51,13 @@ const cartSlice = createSlice({
         // If item doesn't exist, add a new item
         state.items.push({ ...newItem, cartId: uuidv4() });
       }
+      cartSlice.caseReducers.updateTotals(state);
     },
+
     removeItem: (state, action: PayloadAction<CartItem["cartId"]>) => {
       const cartId = action.payload;
       state.items = state.items.filter((item) => item.cartId !== cartId);
+      cartSlice.caseReducers.updateTotals(state);
     },
     updateSize: (
       state,
@@ -95,6 +112,26 @@ const cartSlice = createSlice({
 
         state.items[itemToUpdateIndex] = updatedItem;
       }
+      cartSlice.caseReducers.updateTotals(state);
+    },
+    changeDelivery: (
+      state,
+      action: PayloadAction<"standard" | "express" | "pickup">
+    ) => {
+      const deliveryType = action.payload;
+      state.deliveryFee = deliveryFees[deliveryType];
+      state.deliveryType = deliveryType;
+    },
+    updateTotals: (state) => {
+      state.productTotal = state.items.reduce(
+        (acc, currentItem) =>
+          acc + currentItem.product.price * currentItem.quantity,
+        0
+      );
+      state.totalQuantity = state.items.reduce(
+        (acc, currentItem) => acc + currentItem.quantity,
+        0
+      );
     },
     clearCart: (state) => {
       state.items = [];
@@ -102,7 +139,13 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItem, removeItem, updateQuantity, updateSize, clearCart } =
-  cartSlice.actions;
+export const {
+  addItem,
+  removeItem,
+  updateQuantity,
+  changeDelivery,
+  updateSize,
+  clearCart,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;
