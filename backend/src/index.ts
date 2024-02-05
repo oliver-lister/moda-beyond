@@ -1,6 +1,12 @@
+import "dotenv/config";
+import jwt from "jsonwebtoken";
+import multer from "multer";
 import express from "express";
+import path from "path";
+import cors from "cors";
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
