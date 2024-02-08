@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
-      const productId = (req.params.productId || 'defaultProductId').replace(':', '');
+      const productId = req.body.id;
 
       const folderPath = `./upload/images/${productId}`;
 
@@ -46,40 +46,56 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    const filename = `${file.fieldname}_${req.params.productId}_${Date.now()}${path.extname(file.originalname)}`;
+    const filename = `${file.fieldname}_${req.body.id}_${Date.now()}${path.extname(file.originalname)}`;
     cb(null, filename);
   },
 });
 
 const upload = multer({ storage: storage });
 
-// Creating Upload Endpoint for Images
-
-app.use('/images', express.static('upload/images'));
-
-app.post('/upload/:productId', upload.array('product'), (req, res) => {
-  if (!req.files || req.files.length === 0) {
-    return res.json({
-      success: 0,
-      message: 'No files uploaded.',
-    });
-  }
-
-  const imageUrls: string[] = (req.files as Express.Multer.File[]).map(
-    (img: Express.Multer.File) => `http://localhost:${port}/images/${req.params.productId}/${img.filename}`,
-  );
-
-  res.json({
-    success: 1,
-    image_url: imageUrls,
-  });
-});
-
 // Schema for Creating Products
 
-// const Product = mongoose.model('Product', {
-//   id: { type: Number, require: true },
-// });
+const productSchema = new mongoose.Schema({
+  id: { type: Number, required: true },
+  image: { type: [String], default: [] },
+  name: { type: String, required: true },
+  category: { type: String, required: true },
+  brand: { type: String, required: true },
+  price: { type: Number, required: true },
+  lastPrice: { type: Number },
+  date: { type: Date, default: Date.now },
+  available: { type: Boolean, default: true },
+});
+
+// Model for the Product schema
+const Product = mongoose.model('Product', productSchema);
+
+// Creating Combined Endpoint for Images Upload and Product Creation
+app.post('/addproduct', upload.array('product'), async (req, res) => {
+  try {
+    const newProductData = req.body;
+    const newProduct = await Product.create(newProductData);
+
+    // Update the product with image URLs
+    const imageUrls = (req.files as Express.Multer.File[]).map(
+      (img: Express.Multer.File) => `http://localhost:${port}/images/${req.params.productId}/${img.filename}`,
+    );
+    newProduct.image = imageUrls;
+
+    await newProduct.save(); // save new product to MongoDB
+
+    res.json({
+      success: 1,
+      product: newProduct,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: 0,
+      message: 'Internal server error',
+    });
+  }
+});
 
 app
   .listen(port, () => {
