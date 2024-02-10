@@ -11,6 +11,7 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Database Connection With MongoDB
@@ -26,14 +27,12 @@ app.get('/', (req, res) => {
 });
 
 // Image Storage Engine
-// ... I plan to add API conversion to WEBP before storage
 
-const storage = multer.diskStorage({
+const tempStorage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
-      const productId = req.body.id;
-
-      const folderPath = `./upload/images/${productId}`;
+      // store image files in a temporary directory which later renames to mongoDB id
+      const folderPath = `./upload/images/tempDir`;
 
       if (!fs.existsSync(folderPath)) {
         // If the directory doesn't exist, create it
@@ -46,23 +45,22 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    const filename = `${file.fieldname}_${req.body.id}_${Date.now()}${path.extname(file.originalname)}`;
+    const filename = `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`;
     cb(null, filename);
   },
 });
 
-const upload = multer({ storage: storage });
+const tempUpload = multer({ storage: tempStorage });
 
 // Schema for Creating Products
 
 const productSchema = new mongoose.Schema({
-  id: { type: Number, required: true },
-  image: { type: [String], default: [] },
   name: { type: String, required: true },
   category: { type: String, required: true },
   brand: { type: String, required: true },
   price: { type: Number, required: true },
   lastPrice: { type: Number },
+  images: { type: [String], default: [] },
   date: { type: Date, default: Date.now },
   available: { type: Boolean, default: true },
 });
@@ -70,17 +68,23 @@ const productSchema = new mongoose.Schema({
 // Model for the Product schema
 const Product = mongoose.model('Product', productSchema);
 
-// Creating Combined Endpoint for Images Upload and Product Creation
-app.post('/addproduct', upload.array('product'), async (req, res) => {
+// Creating Endpoint for Product Creation & Image Upload
+app.post('/addproduct', tempUpload.array('product'), async (req, res) => {
   try {
     const newProductData = req.body;
     const newProduct = await Product.create(newProductData);
 
+    const tempPath = './upload/images/tempDir';
+    const newPath = `./upload/images/${newProduct.id}`;
+
+    fs.rename(tempPath, newPath, (err) => (err ? console.log(err) : console.log('Successfully renamed the directory with Product Id.')));
+
     // Update the product with image URLs
     const imageUrls = (req.files as Express.Multer.File[]).map(
-      (img: Express.Multer.File) => `http://localhost:${port}/images/${req.params.productId}/${img.filename}`,
+      (img: Express.Multer.File) => `http://localhost:${port}/images/${newProduct.id}/${img.filename}`,
     );
-    newProduct.image = imageUrls;
+
+    newProduct.images = imageUrls;
 
     await newProduct.save(); // save new product to MongoDB
 
@@ -88,11 +92,10 @@ app.post('/addproduct', upload.array('product'), async (req, res) => {
       success: 1,
       product: newProduct,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
+  } catch (err) {
+    res.json({
       success: 0,
-      message: 'Internal server error',
+      error: err,
     });
   }
 });
@@ -104,5 +107,3 @@ app
   .on('error', (err) => {
     console.log('Error: ' + err);
   });
-
-// https://www.youtube.com/watch?v=y99YgaQjgx4&t=18379s 5:15:31
