@@ -5,7 +5,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./routes/Layout.tsx";
 import ErrorPage from "./routes/error-page.tsx";
-import Home from "./routes/Home/Home.tsx";
+import Dashboard from "./routes/Dashboard/Dashboard.tsx";
 
 import "@mantine/core/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     errorElement: <ErrorPage />,
-    children: [{ index: true, element: <Home /> }],
+    children: [{ index: true, element: <Dashboard /> }],
   },
 ]);
 
