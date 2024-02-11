@@ -68,7 +68,7 @@ const productSchema = new mongoose.Schema({
 // Model for the Product schema
 const Product = mongoose.model('Product', productSchema);
 
-// Creating Endpoint for Product Creation & Image Upload
+// Creating API for Product Creation & Image Upload
 app.post('/addproduct', tempUpload.array('product'), async (req, res) => {
   try {
     const newProductData = req.body;
@@ -91,6 +91,31 @@ app.post('/addproduct', tempUpload.array('product'), async (req, res) => {
     res.json({
       success: 1,
       product: newProduct,
+    });
+  } catch (err) {
+    res.json({
+      success: 0,
+      error: err,
+    });
+  }
+});
+
+// Creating API for Product Removal
+
+app.post('/removeproduct', async (req, res) => {
+  try {
+    const id = req.body.id;
+    await Product.findOneAndDelete({ _id: id });
+
+    const imageFolderPath = `./upload/images/${id}`;
+
+    // Remove local image file folder
+    fs.rmSync(imageFolderPath, { recursive: true, force: true });
+
+    console.log('Product removed: ' + id);
+    res.json({
+      success: 1,
+      name: `${id} deleted`,
     });
   } catch (err) {
     res.json({
