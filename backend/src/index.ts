@@ -68,7 +68,7 @@ const productSchema = new mongoose.Schema({
 // Model for the Product schema
 const Product = mongoose.model('Product', productSchema);
 
-// Creating API for Product Creation & Image Upload
+// API for Product Creation & Image Upload
 app.post('/addproduct', tempUpload.array('product'), async (req, res) => {
   try {
     const newProductData = req.body;
@@ -100,7 +100,7 @@ app.post('/addproduct', tempUpload.array('product'), async (req, res) => {
   }
 });
 
-// Creating API for Product Removal
+// API for Product Removal
 
 app.post('/removeproduct', async (req, res) => {
   try {
@@ -124,6 +124,21 @@ app.post('/removeproduct', async (req, res) => {
     });
   }
 });
+
+// API for Fetching Products with Dynamic Filtering
+
+app.get('/fetchproducts', async (req, res) => {
+  try {
+    const queryFilter = req.query ? req.query : {};
+    const products = await Product.find(queryFilter);
+    res.send(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Start the server
 
 app
   .listen(port, () => {
