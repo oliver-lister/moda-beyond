@@ -4,22 +4,38 @@ import styles from "./dashboard.module.css";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const navMenu = [
-    { label: "Add Product", path: "/addproduct", left: <IconTablePlus /> },
-    { label: "View Products", path: "/viewproducts", left: <IconZoomScan /> },
+  const dashMenu = [
+    {
+      label: "Add Product",
+      path: "/addproduct",
+      left: <IconTablePlus size="2rem" />,
+    },
+    {
+      label: "View Products",
+      path: "/viewproducts",
+      left: <IconZoomScan size="2rem" />,
+    },
   ];
 
   return (
     <>
       <Stack>
         <h2>Welcome to the admin panel.</h2>
-        <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
-          {navMenu.map((link) => (
-            <Button component={Link} to={link.path} leftSection={link.left}>
-              {link.label}
-            </Button>
-          ))}
-        </SimpleGrid>
+        <div className={styles.grid_box}>
+          <SimpleGrid cols={{ base: 1, md: 1, lg: 2 }}>
+            {dashMenu.map((link) => (
+              <Button
+                component={Link}
+                to={link.path}
+                leftSection={link.left}
+                h="250px"
+                fz="2rem"
+              >
+                {link.label}
+              </Button>
+            ))}
+          </SimpleGrid>
+        </div>
       </Stack>
     </>
   );

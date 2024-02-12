@@ -10,6 +10,8 @@ import Dashboard from "./routes/Dashboard/Dashboard.tsx";
 import "@mantine/core/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import "./index.css";
+import AddProduct from "./routes/AddProduct/AddProduct.tsx";
+import ViewProducts from "./routes/ViewProducts/ViewProducts.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
@@ -28,7 +30,17 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     errorElement: <ErrorPage />,
-    children: [{ index: true, element: <Dashboard /> }],
+    children: [
+      { index: true, element: <Dashboard /> },
+      {
+        path: "/addproduct",
+        element: <AddProduct />,
+      },
+      {
+        path: "/viewproducts",
+        element: <ViewProducts />,
+      },
+    ],
   },
 ]);
 
