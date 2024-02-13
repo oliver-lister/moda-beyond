@@ -12,6 +12,7 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/images', express.static('./upload/images'));
 app.use(cors());
 
 // Database Connection With MongoDB
@@ -71,9 +72,17 @@ const productSchema = new mongoose.Schema({
 const Product = mongoose.model('Product', productSchema);
 
 // API for Product Creation & Image Upload
-app.post('/addproduct', tempUpload.array('product'), async (req, res) => {
+app.post('/addproduct', tempUpload.array('productImg'), async (req, res) => {
   try {
-    const newProductData = req.body;
+    const newProductData = {
+      name: req.body.name,
+      category: req.body.category,
+      brand: req.body.brand,
+      availableSizes: JSON.parse(req.body.availableSizes),
+      material: req.body.material,
+      price: req.body.price,
+    };
+
     const newProduct = await Product.create(newProductData);
 
     const tempPath = './upload/images/tempDir';

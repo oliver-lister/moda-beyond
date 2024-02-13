@@ -18,6 +18,17 @@ import { useForm } from "@mantine/form";
 import { IconUpload } from "@tabler/icons-react";
 import styles from "./addproduct.module.css";
 
+interface ProductProps {
+  name: string;
+  brand: string;
+  category: string;
+  availableSizes: string[];
+  description: string;
+  material: string;
+  price: number;
+  images: File[];
+}
+
 const AddProduct = () => {
   const form = useForm({
     initialValues: {
@@ -29,12 +40,41 @@ const AddProduct = () => {
       material: "",
       price: 50,
       images: [],
-    },
+    } as ProductProps,
     validate: {},
   });
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  const handleSubmit = async (values: ProductProps) => {
+    try {
+      const apiUrl = "http://localhost:3000/addproduct";
+
+      // Prepare the data to be sent to the server
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("category", values.category);
+      formData.append("brand", values.brand);
+      formData.append("availableSizes", JSON.stringify(values.availableSizes));
+      formData.append("material", values.material);
+      formData.append("price", String(values.price));
+
+      // Append each image file to the form data
+      values.images.forEach((image) => {
+        formData.append("productImg", image, image.name);
+      });
+
+      // Make the POST request to the server using fetch
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      // Parse the JSON response
+      const responseData = await response.json();
+
+      console.log("Server response:", responseData);
+    } catch (err) {
+      console.error("Error submitting form:", err);
+    }
   };
 
   const ValueComponent: FileInputProps["valueComponent"] = ({ value }) => {
