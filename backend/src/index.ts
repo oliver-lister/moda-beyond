@@ -58,6 +58,8 @@ const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   category: { type: String, required: true },
   brand: { type: String, required: true },
+  availableSizes: { type: [String], required: true },
+  material: { type: String },
   price: { type: Number, required: true },
   lastPrice: { type: Number },
   images: { type: [String], default: [] },
