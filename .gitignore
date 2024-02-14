@@ -32,7 +32,7 @@ package-lock.json
 .idea/
 
 # Ignore any other files or directories specific to your development environment
-# ...
+/backend/src/upload/images
 
 # Ignore local configuration files
 config.local.json

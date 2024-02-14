@@ -9,6 +9,9 @@ import Dashboard from "./routes/Dashboard/Dashboard.tsx";
 
 import "@mantine/core/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
 import "./index.css";
 import AddProduct from "./routes/AddProduct/AddProduct.tsx";
 import ViewProducts from "./routes/ViewProducts/ViewProducts.tsx";
@@ -50,7 +53,10 @@ const root = ReactDOM.createRoot(rootContainer);
 root.render(
   <React.StrictMode>
     <MantineProvider theme={theme}>
-      <RouterProvider router={router} />
+      <ModalsProvider>
+        <Notifications />
+        <RouterProvider router={router} />
+      </ModalsProvider>
     </MantineProvider>
   </React.StrictMode>
 );
