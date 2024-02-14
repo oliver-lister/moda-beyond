@@ -27,7 +27,8 @@ import * as yup from "yup";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 
-interface ProductProps {
+export interface ProductProps {
+  _id?: string;
   name: string;
   brand: string;
   category: string;
