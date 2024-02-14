@@ -1,6 +1,5 @@
-import styles from "./navbar.module.css";
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "@mantine/core";
+import { List, NavLink } from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconTablePlus,
@@ -18,26 +17,31 @@ const NavBar = ({ toggle }: { toggle: () => void }) => {
 
   return (
     <nav>
-      <ul>
+      <List type="unordered" listStyleType="none" spacing={10}>
         {navMenu.map((link, index) => (
-          <li key={index} className={styles.list_item}>
-            <Button
+          <List.Item
+            key={index}
+            styles={{
+              itemWrapper: { display: "flex" },
+              itemLabel: { width: "100%" },
+            }}
+          >
+            <NavLink
               component={Link}
               to={link.path}
-              fullWidth
-              justify="left"
-              size="lg"
               leftSection={link.left}
-              className={`${styles.link} ${
-                pathname === link.path && styles.active
-              }`}
+              label={link.label}
+              variant="filled"
+              active={pathname === link.path}
               onClick={toggle}
-            >
-              {link.label}
-            </Button>
-          </li>
+              styles={{
+                root: { borderRadius: "5px" },
+                label: { fontSize: "1.5rem" },
+              }}
+            />
+          </List.Item>
         ))}
-      </ul>
+      </List>
     </nav>
   );
 };

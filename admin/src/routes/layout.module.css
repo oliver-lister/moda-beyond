@@ -2,9 +2,19 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  font-size: 0.8rem;
 }
 
 .logo span {
   font-weight: 600;
-  font-size: 2rem;
+  font-size: 1rem;
+}
+
+@media (min-width: $mantine-breakpoint-lg) {
+  .logo {
+    font-size: 1rem;
+  }
+  .logo span {
+    font-size: 2rem;
+  }
 }

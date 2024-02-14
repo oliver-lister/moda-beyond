@@ -1,5 +1,12 @@
+import { Title, Text } from "@mantine/core";
+
 const ViewProducts = () => {
-  return <div>ViewProducts</div>;
+  return (
+    <>
+      <Title>View Products</Title>
+      <Text c="gray.8">Review products in the MongoDB Database</Text>
+    </>
+  );
 };
 
 export default ViewProducts;

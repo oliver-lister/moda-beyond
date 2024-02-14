@@ -1,4 +1,4 @@
-import { SimpleGrid, Button, Stack } from "@mantine/core";
+import { SimpleGrid, Button, Stack, Title, Box } from "@mantine/core";
 import { IconTablePlus, IconZoomScan } from "@tabler/icons-react";
 import styles from "./dashboard.module.css";
 import { Link } from "react-router-dom";
@@ -20,8 +20,8 @@ const Dashboard = () => {
   return (
     <>
       <Stack>
-        <h2>Welcome to the admin panel.</h2>
-        <div className={styles.grid_box}>
+        <Title order={1}>Dashboard</Title>
+        <Box className={styles.grid_box}>
           <SimpleGrid cols={{ base: 1, md: 1, lg: 2 }}>
             {dashMenu.map((link) => (
               <Button
@@ -35,7 +35,7 @@ const Dashboard = () => {
               </Button>
             ))}
           </SimpleGrid>
-        </div>
+        </Box>
       </Stack>
     </>
   );

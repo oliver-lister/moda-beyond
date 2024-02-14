@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { AppShell, Burger, Group } from "@mantine/core";
+import { AppShell, Burger, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import NavBar from "../components/NavBar/NavBar";
 import styles from "./layout.module.css";
@@ -26,9 +26,9 @@ const Layout = () => {
               hiddenFrom="sm"
               size="sm"
             />
-            <h1 className={styles.logo}>
+            <Text className={styles.logo}>
               <span>THE SHOPPER</span> ADMIN PANEL
-            </h1>
+            </Text>
           </Group>
         </AppShell.Header>
         <AppShell.Navbar p="md">
