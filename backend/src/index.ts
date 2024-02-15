@@ -74,12 +74,14 @@ const Product = mongoose.model('Product', productSchema);
 
 // API for Product Creation & Image Upload
 app.post('/addproduct', tempUpload.array('productImg'), async (req, res) => {
+  // Using The Color API for finding color labels
   try {
     const newProductData = {
       name: req.body.name,
       category: req.body.category,
       brand: req.body.brand,
       availableSizes: JSON.parse(req.body.availableSizes),
+      availableColors: JSON.parse(req.body.availableColors),
       material: req.body.material,
       price: req.body.price,
     };

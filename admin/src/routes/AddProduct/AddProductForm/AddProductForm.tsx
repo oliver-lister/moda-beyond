@@ -35,7 +35,7 @@ export interface ProductProps {
   brand: string;
   category: string;
   availableSizes: string[];
-  availableColors: string[]; // array of hexs
+  availableColorHexes: string[]; // array of hexs
   description: string;
   material: string;
   price: number;
@@ -51,6 +51,10 @@ const schema = yup.object().shape({
     .array()
     .of(yup.string())
     .min(1, "Please select at least one size"),
+  availableColorHexes: yup
+    .array()
+    .of(yup.string())
+    .min(1, "Please select at least one colour"),
   description: yup.string(),
   material: yup.string(),
   price: yup.number(),
@@ -70,8 +74,8 @@ const AddProductForm = () => {
       name: "",
       brand: "",
       category: "Women",
-      availableSizes: [""],
-      availableColors: [""],
+      availableSizes: [] as string[],
+      availableColorHexes: [] as string[],
       description: "",
       material: "",
       price: 50,
@@ -83,6 +87,26 @@ const AddProductForm = () => {
   const handleSubmit = async (values: ProductProps) => {
     setIsLoading((prev) => !prev);
     try {
+      const availableColorHexes = form.values.availableColorHexes;
+      console.log(availableColorHexes);
+      const availableColors = [];
+
+      for (const color of availableColorHexes) {
+        const response = await fetch(
+          `https://www.thecolorapi.com/id?hex=${color.slice(1)}&format=json`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch color data for hex ${color}`);
+        }
+
+        const data = await response.json();
+        const label = data.name.value;
+
+        availableColors.push({ label: label, hex: color });
+        console.log(availableColors);
+      }
+
       const apiUrl = "http://localhost:3000/addproduct";
 
       const formData = new FormData();
@@ -90,10 +114,7 @@ const AddProductForm = () => {
       formData.append("category", values.category);
       formData.append("brand", values.brand);
       formData.append("availableSizes", JSON.stringify(values.availableSizes));
-      formData.append(
-        "availableColors",
-        JSON.stringify(values.availableColors)
-      );
+      formData.append("availableColors", JSON.stringify(availableColors));
       formData.append("material", values.material);
       formData.append("price", String(values.price));
 
@@ -105,6 +126,10 @@ const AddProductForm = () => {
         method: "POST",
         body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit product data: " + formData);
+      }
 
       const responseData = await response.json();
 
@@ -121,6 +146,7 @@ const AddProductForm = () => {
       }, 2000);
     } catch (err) {
       console.error("Error submitting form:", err);
+      setIsLoading((prev) => !prev);
     }
   };
 
@@ -212,7 +238,7 @@ const AddProductForm = () => {
               <MultiSelect
                 label="Available Colours"
                 description="Select all available colours."
-                {...form.getInputProps("availableColors")}
+                {...form.getInputProps("availableColorHexes")}
               />
               <ColorInput format="hex" ref={colorRef} />
               <Group justify="flex-end">
@@ -221,8 +247,8 @@ const AddProductForm = () => {
                   onClick={() => {
                     if (colorRef.current) {
                       form.setValues({
-                        availableColors: [
-                          ...form.values.availableColors,
+                        availableColorHexes: [
+                          ...form.values.availableColorHexes,
                           colorRef.current.value,
                         ],
                       });
