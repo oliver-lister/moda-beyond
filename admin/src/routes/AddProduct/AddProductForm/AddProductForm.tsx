@@ -18,6 +18,8 @@ import {
   Loader,
   LoadingOverlay,
   Group,
+  ColorInput,
+  Box,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
@@ -25,7 +27,7 @@ import { IconUpload, IconCheck } from "@tabler/icons-react";
 import { yupResolver } from "mantine-form-yup-resolver";
 import * as yup from "yup";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export interface ProductProps {
   _id?: string;
@@ -33,6 +35,7 @@ export interface ProductProps {
   brand: string;
   category: string;
   availableSizes: string[];
+  availableColors: string[]; // array of hexs
   description: string;
   material: string;
   price: number;
@@ -59,6 +62,7 @@ const schema = yup.object().shape({
 
 const AddProductForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const colorRef = useRef<HTMLInputElement>(null);
 
   // Mantine use form
   const form = useForm({
@@ -66,7 +70,8 @@ const AddProductForm = () => {
       name: "",
       brand: "",
       category: "Women",
-      availableSizes: [],
+      availableSizes: [""],
+      availableColors: [""],
       description: "",
       material: "",
       price: 50,
@@ -85,6 +90,10 @@ const AddProductForm = () => {
       formData.append("category", values.category);
       formData.append("brand", values.brand);
       formData.append("availableSizes", JSON.stringify(values.availableSizes));
+      formData.append(
+        "availableColors",
+        JSON.stringify(values.availableColors)
+      );
       formData.append("material", values.material);
       formData.append("price", String(values.price));
 
@@ -188,23 +197,43 @@ const AddProductForm = () => {
               data={["Men", "Women", "Kids"]}
               {...form.getInputProps("category")}
             />
+            <TextInput
+              label="Material"
+              description="Describe the product's materials."
+              {...form.getInputProps("material")}
+            />
             <MultiSelect
               label="Available Sizes"
               description="Select all available sizes."
               data={["INTL S", "INTL M", "INTL L", "INTL XL"]}
               {...form.getInputProps("availableSizes")}
             />
-            <Textarea
-              label="Description"
-              description="Product description."
-              rows={8}
-              {...form.getInputProps("description")}
-            />
-            <TextInput
-              label="Material"
-              description="Describe the product's materials."
-              {...form.getInputProps("material")}
-            />
+            <Box>
+              <MultiSelect
+                label="Available Colours"
+                description="Select all available colours."
+                {...form.getInputProps("availableColors")}
+              />
+              <ColorInput format="hex" ref={colorRef} />
+              <Group justify="flex-end">
+                <Button
+                  size="xs"
+                  onClick={() => {
+                    if (colorRef.current) {
+                      form.setValues({
+                        availableColors: [
+                          ...form.values.availableColors,
+                          colorRef.current.value,
+                        ],
+                      });
+                      colorRef.current.value = "";
+                    }
+                  }}
+                >
+                  Add Colour
+                </Button>
+              </Group>
+            </Box>
             <NumberInput
               label="Price"
               description="Input the desired price."
@@ -213,6 +242,13 @@ const AddProductForm = () => {
               allowNegative={false}
               {...form.getInputProps("price")}
             />
+            <Textarea
+              label="Description"
+              description="Product description."
+              rows={8}
+              {...form.getInputProps("description")}
+            />
+
             <FileInput
               label="Upload Images"
               description="Upload all images of the product, PNG, JPEG, WEBP are accepted."

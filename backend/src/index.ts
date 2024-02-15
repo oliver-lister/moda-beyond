@@ -60,6 +60,7 @@ const productSchema = new mongoose.Schema({
   category: { type: String, required: true },
   brand: { type: String, required: true },
   availableSizes: { type: [String], required: true },
+  availableColors: { type: [{ label: String, hex: String }], required: true },
   material: { type: String },
   price: { type: Number, required: true },
   lastPrice: { type: Number },
