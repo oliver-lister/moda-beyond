@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   TextInput,
-  SimpleGrid,
   Select,
   Fieldset,
   MultiSelect,
@@ -19,7 +18,8 @@ import {
   LoadingOverlay,
   Group,
   ColorInput,
-  Box,
+  Grid,
+  GridCol,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
@@ -27,15 +27,14 @@ import { IconUpload, IconCheck } from "@tabler/icons-react";
 import { yupResolver } from "mantine-form-yup-resolver";
 import * as yup from "yup";
 import { useForm } from "@mantine/form";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
-export interface ProductProps {
-  _id?: string;
+export interface ProductFormProps {
   name: string;
   brand: string;
   category: string;
   availableSizes: string[];
-  availableColorHexes: string[]; // array of hexs
+  availableColorHexes: string[];
   description: string;
   material: string;
   price: number;
@@ -66,15 +65,14 @@ const schema = yup.object().shape({
 
 const AddProductForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const colorRef = useRef<HTMLInputElement>(null);
 
-  // Mantine use form
   const form = useForm({
     initialValues: {
       name: "",
       brand: "",
       category: "Women",
       availableSizes: [] as string[],
+      colorHex: "",
       availableColorHexes: [] as string[],
       description: "",
       material: "",
@@ -84,28 +82,52 @@ const AddProductForm = () => {
     validate: yupResolver(schema),
   });
 
-  const handleSubmit = async (values: ProductProps) => {
+  const addColor = () => {
+    if (
+      form.values.colorHex === "" ||
+      form.values.availableColorHexes.includes(form.values.colorHex)
+    ) {
+      console.log(
+        "You've selected the same colour twice, or haven't selected a color at all."
+      );
+    } else {
+      form.setValues({
+        availableColorHexes: [
+          ...form.values.availableColorHexes,
+          form.values.colorHex,
+        ],
+      });
+      form.setValues({ colorHex: "" });
+    }
+  };
+
+  const findAvailableColors = async (
+    availableColorHexes: ProductFormProps["availableColorHexes"]
+  ) => {
+    const availableColors = [];
+
+    for (const color of availableColorHexes) {
+      const response = await fetch(
+        `https://www.thecolorapi.com/id?hex=${color.slice(1)}&format=json`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch color data for hex ${color}`);
+      }
+
+      const data = await response.json();
+      const label = data.name.value;
+
+      availableColors.push({ label: label, hex: color });
+    }
+    return availableColors;
+  };
+
+  const handleSubmit = async (values: ProductFormProps) => {
     setIsLoading((prev) => !prev);
     try {
       const availableColorHexes = form.values.availableColorHexes;
-      console.log(availableColorHexes);
-      const availableColors = [];
-
-      for (const color of availableColorHexes) {
-        const response = await fetch(
-          `https://www.thecolorapi.com/id?hex=${color.slice(1)}&format=json`
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch color data for hex ${color}`);
-        }
-
-        const data = await response.json();
-        const label = data.name.value;
-
-        availableColors.push({ label: label, hex: color });
-        console.log(availableColors);
-      }
+      const availableColors = await findAvailableColors(availableColorHexes);
 
       const apiUrl = "http://localhost:3000/addproduct";
 
@@ -176,10 +198,12 @@ const AddProductForm = () => {
     modals.openConfirmModal({
       title: "Are you sure you want to clear the form?",
       labels: { confirm: "Confirm", cancel: "Cancel" },
-      onConfirm: () => form.reset(),
+      onConfirm: () => {
+        form.reset();
+      },
     });
 
-  const openSubmitModal = (values: ProductProps) =>
+  const openSubmitModal = (values: ProductFormProps) =>
     modals.openConfirmModal({
       title: "Are you sure you want to submit?",
       children: (
@@ -194,7 +218,7 @@ const AddProductForm = () => {
   return (
     <form onSubmit={form.onSubmit((values) => openSubmitModal(values))}>
       <Group justify="flex-end" mb={5}>
-        <Button onClick={() => openResetModal()} color="gray">
+        <Button onClick={openResetModal} color="gray">
           Clear Form
         </Button>
       </Group>
@@ -205,88 +229,94 @@ const AddProductForm = () => {
             zIndex={1000}
             overlayProps={{ radius: "sm", blur: 1 }}
           />
-          <SimpleGrid cols={{ lg: 1, xl: 2 }}>
-            <TextInput
-              label="Product Name"
-              description="Type in the product's name."
-              {...form.getInputProps("name")}
-            />
-            <Autocomplete
-              label="Brand"
-              description="Begin searching and pick an existing brand or create a new one."
-              data={["Nike", "DC", "New Balance", "Universal"]}
-              {...form.getInputProps("brand")}
-            />
-            <Select
-              label="Category"
-              description="Select the product's category."
-              data={["Men", "Women", "Kids"]}
-              {...form.getInputProps("category")}
-            />
-            <TextInput
-              label="Material"
-              description="Describe the product's materials."
-              {...form.getInputProps("material")}
-            />
-            <MultiSelect
-              label="Available Sizes"
-              description="Select all available sizes."
-              data={["INTL S", "INTL M", "INTL L", "INTL XL"]}
-              {...form.getInputProps("availableSizes")}
-            />
-            <Box>
-              <MultiSelect
-                label="Available Colours"
-                description="Select all available colours."
-                {...form.getInputProps("availableColorHexes")}
+          <Grid>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <TextInput
+                label="Product Name"
+                description="Type in the product's name."
+                {...form.getInputProps("name")}
               />
-              <ColorInput format="hex" ref={colorRef} />
-              <Group justify="flex-end">
-                <Button
-                  size="xs"
-                  onClick={() => {
-                    if (colorRef.current) {
-                      form.setValues({
-                        availableColorHexes: [
-                          ...form.values.availableColorHexes,
-                          colorRef.current.value,
-                        ],
-                      });
-                      colorRef.current.value = "";
-                    }
-                  }}
-                >
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <Autocomplete
+                label="Brand"
+                description="Begin searching and pick an existing brand or create a new one."
+                data={["Nike", "DC", "New Balance", "Universal"]}
+                {...form.getInputProps("brand")}
+              />
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <Select
+                label="Category"
+                description="Select the product's category."
+                data={["Men", "Women", "Kids"]}
+                {...form.getInputProps("category")}
+              />
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <NumberInput
+                label="Price"
+                description="Input the desired price."
+                prefix="$"
+                decimalScale={2}
+                allowNegative={false}
+                {...form.getInputProps("price")}
+              />
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <MultiSelect
+                label="Available Sizes"
+                description="Select all available sizes."
+                data={["INTL S", "INTL M", "INTL L", "INTL XL"]}
+                {...form.getInputProps("availableSizes")}
+              />
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <Group gap={2} align="flex-end">
+                <ColorInput
+                  format="hex"
+                  label="Available Colours"
+                  description="Select available colours, one at a time."
+                  {...form.getInputProps("colorHex")}
+                />
+                <Button size="sm" onClick={addColor}>
                   Add Colour
                 </Button>
+                <MultiSelect
+                  {...form.getInputProps("availableColorHexes")}
+                  style={{ flex: 1 }}
+                />
               </Group>
-            </Box>
-            <NumberInput
-              label="Price"
-              description="Input the desired price."
-              prefix="$"
-              decimalScale={2}
-              allowNegative={false}
-              {...form.getInputProps("price")}
-            />
-            <Textarea
-              label="Description"
-              description="Product description."
-              rows={8}
-              {...form.getInputProps("description")}
-            />
-
-            <FileInput
-              label="Upload Images"
-              description="Upload all images of the product, PNG, JPEG, WEBP are accepted."
-              leftSection={<IconUpload size={15} />}
-              placeholder="Click here"
-              multiple={true}
-              valueComponent={FilePill}
-              clearable
-              accept="image/png,image/jpeg,image/webp"
-              {...form.getInputProps("images")}
-            />
-          </SimpleGrid>
+            </GridCol>
+            <GridCol span={{ base: 12 }}>
+              <Textarea
+                label="Description"
+                description="Product description."
+                rows={8}
+                {...form.getInputProps("description")}
+              />
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <TextInput
+                label="Material"
+                description="Describe the product's materials."
+                {...form.getInputProps("material")}
+              />
+            </GridCol>
+            <GridCol span={{ base: 12, xl: 6 }}>
+              <FileInput
+                label="Upload Images"
+                description="Upload all images of the product, PNG, JPEG, WEBP are accepted."
+                leftSection={<IconUpload size={15} />}
+                placeholder="Click here"
+                multiple={true}
+                valueComponent={FilePill}
+                clearable
+                accept="image/png,image/jpeg,image/webp"
+                {...form.getInputProps("images")}
+              />
+            </GridCol>
+          </Grid>
         </Fieldset>
         {isLoading ? (
           <Button disabled leftSection={<Loader size={15} />}>
