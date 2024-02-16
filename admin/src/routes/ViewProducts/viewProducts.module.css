@@ -1,0 +1,26 @@
+.images_inner {
+  position: relative;
+}
+
+.images_inner:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.image_left,
+.image_right {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.images_inner:hover .image_left {
+  transform: rotate(5deg) translate(20px);
+  opacity: 0.6;
+}
+
+.images_inner:hover .image_right {
+  transform: rotate(-5deg) translate(-20px);
+  opacity: 0.6;
+}

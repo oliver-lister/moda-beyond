@@ -29,7 +29,8 @@ import * as yup from "yup";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 
-export interface ProductFormProps {
+export interface ProductProps {
+  _id?: string;
   name: string;
   brand: string;
   category: string;
@@ -102,7 +103,7 @@ const AddProductForm = () => {
   };
 
   const findAvailableColors = async (
-    availableColorHexes: ProductFormProps["availableColorHexes"]
+    availableColorHexes: ProductProps["availableColorHexes"]
   ) => {
     const availableColors = [];
 
@@ -123,7 +124,7 @@ const AddProductForm = () => {
     return availableColors;
   };
 
-  const handleSubmit = async (values: ProductFormProps) => {
+  const handleSubmit = async (values: ProductProps) => {
     setIsLoading((prev) => !prev);
     try {
       const availableColorHexes = form.values.availableColorHexes;
@@ -203,7 +204,7 @@ const AddProductForm = () => {
       },
     });
 
-  const openSubmitModal = (values: ProductFormProps) =>
+  const openSubmitModal = (values: ProductProps) =>
     modals.openConfirmModal({
       title: "Are you sure you want to submit?",
       children: (

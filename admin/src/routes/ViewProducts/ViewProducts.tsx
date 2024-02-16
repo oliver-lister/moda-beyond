@@ -10,11 +10,14 @@ import {
   Center,
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import React, { useEffect, useState } from "react";
+import { modals } from "@mantine/modals";
+import { Carousel } from "@mantine/carousel";
+import { useEffect, useState } from "react";
 import { ProductProps } from "../AddProduct/AddProductForm/AddProductForm";
+import styles from "./viewProducts.module.css";
 
 const ViewProducts = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<ProductProps[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,22 +51,92 @@ const ViewProducts = () => {
     }
   };
 
+  const openImages = (clickedProduct: ProductProps) => {
+    modals.open({
+      title: `Product Images (${clickedProduct.images.length})`,
+      centered: true,
+      children: (
+        <>
+          {clickedProduct.images.length > 1 ? (
+            <Carousel withIndicators>
+              {clickedProduct.images.map((img) => (
+                <Carousel.Slide>
+                  <Image src={img} />
+                </Carousel.Slide>
+              ))}
+            </Carousel>
+          ) : (
+            <Image src={clickedProduct.images[0]} />
+          )}
+        </>
+      ),
+    });
+  };
+
   return (
     <Stack>
       <Box>
         <Title>View Products</Title>
         <Text c="gray.8">Review products in the MongoDB Database</Text>
       </Box>
-      <Grid align="center">
+      <Box>
+        <Grid align="center" style={{ padding: "1rem 0" }}>
+          <GridCol span={{ base: 2 }}>
+            <Center>
+              <Text>Images</Text>
+            </Center>
+          </GridCol>
+          <GridCol span={{ base: 3 }}>
+            <Text>Brand & Product Name</Text>
+          </GridCol>
+          <GridCol span={{ base: 2 }}>
+            <Text>Category</Text>
+          </GridCol>
+          <GridCol span={{ base: 2 }}>
+            <Text>{`Price ($AUD)`}</Text>
+          </GridCol>
+          <GridCol span={{ base: 2 }}>
+            <Text>Remove</Text>
+          </GridCol>
+        </Grid>
         {products.map((product: ProductProps) => (
-          <React.Fragment key={product._id}>
-            <GridCol span={{ base: 3 }}>
-              <Center>
-                <Image src={product.images[0]} width={200} height={200} />
+          <Grid
+            align="center"
+            key={product._id}
+            style={{ borderTop: "1px solid gray", padding: "1rem 0" }}
+          >
+            <GridCol span={{ base: 2 }}>
+              <Center className={styles.images_wrapper}>
+                <Box className={styles.images_inner}>
+                  <Image
+                    src={product.images[0]}
+                    width={100}
+                    height={100}
+                    onClick={() => openImages(product)}
+                    className={styles.image}
+                  />
+                  <Image
+                    src={product.images[0]}
+                    width={100}
+                    height={100}
+                    onClick={() => openImages(product)}
+                    className={styles.image_left}
+                  />
+                  <Image
+                    src={product.images[0]}
+                    width={100}
+                    height={100}
+                    onClick={() => openImages(product)}
+                    className={styles.image_right}
+                  />
+                </Box>
+                <Image></Image>
               </Center>
             </GridCol>
             <GridCol span={{ base: 3 }}>
-              <Text size="xs">{product.brand}</Text>
+              <Text size="xs" style={{ fontWeight: "600" }}>
+                {product.brand}
+              </Text>
               <Text size="sm">{product.name}</Text>
             </GridCol>
             <GridCol span={{ base: 2 }}>
@@ -77,9 +150,9 @@ const ViewProducts = () => {
                 <IconTrash />
               </UnstyledButton>
             </GridCol>
-          </React.Fragment>
+          </Grid>
         ))}
-      </Grid>
+      </Box>
     </Stack>
   );
 };

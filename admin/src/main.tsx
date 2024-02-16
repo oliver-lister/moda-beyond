@@ -12,6 +12,7 @@ import { createTheme, MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
+import "@mantine/carousel/styles.css";
 import "./index.css";
 import AddProduct from "./routes/AddProduct/AddProduct.tsx";
 import ViewProducts from "./routes/ViewProducts/ViewProducts.tsx";
