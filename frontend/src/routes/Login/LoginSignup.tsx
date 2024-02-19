@@ -9,18 +9,21 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
 import styles from "./loginsignup.module.css";
 import { IconCake, IconLock } from "@tabler/icons-react";
 import { useState } from "react";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
   const form = useForm({
     initialValues: {
       email: "",
+      password: "",
       firstName: "",
       lastName: "",
-      password: "",
-      birthday: "",
+      dob: "",
       shoppingPreference: "Womenswear",
       newsletter: true,
     },
@@ -36,8 +39,43 @@ const Signup = () => {
     },
   });
 
+  interface signupValues {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    dob: string;
+    newsletter: boolean;
+    shoppingPreference: string;
+  }
+
+  const handleSubmit = async (values: signupValues) => {
+    try {
+      const response = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to register new user: " + values);
+      }
+
+      const responseData = await response.json();
+
+      localStorage.setItem("auth-token", responseData.token);
+      navigate("/");
+      console.log("Server response:", responseData);
+      form.reset();
+    } catch (err) {
+      console.error("Error submitting form:", err);
+    }
+  };
+
   return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <Stack>
         <div>
           <h2 className={styles.heading}>Sign Up</h2>
@@ -74,7 +112,7 @@ const Signup = () => {
           leftSection={<IconCake size={15} />}
           label="Birthday"
           placeholder="Select date"
-          {...form.getInputProps("birthday")}
+          {...form.getInputProps("dob")}
         />
         <Select
           withAsterisk
@@ -93,15 +131,12 @@ const Signup = () => {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const form = useForm({
     initialValues: {
       email: "",
-      firstName: "",
-      lastName: "",
       password: "",
-      birthday: "",
-      shoppingPreference: "Womenswear",
-      newsletter: true,
     },
 
     validate: {
@@ -113,8 +148,39 @@ const Login = () => {
           : "Please enter a valid password.",
     },
   });
+
+  interface loginValues {
+    email: string;
+    password: string;
+  }
+
+  const handleSubmit = async (values: loginValues) => {
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to login.");
+      }
+
+      const responseData = await response.json();
+
+      localStorage.setItem("auth-token", responseData.token);
+      navigate("/");
+      console.log("Server response:", responseData);
+      form.reset();
+    } catch (err) {
+      console.error("Error submitting form:", err);
+    }
+  };
+
   return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <Stack>
         <div>
           <h2 className={styles.heading}>Login</h2>

@@ -9,7 +9,7 @@ import {
   Image,
 } from "@mantine/core";
 import { IconTrash, IconEdit } from "@tabler/icons-react";
-import { ProductProps } from "../../AddProduct/AddProductForm/AddProductForm";
+import { ProductProps } from "../../AddProduct/components/AddProductForm";
 import styles from "../viewProducts.module.css";
 
 const GridRow = ({
@@ -23,7 +23,7 @@ const GridRow = ({
 }) => {
   return (
     <>
-      <GridCol span={{ base: 3 }}>
+      <GridCol span={3}>
         <Box className={styles.images_inner}>
           <Image
             src={product.images[0]}
@@ -33,7 +33,7 @@ const GridRow = ({
           />
         </Box>
       </GridCol>
-      <GridCol span={{ base: 5 }}>
+      <GridCol span={5}>
         <Group>
           <Stack gap="xs">
             <Box>
@@ -46,12 +46,12 @@ const GridRow = ({
           </Stack>
         </Group>
       </GridCol>
-      <GridCol span={{ base: 2 }}>
+      <GridCol span={2}>
         <Center>
           <Text size="sm">${product.price}</Text>
         </Center>
       </GridCol>
-      <GridCol span={{ base: 2 }}>
+      <GridCol span={2}>
         <Group justify="center">
           <UnstyledButton className={styles.edit}>
             <IconEdit />

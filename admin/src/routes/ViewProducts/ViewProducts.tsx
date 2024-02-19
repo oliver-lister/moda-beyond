@@ -2,7 +2,7 @@ import { Box, Stack, Title, Text, Image, Grid, GridCol } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
-import { ProductProps } from "../AddProduct/AddProductForm/AddProductForm";
+import { ProductProps } from "../AddProduct/components/AddProductForm";
 import GridHeader from "./components/GridHeader";
 import GridRow from "./components/GridRow";
 
@@ -70,8 +70,8 @@ const ViewProducts = () => {
         <Text c="gray.8">Review products in the MongoDB Database</Text>
       </Box>
       <Box>
-        <GridHeader />
         <Grid align="center" style={{ padding: "1rem 1rem" }}>
+          <GridHeader />
           {products.length > 0 ? (
             products.map((product: ProductProps) => (
               <GridRow

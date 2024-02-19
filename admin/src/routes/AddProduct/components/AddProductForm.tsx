@@ -130,8 +130,6 @@ const AddProductForm = () => {
       const availableColorHexes = form.values.availableColorHexes;
       const availableColors = await findAvailableColors(availableColorHexes);
 
-      const apiUrl = "http://localhost:3000/addproduct";
-
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("category", values.category);
@@ -145,7 +143,7 @@ const AddProductForm = () => {
         formData.append("productImg", image, image.name);
       });
 
-      const response = await fetch(apiUrl, {
+      const response = await fetch("http://localhost:3000/addproduct", {
         method: "POST",
         body: formData,
       });

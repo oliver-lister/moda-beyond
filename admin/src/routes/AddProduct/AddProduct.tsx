@@ -1,5 +1,5 @@
 import { Stack, Group, Text, Title, Box } from "@mantine/core";
-import AddProductForm from "./AddProductForm/AddProductForm";
+import AddProductForm from "./components/AddProductForm";
 
 const AddProduct = () => {
   return (

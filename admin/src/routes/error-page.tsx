@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import { useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
@@ -11,6 +12,7 @@ export default function ErrorPage() {
       <p>
         <i>{error.statusText || error.message}</i>
       </p>
+      <NavLink to="/">Back to Dashboard</NavLink>
     </div>
   );
 }

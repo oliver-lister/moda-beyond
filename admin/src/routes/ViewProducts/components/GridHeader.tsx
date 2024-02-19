@@ -1,22 +1,16 @@
-import { Grid, GridCol, Text, Center, Box, Stack, Group} from '@mantine/core'
+import { GridCol, Text, Center, Box, Stack, Group } from "@mantine/core";
 
 const GridHeader = () => {
   return (
-    <Grid
-      align="center"
-      style={{
-        padding: "1rem 1rem",
-        backgroundColor: "var(--mantine-color-gray-1",
-      }}
-    >
-      <GridCol span={{ base: 3 }}>
+    <>
+      <GridCol span={3}>
         <Center>
           <Text size="sm" style={{ fontWeight: "600" }}>
             Images
           </Text>
         </Center>
       </GridCol>
-      <GridCol span={{ base: 5 }}>
+      <GridCol span={5}>
         <Group>
           <Stack gap="xs">
             <Box>
@@ -29,7 +23,7 @@ const GridHeader = () => {
           </Stack>
         </Group>
       </GridCol>
-      <GridCol span={{ base: 2 }}>
+      <GridCol span={2}>
         <Stack gap={0} style={{ textAlign: "center" }}>
           <Text size="sm" style={{ fontWeight: "600" }}>
             Price
@@ -37,14 +31,14 @@ const GridHeader = () => {
           <Text size="xs">{`($AUD)`}</Text>
         </Stack>
       </GridCol>
-      <GridCol span={{ base: 2 }}>
+      <GridCol span={2}>
         <Center style={{ textAlign: "center" }}>
           <Text size="sm" style={{ fontWeight: "600" }}>
             Remove / Edit
           </Text>
         </Center>
       </GridCol>
-    </Grid>
+    </>
   );
 };
 

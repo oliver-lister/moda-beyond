@@ -74,7 +74,6 @@ const Product = mongoose.model('Product', productSchema);
 
 // API for Product Creation & Image Upload
 app.post('/addproduct', tempUpload.array('productImg'), async (req, res) => {
-  // Using The Color API for finding color labels
   try {
     const newProductData = {
       name: req.body.name,
@@ -149,6 +148,74 @@ app.get('/fetchproducts', async (req, res) => {
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Schema for Creating Users
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  dob: { type: Date },
+  shoppingPreference: { type: String, required: true },
+  newsletter: { type: Boolean, required: true, default: true },
+  cart: { type: Object, default: { items: [], productTotal: 0, totalQuantity: 0 } },
+});
+
+// Model for the User schema
+const User = mongoose.model('Users', userSchema);
+
+// API for User Registration
+
+app.post('/signup', async (req, res) => {
+  try {
+    // Check if the user already exists
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      throw new Error('Existing user found with the same email address.');
+    }
+
+    // Create a new user instance
+    const newUserData = req.body;
+    const newUser = new User(newUserData);
+
+    // Save the new user to the database
+    await newUser.save();
+
+    // Generate a JWT token for authentication
+    const token = jwt.sign({ userId: newUser._id }, 'secret_ecom', { expiresIn: '1h' });
+
+    return res.status(200).json({ success: 1, message: 'User registered successfully.', token });
+  } catch (err: any) {
+    return res.status(400).json({ success: 0, error: err.message });
+  }
+});
+
+// API for User Login
+
+app.post('/login', async (req, res) => {
+  try {
+    // Check if the user exists
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    const isPasswordValid = req.body.password === user.password;
+
+    if (!isPasswordValid) {
+      throw new Error('Incorrect password.');
+    }
+
+    // Generate a JWT token for authentication
+    const token = jwt.sign({ userId: user._id }, 'secret_ecom', { expiresIn: '1h' });
+
+    // You can customize the response based on your needs
+    return res.status(200).json({ success: 1, message: 'Login successful', token });
+  } catch (err) {
+    return res.status(401).json({ success: 0, error: err });
   }
 });
 

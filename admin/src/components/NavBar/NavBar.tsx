@@ -4,7 +4,6 @@ import {
   IconLayoutDashboard,
   IconTablePlus,
   IconZoomScan,
-  IconEdit,
 } from "@tabler/icons-react";
 
 const NavBar = ({ toggle }: { toggle: () => void }) => {
@@ -14,7 +13,6 @@ const NavBar = ({ toggle }: { toggle: () => void }) => {
     { label: "Dashboard", path: "/", left: <IconLayoutDashboard /> },
     { label: "View Products", path: "/viewproducts", left: <IconZoomScan /> },
     { label: "Add Product", path: "/addproduct", left: <IconTablePlus /> },
-    { label: "Edit Product", path: "/editproduct", left: <IconEdit /> },
   ];
 
   return (
