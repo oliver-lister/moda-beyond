@@ -17,7 +17,6 @@ const Product = () => {
     // Fetch products from backend
     const fetchProduct = async () => {
       try {
-        console.log("Fetching product with ID:", productId);
         const response = await fetch(
           `http://localhost:3000/fetchproducts?_id=${productId?.slice(1)}`
         );
@@ -27,8 +26,8 @@ const Product = () => {
         }
 
         const product = await response.json();
-        console.log("Fetched product:", product);
-        setDisplayedProduct(product);
+
+        setDisplayedProduct(product[0]);
       } catch (error) {
         console.error("Error fetching product:", error);
       } finally {
@@ -67,7 +66,7 @@ const Product = () => {
             {breadcrumbItems}
           </Breadcrumbs>
           <ProductDisplay product={displayedProduct} />
-          <SimilarProducts />
+          <SimilarProducts product={displayedProduct} />
         </Stack>
       </Container>
     </section>
