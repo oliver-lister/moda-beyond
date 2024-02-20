@@ -3,16 +3,16 @@ import styles from "./Item.module.css";
 import ProductProps from "../../types/ProductProps";
 import { Link } from "react-router-dom";
 
-const Item = ({ id, image, name, brand, price, lastPrice }: ProductProps) => {
+const Item = ({ _id, images, name, brand, price, lastPrice }: ProductProps) => {
   return (
     <Link
-      to={`/product/${id}`}
+      to={`/product/:${_id}`}
       className={styles.link}
       onClick={() => window.scrollTo(0, 0)}
     >
       <article className={styles.item}>
         <div className={styles.imageBox}>
-          <Image src={image[0]} className={styles.image} />
+          <Image src={images[0]} className={styles.image} />
         </div>
         <div className={styles.content}>
           <p className={styles.brand}>{brand}</p>

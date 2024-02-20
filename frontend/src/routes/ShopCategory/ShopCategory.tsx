@@ -11,10 +11,6 @@ import {
   SimpleGrid,
 } from "@mantine/core";
 import styles from "./shopCategory.module.css";
-
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
-
 import { useState, useEffect } from "react";
 import ProductProps from "../../types/ProductProps.ts";
 
@@ -25,7 +21,6 @@ type ShopCategoryProps = {
 };
 
 const ShopCategory = ({ shopCategory }: ShopCategoryProps) => {
-  const products = useSelector((state: RootState) => state.products.items);
   const [sort, setSort] = useState("New Arrivals");
   const [displayedProducts, setDisplayedProducts] = useState<ProductProps[]>(
     []
@@ -46,17 +41,33 @@ const ShopCategory = ({ shopCategory }: ShopCategoryProps) => {
   }, [displayedProducts]);
 
   useEffect(() => {
-    // Update displayedProducts based on the category
-    setDisplayedProducts(
-      products.filter((product) => product.category === shopCategory)
-    );
-  }, [shopCategory, products]);
+    // Fetch products from backend
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/fetchproducts?category=${shopCategory}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const products = await response.json();
+        console.log(products);
+        setDisplayedProducts(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [shopCategory, sort]);
 
   useEffect(() => {
     // Update displayedProducts based on the filter (input component)
     if (sort === "New Arrivals") {
       setDisplayedProducts((prevProducts) =>
-        [...prevProducts].sort((a, b) => b.id - a.id)
+        [...prevProducts].sort((a, b) => b.date - a.date)
       );
     }
     if (sort === "Price: Low to High") {
@@ -97,13 +108,13 @@ const ShopCategory = ({ shopCategory }: ShopCategoryProps) => {
           </Group>
           <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
             {displayedProducts.map(
-              ({ id, brand, name, image, price, lastPrice }) => (
+              ({ _id, brand, name, images, price, lastPrice }) => (
                 <Item
-                  key={id}
-                  id={id}
+                  key={_id}
+                  _id={_id}
                   brand={brand}
                   name={name}
-                  image={image}
+                  images={images}
                   price={price}
                   lastPrice={lastPrice}
                 />

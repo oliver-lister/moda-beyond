@@ -12,6 +12,7 @@ import {
   rem,
   Select,
   Button,
+  Text,
 } from "@mantine/core";
 import { Carousel, Embla } from "@mantine/carousel";
 import { notifications } from "@mantine/notifications";
@@ -91,6 +92,10 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
     }
   }, [width]);
 
+  if (!product) {
+    return <Text>Waiting for product.</Text>;
+  }
+
   return (
     <Grid className={styles.product_display} gutter="xl" overflow="hidden">
       {!mobile && (
@@ -103,7 +108,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                 : {}
             }
           >
-            {product.image.map((img, index) => (
+            {product.images.map((img, index) => (
               <Image
                 key={index}
                 src={img}
@@ -126,7 +131,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
           getEmblaApi={setEmbla}
           className={styles.carousel}
         >
-          {product.image.map((img, index) => (
+          {product.images.map((img, index) => (
             <Carousel.Slide key={index}>
               <Image src={img} ref={imageRef} />
             </Carousel.Slide>

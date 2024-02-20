@@ -1,28 +1,58 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
 import { Link, useParams } from "react-router-dom";
-import { Breadcrumbs, Anchor, Container, Stack } from "@mantine/core";
+import { Breadcrumbs, Anchor, Container, Stack, Skeleton } from "@mantine/core";
 import styles from "./product.module.css";
 import ProductDisplay from "./ProductDisplay/ProductDisplay.tsx";
 import SimilarProducts from "./SimilarProducts/SimilarProducts.tsx";
+import { useEffect, useState } from "react";
+import ProductProps from "../../types/ProductProps.ts";
 
 const Product = () => {
-  const products = useSelector((state: RootState) => state.products.items);
   const { productId } = useParams();
+  const [displayedProduct, setDisplayedProduct] = useState<ProductProps | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch products from backend
+    const fetchProduct = async () => {
+      try {
+        console.log("Fetching product with ID:", productId);
+        const response = await fetch(
+          `http://localhost:3000/fetchproducts?_id=${productId?.slice(1)}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch product");
+        }
+
+        const product = await response.json();
+        console.log("Fetched product:", product);
+        setDisplayedProduct(product);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
 
   if (!productId) {
     return <div>Please search for a product</div>;
   }
 
-  const product = products.find((e) => e.id === +productId);
+  if (loading) {
+    return <Skeleton />;
+  }
 
-  if (!product) {
+  if (!displayedProduct) {
     return <div>Product could not be found.</div>;
   }
 
-  const items = [
-    { title: product.category, href: `/${product.category}` },
-    { title: product.name, href: "#" },
+  const breadcrumbItems = [
+    { title: displayedProduct.category, href: `/${displayedProduct.category}` },
+    { title: displayedProduct.name, href: "#" },
   ].map((item, index) => (
     <Anchor component={Link} to={item.href} key={index}>
       {item.title}
@@ -33,8 +63,10 @@ const Product = () => {
     <section className={styles.product}>
       <Container size="xl">
         <Stack gap="lg">
-          <Breadcrumbs className={styles.breadcrumbs}>{items}</Breadcrumbs>
-          <ProductDisplay product={product} />
+          <Breadcrumbs className={styles.breadcrumbs}>
+            {breadcrumbItems}
+          </Breadcrumbs>
+          <ProductDisplay product={displayedProduct} />
           <SimilarProducts />
         </Stack>
       </Container>

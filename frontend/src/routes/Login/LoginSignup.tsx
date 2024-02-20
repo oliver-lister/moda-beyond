@@ -6,6 +6,7 @@ import {
   Checkbox,
   Button,
   Anchor,
+  Alert,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
@@ -132,6 +133,7 @@ const Signup = () => {
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isIncorrect, setIsIncorrect] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -142,10 +144,7 @@ const Login = () => {
     validate: {
       email: (value) =>
         /^\S+@\S+$/.test(value) ? null : "Please enter a valid email.",
-      password: (value) =>
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value)
-          ? null
-          : "Please enter a valid password.",
+      password: (value) => (value ? null : "Please enter a password."),
     },
   });
 
@@ -176,6 +175,7 @@ const Login = () => {
       form.reset();
     } catch (err) {
       console.error("Error submitting form:", err);
+      setIsIncorrect((prev) => !prev);
     }
   };
 
@@ -186,6 +186,11 @@ const Login = () => {
           <h2 className={styles.heading}>Login</h2>
           <p>Login to purchase products, and review your details!</p>
         </div>
+        {isIncorrect ? (
+          <Alert variant="light" color="red" title="Incorrect Details">
+            Your username or password was incorrect, please try again.
+          </Alert>
+        ) : null}
         <TextInput
           label="Email"
           placeholder="your@email.com"

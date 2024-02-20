@@ -71,7 +71,7 @@ const AddProductForm = () => {
     initialValues: {
       name: "",
       brand: "",
-      category: "Women",
+      category: "women",
       availableSizes: [] as string[],
       colorHex: "",
       availableColorHexes: [] as string[],
@@ -248,7 +248,7 @@ const AddProductForm = () => {
               <Select
                 label="Category"
                 description="Select the product's category."
-                data={["Men", "Women", "Kids"]}
+                data={["men", "women", "kids"]}
                 {...form.getInputProps("category")}
               />
             </GridCol>

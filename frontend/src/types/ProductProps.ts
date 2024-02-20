@@ -1,10 +1,15 @@
 export default interface ProductProps {
-  id: number;
-  image: string[];
+  _id?: string;
   name: string;
-  category?: string;
+  category?: "men" | "women" | "kids";
   brand: string;
+  availableSizes?: string[];
+  availableColors?: { label: string; hex: string }[];
   description?: string;
+  material?: string;
   price: number;
   lastPrice?: number;
+  images: string[];
+  date?: Date;
+  available?: boolean;
 }

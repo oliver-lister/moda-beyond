@@ -57,7 +57,7 @@ const tempUpload = multer({ storage: tempStorage });
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  category: { type: String, required: true },
+  category: { type: String, required: true, enum: ['men', 'women', 'kids'] },
   brand: { type: String, required: true },
   availableSizes: { type: [String], required: true },
   availableColors: { type: [{ label: String, hex: String }], required: true },
