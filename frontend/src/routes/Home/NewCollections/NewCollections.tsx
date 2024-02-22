@@ -1,32 +1,19 @@
 import styles from "./NewCollections.module.css";
 import { Stack, SimpleGrid } from "@mantine/core";
-import ProductProps from "../../../types/ProductProps.ts";
 import Item from "../../../components/Item/Item.tsx";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../state/store.ts";
+import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";
 
 const NewCollections = () => {
-  const products = useSelector((state: RootState) => state.products.items);
-  const newCollections = products.slice(12, 18);
+  const { products } = useFetchProducts(null);
 
   return (
     <section className={styles.newcollection}>
       <Stack>
         <h2 className={styles.title}>New Collections</h2>
         <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
-          {newCollections.map(
-            ({ id, name, image, brand, price, lastPrice }: ProductProps) => (
-              <Item
-                key={id}
-                id={id}
-                brand={brand}
-                name={name}
-                image={image}
-                price={price}
-                lastPrice={lastPrice}
-              />
-            )
-          )}
+          {products.map(({ _id, ...rest }) => (
+            <Item key={_id} _id={_id} {...rest} />
+          ))}
         </SimpleGrid>
       </Stack>
     </section>

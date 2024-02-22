@@ -30,8 +30,8 @@ const Cart = () => {
                     {cart.items.map((item) => (
                       <CartItem
                         cartId={item.cartId}
-                        image={item.product.image[0]}
-                        productId={item.product.id}
+                        image={item.product.images[0]}
+                        productId={item.product._id}
                         brand={item.product.brand}
                         name={item.product.name}
                         selectedColor={item.selectedColor}

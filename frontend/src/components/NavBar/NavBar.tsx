@@ -8,6 +8,7 @@ import {
   rem,
   UnstyledButton,
   Button,
+  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -50,7 +51,7 @@ const NavBar = () => {
               className={`${styles.logo} ${pathname === "/" && styles.active}`}
               onClick={() => opened && toggle()}
             >
-              <h1>The Shopper</h1>
+              <Title order={1}>The Shopper</Title>
             </Link>
             <ul className={`${styles.list} ${opened && styles.opened}`}>
               {navMenu.map((link, index) => (
@@ -73,7 +74,9 @@ const NavBar = () => {
               <Menu>
                 <Menu.Target>
                   <UnstyledButton className={styles.profile}>
-                    <IconUserCircle size={30} />
+                    <IconUserCircle
+                      style={{ width: rem(32), height: rem(32) }}
+                    />
                   </UnstyledButton>
                 </Menu.Target>
                 <Menu.Dropdown>
@@ -132,10 +135,14 @@ const NavBar = () => {
               <Group>
                 {cart.length > 0 ? (
                   <Indicator inline label={findTotalCartQuantity} size={16}>
-                    <IconShoppingCart size={30} />
+                    <IconShoppingCart
+                      style={{ width: rem(32), height: rem(32) }}
+                    />
                   </Indicator>
                 ) : (
-                  <IconShoppingCart size={30} />
+                  <IconShoppingCart
+                    style={{ width: rem(32), height: rem(32) }}
+                  />
                 )}
               </Group>
             </Link>
