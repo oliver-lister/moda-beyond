@@ -18,11 +18,10 @@ import {
   IconLogin,
 } from "@tabler/icons-react";
 import styles from "./NavBar.module.css";
-
 import { Link, useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../state/store.ts";
+import { signOut } from "../../state/auth/authSlice.ts";
 
 const navMenu = [
   { label: "Women", path: "/women" },
@@ -31,15 +30,10 @@ const navMenu = [
 ];
 
 const NavBar = () => {
-  const cart = useSelector((state: RootState) => state.cart.items);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
   const [opened, { toggle }] = useDisclosure();
-
-  const findTotalCartQuantity = cart.reduce(
-    (accumulator, currentItem) => accumulator + currentItem.quantity,
-    0
-  );
 
   return (
     <nav className={styles.nav}>
@@ -70,7 +64,7 @@ const NavBar = () => {
             </ul>
           </Group>
           <Flex align="center" gap={20}>
-            {localStorage.getItem("auth-token") ? (
+            {user ? (
               <Menu>
                 <Menu.Target>
                   <UnstyledButton className={styles.profile}>
@@ -95,10 +89,10 @@ const NavBar = () => {
                     </Link>
                   </Menu.Item>
                   <Menu.Item className={styles.profile_menu_item}>
-                    <UnstyledButton
+                    <Link
+                      to="/"
                       onClick={() => {
-                        localStorage.removeItem("auth-token");
-                        navigate("/");
+                        dispatch(signOut());
                       }}
                     >
                       <Group>
@@ -107,7 +101,7 @@ const NavBar = () => {
                         />
                         Logout
                       </Group>
-                    </UnstyledButton>
+                    </Link>
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
@@ -133,8 +127,8 @@ const NavBar = () => {
               onClick={() => opened && toggle()}
             >
               <Group>
-                {cart.length > 0 ? (
-                  <Indicator inline label={findTotalCartQuantity} size={16}>
+                {user && user.cart.length > 0 ? (
+                  <Indicator inline label={user.cart.length} size={16}>
                     <IconShoppingCart
                       style={{ width: rem(32), height: rem(32) }}
                     />

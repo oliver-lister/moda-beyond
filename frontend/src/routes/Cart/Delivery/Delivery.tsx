@@ -1,24 +1,11 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../state/store.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../state/store";
-import { changeDelivery } from "../../../state/cart/cartSlice";
 import { Stack, Group, Radio } from "@mantine/core";
 import styles from "./delivery.module.css";
 
 const Delivery = () => {
-  const cart = useSelector((state: RootState) => state.cart);
-  const dispatch = useDispatch<AppDispatch>();
-
   return (
     <Stack className={styles.container} gap={0}>
       <p>Delivery Type</p>
-      <Radio.Group
-        value={cart.deliveryType}
-        onChange={(value: string) =>
-          dispatch(changeDelivery(value as "standard" | "express" | "pickup"))
-        }
-      >
+      <Radio.Group value={cart.deliveryType}>
         <Group
           justify="space-between"
           align="center"

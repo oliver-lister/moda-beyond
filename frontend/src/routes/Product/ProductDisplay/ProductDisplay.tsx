@@ -22,15 +22,6 @@ import { useMediaQuery } from "@mantine/hooks";
 import ProductProps from "../../../types/ProductProps";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { IconShoppingCart } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../state/store";
-import { addItem } from "../../../state/cart/cartSlice";
-
-const colors = [
-  { label: "Burgundy", hex: "#800020" },
-  { label: "Red Rose", hex: "#ff033e" },
-  // Add more colors as needed
-];
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
   const mobile = useMediaQuery("(max-width: 768px");
@@ -49,9 +40,10 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   );
 
   // ADD TO CART FORM
-  const dispatch = useDispatch<AppDispatch>();
   const [selectedColor, setSelectedColor] = useState<string | null>(
-    colors[0].label
+    product.availableColors && product.availableColors.length > 0
+      ? product.availableColors[0].label
+      : null
   );
 
   const form = useForm({
@@ -67,17 +59,38 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   });
 
   const handleColorClick = (hex: string) => {
-    setSelectedColor(hex === selectedColor ? null : hex);
+    setSelectedColor(hex === selectedColor ? selectedColor : hex);
   };
 
-  const handleSubmit = () => {
-    form.setValues({ ...form.values, selectedColor });
-    dispatch(addItem(form.values));
-    notifications.show({
-      title: "Success! You've added an item to your cart.",
-      message: `${form.values.size} ${product.brand} ${form.values.selectedColor} ${product.name}`,
-      icon: <IconShoppingCart />,
-    });
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/addtocart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "accessToken": localStorage.getItem("accessToken"),
+        },
+        body: JSON.stringify({
+          productId: product._id,
+          color: selectedColor,
+          quantity: form.values.quantity,
+          size: form.values.size,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text(); // Log the error message
+        throw new Error(`Error adding product to cart: ${errorMessage}`);
+      }
+
+      notifications.show({
+        title: "Success! You've added an item to your cart.",
+        message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
+        icon: <IconShoppingCart />,
+      });
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
   };
 
   // Response re-sizing with thumbnails
@@ -178,8 +191,8 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                     </span>
                   </p>
                   <Group>
-                    {colors &&
-                      colors.map((color) => (
+                    {product.availableColors &&
+                      product.availableColors.map((color) => (
                         <ColorSwatch
                           key={color.label}
                           component="button"
@@ -200,7 +213,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                 <Group align="start">
                   <Select
                     withAsterisk
-                    data={["INTL S", "INTL M", "INTL L", "INTL XL"]}
+                    data={product.availableSizes}
                     {...form.getInputProps("size")}
                     placeholder="Pick a size..."
                   />

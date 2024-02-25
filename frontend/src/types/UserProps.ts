@@ -1,19 +1,26 @@
-import ProductProps from "./ProductProps";
-
 interface Address {
   street: string;
   city: string;
   zipCode: string;
 }
 
+export interface CartItemProps {
+  _id?: string;
+  productId: string;
+  color: string | null;
+  size: string | null;
+  quantity: number;
+}
+
 export default interface UserProps {
-  id: number;
+  _id: number;
   email: string;
+  password: string;
   firstName: string;
   lastName: string;
-  birthday?: string;
-  shoppingPreference: string;
-  age?: number;
+  dob?: string;
   address?: Address;
-  cart: ProductProps[];
+  shoppingPreference: string;
+  newsletter: boolean;
+  cart: CartItemProps[];
 }

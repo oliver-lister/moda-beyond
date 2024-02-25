@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../state/store.ts";
 import { Button, Stack, Group } from "@mantine/core";
 import styles from "./ordersummary.module.css";
 

@@ -1,5 +1,3 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
 import { Button, Stack, Container, Grid, GridCol, Alert } from "@mantine/core";
 import { IconTruck } from "@tabler/icons-react";
 import styles from "./cart.module.css";
@@ -7,11 +5,14 @@ import { Link } from "react-router-dom";
 import CartItem from "./CartItem/CartItem.tsx";
 import Delivery from "./Delivery/Delivery.tsx";
 import OrderSummary from "./OrderSummary/OrderSummary.tsx";
+import useUser from "../../hooks/useUser.tsx";
+import { CartItemProps } from "../../types/UserProps.ts";
 
 const Cart = () => {
-  const cart = useSelector((state: RootState) => state.cart);
+  const authToken = localStorage.getItem("auth-token");
+  const { user } = useUser(authToken);
 
-  if (cart.totalQuantity > 0) {
+  if (user && user.cart.length > 0) {
     return (
       <section className={styles.container}>
         <Container size="xl">
@@ -27,19 +28,23 @@ const Cart = () => {
                     className={styles.alert}
                   />
                   <ul>
-                    {cart.items.map((item) => (
-                      <CartItem
-                        cartId={item.cartId}
-                        image={item.product.images[0]}
-                        productId={item.product._id}
-                        brand={item.product.brand}
-                        name={item.product.name}
-                        selectedColor={item.selectedColor}
-                        size={item.size}
-                        quantity={item.quantity}
-                        price={item.product.price}
-                      />
-                    ))}
+                    {user.cart.map(
+                      ({
+                        _id,
+                        productId,
+                        size,
+                        quantity,
+                        color,
+                      }: CartItemProps) => (
+                        <CartItem
+                          key={_id}
+                          productId={productId}
+                          color={color}
+                          size={size}
+                          quantity={quantity}
+                        />
+                      )
+                    )}
                   </ul>
                   <Delivery />
                 </Stack>

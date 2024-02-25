@@ -14,9 +14,13 @@ import { useNavigate } from "react-router-dom";
 import styles from "./loginsignup.module.css";
 import { IconCake, IconLock } from "@tabler/icons-react";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../state/store";
+import { signupAsync, loginAsync } from "../../state/auth/authSlice";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm({
     initialValues: {
@@ -52,23 +56,8 @@ const Signup = () => {
 
   const handleSubmit = async (values: signupValues) => {
     try {
-      const response = await fetch("http://localhost:3000/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to register new user: " + values);
-      }
-
-      const responseData = await response.json();
-
-      localStorage.setItem("auth-token", responseData.token);
+      dispatch(signupAsync(values));
       navigate("/");
-      console.log("Server response:", responseData);
       form.reset();
     } catch (err) {
       console.error("Error submitting form:", err);
@@ -134,6 +123,7 @@ const Signup = () => {
 const Login = () => {
   const navigate = useNavigate();
   const [isIncorrect, setIsIncorrect] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm({
     initialValues: {
@@ -155,23 +145,8 @@ const Login = () => {
 
   const handleSubmit = async (values: loginValues) => {
     try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to login.");
-      }
-
-      const responseData = await response.json();
-
-      localStorage.setItem("auth-token", responseData.token);
+      dispatch(loginAsync(values));
       navigate("/");
-      console.log("Server response:", responseData);
       form.reset();
     } catch (err) {
       console.error("Error submitting form:", err);
