@@ -12,7 +12,7 @@ const CartItem = ({ productId, size, quantity, color }: CartItemProps) => {
     const fetchProductById = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/fetchproductbyid/${productId}`
+          `http://localhost:3000/products/fetchproductbyid/${productId}`
         );
 
         if (!response.ok) {

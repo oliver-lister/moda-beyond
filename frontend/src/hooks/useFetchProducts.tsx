@@ -30,7 +30,7 @@ export const useFetchProducts = (initialSortQuery: Query[] | null) => {
         }
 
         const response = await fetch(
-          `http://localhost:3000/fetchproducts?${queryString}`
+          `http://localhost:3000/products/fetchproducts?${queryString}`
         );
 
         if (!response.ok) {

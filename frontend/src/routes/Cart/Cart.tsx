@@ -5,12 +5,13 @@ import { Link } from "react-router-dom";
 import CartItem from "./CartItem/CartItem.tsx";
 import Delivery from "./Delivery/Delivery.tsx";
 import OrderSummary from "./OrderSummary/OrderSummary.tsx";
-import useUser from "../../hooks/useUser.tsx";
 import { CartItemProps } from "../../types/UserProps.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../state/store.ts";
 
 const Cart = () => {
-  const authToken = localStorage.getItem("auth-token");
-  const { user } = useUser(authToken);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
 
   if (user && user.cart.length > 0) {
     return (
@@ -46,12 +47,12 @@ const Cart = () => {
                       )
                     )}
                   </ul>
-                  <Delivery />
+                  <Delivery cart={user.cart} />
                 </Stack>
               </Stack>
             </GridCol>
             <GridCol span={{ base: 12, lg: 4 }}>
-              <OrderSummary />
+              <OrderSummary cart={user.cart} />
             </GridCol>
           </Grid>
         </Container>

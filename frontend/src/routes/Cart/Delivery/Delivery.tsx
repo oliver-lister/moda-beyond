@@ -1,7 +1,7 @@
 import { Stack, Group, Radio } from "@mantine/core";
 import styles from "./delivery.module.css";
 
-const Delivery = () => {
+const Delivery = ({ cart }) => {
   return (
     <Stack className={styles.container} gap={0}>
       <p>Delivery Type</p>

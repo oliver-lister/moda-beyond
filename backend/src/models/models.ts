@@ -1,0 +1,62 @@
+import mongoose, { Document } from 'mongoose';
+
+const productSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  category: { type: String, required: true, enum: ['men', 'women', 'kids'] },
+  brand: { type: String, required: true },
+  availableSizes: { type: [String], required: true },
+  availableColors: { type: [{ label: String, hex: String }], required: true },
+  material: { type: String },
+  price: { type: Number, required: true },
+  lastPrice: { type: Number },
+  images: { type: [String], default: [] },
+  date: { type: Date, default: Date.now },
+  available: { type: Boolean, default: true },
+});
+
+const Product = mongoose.model('Product', productSchema);
+
+const cartItemSchema = new mongoose.Schema({
+  productId: { type: String, required: true },
+  size: { type: String, required: true },
+  color: { type: String, required: true },
+  quantity: { type: Number, default: 1 },
+});
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  dob: Date,
+  address: { street: String, city: String, zipCode: String },
+  shoppingPreference: { type: String, required: true },
+  newsletter: { type: Boolean, required: true, default: true },
+  cart: [cartItemSchema],
+});
+
+// Define the CartItem interface
+interface CartItem {
+  _id?: string;
+  productId: string;
+  size?: string;
+  color?: string;
+  quantity?: number;
+}
+
+// Define the UserDocument interface
+interface UserDocument extends Document {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dob?: Date;
+  address?: { street: string; city: string; zipCode: string };
+  shoppingPreference: string;
+  newsletter: boolean;
+  cart: CartItem[];
+}
+
+const User = mongoose.model<UserDocument>('Users', userSchema);
+
+export { Product, User };

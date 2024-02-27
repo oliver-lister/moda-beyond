@@ -116,7 +116,7 @@ export const loginAsync = createAsyncThunk(
   "auth/loginAsync",
   async (values: LoginValues) => {
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +152,7 @@ export const signupAsync = createAsyncThunk(
   "auth/signupAsync",
   async (values: SignupValues) => {
     try {
-      const response = await fetch("http://localhost:3000/signup", {
+      const response = await fetch("http://localhost:3000/users/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -178,7 +178,7 @@ export const refreshAccessTokenAsync = createAsyncThunk(
   "auth/refreshAccessToken",
   async (refreshToken: string) => {
     try {
-      const response = await fetch("http://localhost:3000/refreshtoken", {
+      const response = await fetch("http://localhost:3000/users/refreshtoken", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,7 +204,7 @@ export const fetchUserDataAsync = createAsyncThunk(
   "auth/fetchUserDataAsync",
   async (userId: string, accessToken) => {
     try {
-      const response = await fetch(`http://localhost:3000/fetchuser`, {
+      const response = await fetch(`http://localhost:3000/users/fetchuser`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

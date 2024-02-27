@@ -18,7 +18,9 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/fetchproducts?_id=${productId?.slice(1)}`
+          `http://localhost:3000/products/fetchproducts?_id=${productId?.slice(
+            1
+          )}`
         );
 
         if (!response.ok) {
