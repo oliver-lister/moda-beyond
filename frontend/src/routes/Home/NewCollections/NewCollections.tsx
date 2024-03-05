@@ -2,9 +2,18 @@ import styles from "./NewCollections.module.css";
 import { Stack, SimpleGrid } from "@mantine/core";
 import Item from "../../../components/Item/Item.tsx";
 import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";
+import Loading from "../../../components/Loading/Loading.tsx";
 
 const NewCollections = () => {
   const { products } = useFetchProducts(null);
+
+  if (!products) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
 
   return (
     <section className={styles.newcollection}>

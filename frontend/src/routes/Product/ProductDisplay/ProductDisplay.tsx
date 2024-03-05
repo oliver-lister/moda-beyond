@@ -21,7 +21,7 @@ import { useViewportSize } from "@mantine/hooks";
 import { useMediaQuery } from "@mantine/hooks";
 import ProductProps from "../../../types/ProductProps";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { IconShoppingCart } from "@tabler/icons-react";
+import { IconShoppingCart, IconX } from "@tabler/icons-react";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
   const mobile = useMediaQuery("(max-width: 768px");
@@ -79,7 +79,12 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
       });
 
       if (!response.ok) {
-        const errorMessage = await response.text(); // Log the error message
+        const errorMessage = await response.text();
+        notifications.show({
+          title: "Error! Something went wrong.",
+          message: "Please login and try again.",
+          icon: <IconX />,
+        });
         throw new Error(`Error adding product to cart: ${errorMessage}`);
       }
 

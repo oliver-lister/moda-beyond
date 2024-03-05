@@ -3,17 +3,17 @@ import ProductProps from "../types/ProductProps";
 
 export interface Query {
   prop: string;
-  value: string;
+  value: string | null;
 }
 
 interface FetchProductsResult {
-  products: ProductProps[];
+  products: ProductProps[] | null;
   error: Error | null;
 }
 
 export const useFetchProducts = (initialSortQuery: Query[] | null) => {
   const [products, setProducts] = useState<FetchProductsResult>({
-    products: [],
+    products: null,
     error: null,
   });
   const [query, setQuery] = useState<Query[] | null>(initialSortQuery);

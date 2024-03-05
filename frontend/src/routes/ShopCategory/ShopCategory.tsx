@@ -14,7 +14,9 @@ import {
 import styles from "./shopCategory.module.css";
 import { useEffect, useState } from "react";
 import Item from "../../components/Item/Item.tsx";
-import { Query, useFetchProducts } from "../../hooks/useFetchProducts.tsx";
+import Loading from "../../components/Loading/Loading.tsx";
+import ProductProps from "../../types/ProductProps.ts";
+import { useLocation } from "react-router-dom";
 
 type ShopCategoryProps = {
   shopCategory: "men" | "women" | "kids";
@@ -27,25 +29,28 @@ const bannerImg = {
 };
 
 const ShopCategory = ({ shopCategory }: ShopCategoryProps) => {
-  const [sort, setSort] = useState<Query[]>([
-    { prop: "category", value: shopCategory },
-  ]);
-  const { products, updateQuery } = useFetchProducts(sort);
+  const location = useLocation();
+  const [products, setProducts] = useState<ProductProps[] | null>(null);
 
   useEffect(() => {
-    setSort((prevSort) => {
-      return prevSort.map((item) => {
-        if (item.prop === "category") {
-          return { ...item, value: shopCategory };
-        }
-        return item;
-      });
-    });
-  }, [shopCategory]);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/products/fetchproducts${location.pathname}${location.search}`
+        );
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
 
-  useEffect(() => {
-    updateQuery(sort);
-  }, [updateQuery, sort]);
+    fetchData();
+  }, [location]);
+
+  if (!products) {
+    return <Loading />;
+  }
 
   return (
     <section className={styles.shop_category}>
@@ -62,9 +67,9 @@ const ShopCategory = ({ shopCategory }: ShopCategoryProps) => {
             <Select
               label="Sort By"
               data={[
-                "New Arrivals",
-                "Price: Low to High",
-                "Price: High to Low",
+                { label: "New Arrivals", value: "new" },
+                { label: "Price: Low to High", value: "low-to-high" },
+                { label: "Price: High to Low", value: "high-to-low" },
               ]}
             />
           </Group>

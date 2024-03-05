@@ -2,14 +2,18 @@ import styles from "./Popular.module.css";
 import { SimpleGrid, Stack, Text } from "@mantine/core";
 import Item from "../../../components/Item/Item.tsx";
 import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";
-import { useEffect } from "react";
+import Loading from "../../../components/Loading/Loading.tsx";
 
 const Popular = () => {
   const { products, error } = useFetchProducts(null);
 
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
+  if (!products) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
 
   return (
     <section className={styles.popular}>
