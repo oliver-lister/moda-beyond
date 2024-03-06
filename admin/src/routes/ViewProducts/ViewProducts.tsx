@@ -12,7 +12,9 @@ const ViewProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/fetchproducts");
+        const response = await fetch(
+          "http://localhost:3000/products/fetchproducts"
+        );
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -25,7 +27,7 @@ const ViewProducts = () => {
 
   const removeProduct = async (_id: ProductProps["_id"]) => {
     try {
-      const apiUrl = "http://localhost:3000/removeproduct";
+      const apiUrl = "http://localhost:3000/products/removeproduct";
 
       const response = await fetch(apiUrl, {
         method: "POST",

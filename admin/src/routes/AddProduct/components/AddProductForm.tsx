@@ -143,10 +143,13 @@ const AddProductForm = () => {
         formData.append("productImg", image, image.name);
       });
 
-      const response = await fetch("http://localhost:3000/addproduct", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:3000/products/addproduct",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to submit product data: " + formData);
