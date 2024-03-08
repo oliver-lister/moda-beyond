@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, Params } from "react-router-dom";
 import { Breadcrumbs, Anchor, Container, Stack } from "@mantine/core";
 import styles from "./product.module.css";
 import ProductDisplay from "./ProductDisplay/ProductDisplay.tsx";
@@ -8,7 +8,7 @@ import ProductProps from "../../types/ProductProps.ts";
 import Loading from "../../components/Loading/Loading.tsx";
 
 const Product = () => {
-  const { productId } = useParams();
+  const { productId }: Readonly<Params<string>> | undefined = useParams();
   const [product, setProduct] = useState<ProductProps | null>(null);
 
   useEffect(() => {
@@ -16,9 +16,7 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/products/fetchproductbyid/${productId?.slice(
-            1
-          )}`
+          `http://localhost:3000/products/fetchproductbyid/${productId}`
         );
 
         if (!response.ok) {

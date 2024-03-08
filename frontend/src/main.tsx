@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./routes/Layout.tsx";
 import ErrorPage from "./routes/error-page.tsx";
 import Home from "./routes/Home/Home.tsx";
-import ShopCategory from "./routes/ShopCategory/ShopCategory.tsx";
+import Shop from "./routes/Shop/Shop.tsx";
 import Product from "./routes/Product/Product.tsx";
 import Cart from "./routes/Cart/Cart.tsx";
 import LoginSignup from "./routes/Login/LoginSignup.tsx";
@@ -44,18 +44,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      {
-        path: "/men",
-        element: <ShopCategory shopCategory="men" />,
-      },
-      {
-        path: "/women",
-        element: <ShopCategory shopCategory="women" />,
-      },
-      {
-        path: "/kids",
-        element: <ShopCategory shopCategory="kids" />,
-      },
+      { path: "/shop", element: <Shop /> },
       {
         path: "/product",
         element: <Product />,

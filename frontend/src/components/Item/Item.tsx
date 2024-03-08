@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const Item = ({ _id, images, name, brand, price, lastPrice }: ProductProps) => {
   return (
     <Link
-      to={`/product/:${_id}`}
+      to={`/product/${_id}`}
       className={styles.link}
       onClick={() => window.scrollTo(0, 0)}
       key={_id}

@@ -9,6 +9,7 @@ import {
   UnstyledButton,
   Button,
   Title,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -16,24 +17,48 @@ import {
   IconUserCircle,
   IconLogout,
   IconLogin,
+  IconSearch,
 } from "@tabler/icons-react";
 import styles from "./NavBar.module.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store.ts";
 import { signOut } from "../../state/auth/authSlice.ts";
+import { useSearchParams } from "react-router-dom";
+import { useRef } from "react";
 
 const navMenu = [
-  { label: "Women", path: "/women" },
-  { label: "Men", path: "/men" },
-  { label: "Kids", path: "/kids" },
+  { label: "Women", path: "/shop?category=women&sortBy=date&sortOrder=-1" },
+  { label: "Men", path: "/shop?category=men&sortBy=date&sortOrder=-1" },
+  { label: "Kids", path: "/shop?category=kids&sortBy=date&sortOrder=-1" },
 ];
 
 const NavBar = () => {
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
   const [opened, { toggle }] = useDisclosure();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchInputRef.current) return null;
+    const text = searchInputRef.current.value;
+    navigate("/shop");
+
+    if (text.length === 0) {
+      searchParams.delete("search");
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setSearchParams(
+        { search: text, sortBy: "date", sortOrder: "-1" },
+        { replace: true }
+      );
+    }
+    searchInputRef.current.value = "";
+  };
 
   return (
     <nav className={styles.nav}>
@@ -63,7 +88,10 @@ const NavBar = () => {
               ))}
             </ul>
           </Group>
-          <Flex align="center" gap={20}>
+          <Group align="center" gap={20}>
+            <form onSubmit={handleSearchSubmit}>
+              <TextInput ref={searchInputRef} leftSection={<IconSearch />} />
+            </form>
             {user ? (
               <Menu>
                 <Menu.Target>
@@ -147,7 +175,7 @@ const NavBar = () => {
               color="white"
               aria-label="Toggle navigation"
             />
-          </Flex>
+          </Group>
         </Flex>
       </Container>
     </nav>

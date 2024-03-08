@@ -1,18 +1,23 @@
 import mongoose, { Document } from 'mongoose';
 
-const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  category: { type: String, required: true, enum: ['men', 'women', 'kids'] },
-  brand: { type: String, required: true },
-  availableSizes: { type: [String], required: true },
-  availableColors: { type: [{ label: String, hex: String }], required: true },
-  material: { type: String },
-  price: { type: Number, required: true },
-  lastPrice: { type: Number },
-  images: { type: [String], default: [] },
-  date: { type: Date, default: Date.now },
-  available: { type: Boolean, default: true },
-});
+const productSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    category: { type: String, required: true, enum: ['men', 'women', 'kids'] },
+    brand: { type: String, required: true },
+    availableSizes: { type: [String], required: true },
+    availableColors: { type: [{ label: String, hex: String }], required: true },
+    material: { type: String },
+    price: { type: Number, required: true },
+    lastPrice: { type: Number },
+    images: { type: [String], default: [] },
+    date: { type: Date, default: Date.now },
+    available: { type: Boolean, default: true },
+  },
+  { autoIndex: false },
+);
+
+productSchema.index({ name: 'text', brand: 'text' });
 
 const Product = mongoose.model('Product', productSchema);
 
