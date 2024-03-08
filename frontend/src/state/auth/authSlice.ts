@@ -41,7 +41,6 @@ const authSlice = createSlice({
     builder
       .addCase(loginAsync.pending, (state) => {
         state.isLoading = true;
-        console.log("loginAsync pending");
       })
       .addCase(
         loginAsync.fulfilled,
@@ -61,7 +60,6 @@ const authSlice = createSlice({
       )
       .addCase(signupAsync.pending, (state) => {
         state.isLoading = true;
-        console.log("signupAsync pending");
       })
       .addCase(
         signupAsync.fulfilled,
@@ -81,7 +79,6 @@ const authSlice = createSlice({
       )
       .addCase(refreshAccessTokenAsync.pending, (state) => {
         state.isLoading = true;
-        console.log("refreshAccessTokenAsync pending");
       })
       .addCase(refreshAccessTokenAsync.fulfilled, (state, action) => {
         const { newAccessToken, newRefreshToken, user } = action.payload;
@@ -90,8 +87,18 @@ const authSlice = createSlice({
         state.refreshToken = newRefreshToken;
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
-
+        state.isLoading = false;
+        state.isAuthenticated = true;
         state.user = user;
+      })
+      .addCase(refreshAccessTokenAsync.rejected, (state) => {
+        state.accessToken = "";
+        state.refreshToken = "";
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        state.user = null;
+        state.isAuthenticated = false;
+        state.isLoading = false;
       })
       .addCase(fetchUserDataAsync.pending, (state) => {
         state.isLoading = true;
@@ -200,15 +207,20 @@ export const refreshAccessTokenAsync = createAsyncThunk(
   }
 );
 
+interface FetchUserDataAsyncParams {
+  userId: string;
+  accessToken?: string; // Make sure accessToken is optional if it can be undefined
+}
+
 export const fetchUserDataAsync = createAsyncThunk(
   "auth/fetchUserDataAsync",
-  async (userId: string, accessToken) => {
+  async ({ userId, accessToken }: FetchUserDataAsyncParams) => {
     try {
       const response = await fetch(`http://localhost:3000/users/fetchuser`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: accessToken,
+          ...(accessToken && { Authorization: accessToken }),
         },
         body: JSON.stringify({ userId }),
       });

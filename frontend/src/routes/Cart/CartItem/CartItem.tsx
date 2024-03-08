@@ -4,9 +4,10 @@ import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../types/UserProps";
 import { useEffect, useState } from "react";
+import ProductProps from "../../../types/ProductProps";
 
-const CartItem = ({ productId, size, quantity, color, remove }: CartItemProps) => {
-  const [product, setProduct] = useState(null);
+const CartItem = ({ productId, size, quantity, color }: CartItemProps) => {
+  const [product, setProduct] = useState<ProductProps | null>(null);
 
   useEffect(() => {
     const fetchProductById = async () => {

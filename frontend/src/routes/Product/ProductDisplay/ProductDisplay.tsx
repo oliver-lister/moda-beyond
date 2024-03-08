@@ -64,11 +64,13 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
 
   const handleSubmit = async () => {
     try {
+      const accessToken = localStorage.getItem("accessToken");
+
       const response = await fetch("http://localhost:3000/users/addtocart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          accessToken: localStorage.getItem("accessToken"),
+          ...(accessToken && { Authorization: accessToken }),
         },
         body: JSON.stringify({
           productId: product._id,

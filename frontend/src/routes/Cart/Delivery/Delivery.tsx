@@ -1,11 +1,11 @@
 import { Stack, Group, Radio } from "@mantine/core";
 import styles from "./delivery.module.css";
 
-const Delivery = ({ cart }) => {
+const Delivery = () => {
   return (
     <Stack className={styles.container} gap={0}>
       <p>Delivery Type</p>
-      <Radio.Group value={cart.deliveryType}>
+      <Radio.Group>
         <Group
           justify="space-between"
           align="center"

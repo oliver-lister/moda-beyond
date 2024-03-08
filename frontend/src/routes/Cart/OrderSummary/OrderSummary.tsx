@@ -1,7 +1,7 @@
 import { Button, Stack, Group } from "@mantine/core";
 import styles from "./ordersummary.module.css";
 
-const OrderSummary = ({ cart }) => {
+const OrderSummary = () => {
   return (
     <Stack className={styles.container}>
       <p className={styles.coupon}>
@@ -10,7 +10,7 @@ const OrderSummary = ({ cart }) => {
       <Stack className={styles.summary}>
         <h3>Order Summary</h3>
         <Group justify="space-between">
-          <p>{`Product Total (${cart.length})`}</p>
+          <p>{`Product Total (2)`}</p>
           <p>$12</p>
         </Group>
         <Group justify="space-between">

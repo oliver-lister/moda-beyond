@@ -26,13 +26,14 @@ const Shop = () => {
   const { products, isLoading } = useFetchProducts();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleChangeSort = (value: string) => {
-    const sort = sortOptions[value];
-    searchParams.set("sortBy", sort.sortBy);
-    searchParams.set("sortOrder", sort.sortOrder.toString());
-    setSearchParams(searchParams);
+  const handleChangeSort = (value: string | null) => {
+    if (value) {
+      const sort = sortOptions[value];
+      searchParams.set("sortBy", sort.sortBy);
+      searchParams.set("sortOrder", sort.sortOrder.toString());
+      setSearchParams(searchParams);
+    }
   };
-
   return (
     <section style={{ padding: "1rem 0" }}>
       <Container size="xl">

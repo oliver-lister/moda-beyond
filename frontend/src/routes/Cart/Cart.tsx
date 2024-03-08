@@ -6,12 +6,11 @@ import CartItem from "./CartItem/CartItem.tsx";
 import Delivery from "./Delivery/Delivery.tsx";
 import OrderSummary from "./OrderSummary/OrderSummary.tsx";
 import { CartItemProps } from "../../types/UserProps.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../state/store.ts";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store.ts";
 
 const Cart = () => {
   const user = useSelector((state: RootState) => state.auth.user);
-  const dispatch = useDispatch<AppDispatch>();
 
   if (user && user.cart.length > 0) {
     return (
@@ -47,12 +46,12 @@ const Cart = () => {
                       )
                     )}
                   </ul>
-                  <Delivery cart={user.cart} />
+                  <Delivery />
                 </Stack>
               </Stack>
             </GridCol>
             <GridCol span={{ base: 12, lg: 4 }}>
-              <OrderSummary cart={user.cart} />
+              <OrderSummary />
             </GridCol>
           </Grid>
         </Container>

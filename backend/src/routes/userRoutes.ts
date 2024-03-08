@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 const generateAccessToken = (userId: any, expiryTime: string) => {
-  console.log(userId, expiryTime);
   try {
     if (!process.env.JWT_ACCESS_TOKEN_SECRET) {
       throw new Error('JWT secret could not be found or accessed.');
@@ -127,6 +126,8 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
     const newAccessToken = generateAccessToken(userId, '5m');
     const newRefreshToken = generateRefreshToken();
 
+    console.log('newRefreshToken: ' + newRefreshToken);
+
     // Update session
 
     session.updatedAt = new Date();
@@ -134,7 +135,9 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
 
     await session.save();
 
-    res.json({ success: 1, newAccessToken, newRefreshToken, user });
+    console.log('Updated Session: ' + session);
+
+    return res.json({ success: 1, newAccessToken, newRefreshToken, user });
   } catch (err) {
     console.error('Error refreshing access token:', err);
     return res.status(401).json({ success: 0, error: 'Invalid refresh token' });
