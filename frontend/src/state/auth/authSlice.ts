@@ -84,11 +84,11 @@ const authSlice = createSlice({
         console.log("refreshAccessTokenAsync pending");
       })
       .addCase(refreshAccessTokenAsync.fulfilled, (state, action) => {
-        const { accessToken, newRefreshToken, user } = action.payload;
+        const { newAccessToken, newRefreshToken, user } = action.payload;
 
-        state.accessToken = accessToken;
+        state.accessToken = newAccessToken;
         state.refreshToken = newRefreshToken;
-        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
 
         state.user = user;
@@ -208,7 +208,7 @@ export const fetchUserDataAsync = createAsyncThunk(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          accessToken: accessToken,
+          Authorization: accessToken,
         },
         body: JSON.stringify({ userId }),
       });

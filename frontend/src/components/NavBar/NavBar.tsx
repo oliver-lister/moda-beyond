@@ -44,7 +44,8 @@ const NavBar = () => {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchInputRef.current) return null;
+    if (!searchInputRef.current || searchInputRef.current.value.length === 0)
+      return null;
     const text = searchInputRef.current.value;
     navigate("/shop");
 

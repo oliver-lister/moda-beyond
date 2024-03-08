@@ -1,20 +1,21 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import 'dotenv/config';
 
-interface AuthenticatedRequest extends Request {
+interface AuthorizedRequest extends Request {
   user?: string | jwt.JwtPayload;
 }
 
 // JWT Authentication Middleware
-const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const token = req.header('accessToken');
+const authorizeJWT = (req: AuthorizedRequest, res: Response, next: NextFunction) => {
+  const accessToken = req.header('Authorization');
 
-  if (!token) {
-    return res.status(401).json({ success: 0, error: 'Access Denied - Missing Token' });
+  if (!accessToken || !process.env.JWT_ACCESS_TOKEN_SECRET) {
+    return res.status(401).json({ success: 0, error: 'Access Denied - Missing Token or Missing Token Secret' });
   }
 
   try {
-    const decoded = jwt.verify(token, 'secret_ecom');
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
@@ -23,4 +24,4 @@ const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: NextFun
   }
 };
 
-export { authenticateJWT };
+export { authorizeJWT };

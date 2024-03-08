@@ -1,9 +1,27 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { User, Product } from '../models/models'; // Update with the actual file path
-import { authenticateJWT } from '../middleware/authMiddleware'; // Update with the actual file path
+import { User, Product, Session } from '../models/models';
+import { authorizeJWT } from '../middleware/authMiddleware';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import 'dotenv/config';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
+
+const generateAccessToken = (userId: any, expiryTime: string) => {
+  console.log(userId, expiryTime);
+  try {
+    if (!process.env.JWT_ACCESS_TOKEN_SECRET) {
+      throw new Error('JWT secret could not be found or accessed.');
+    }
+    return jwt.sign({ userId: userId }, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: expiryTime });
+  } catch ({ err }: any) {
+    console.log('Error: ' + err.message);
+  }
+};
+
+const generateRefreshToken = () => {
+  return uuidv4().replace(/-/g, '');
+};
 
 // API for User Registration
 router.post('/signup', async (req, res) => {
@@ -22,8 +40,12 @@ router.post('/signup', async (req, res) => {
     await newUser.save();
 
     // Generate a JWT token for authentication
-    const accessToken = jwt.sign({ userId: newUser._id }, 'secret_ecom', { expiresIn: '1h' });
-    const refreshToken = jwt.sign({ userId: newUser._id }, 'secret_ecom_refresh', { expiresIn: '1h' });
+    const accessToken = generateAccessToken(newUser._id, '5m');
+    const refreshToken = generateRefreshToken();
+
+    const newSession = new Session({ userId: newUser._id, refreshToken: refreshToken });
+
+    newSession.save();
 
     return res.status(200).json({ success: 1, message: 'User registered successfully.', accessToken, refreshToken, newUser });
   } catch (err: any) {
@@ -47,8 +69,12 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // Generate a JWT token for authentication
-    const accessToken = jwt.sign({ userId: user._id }, 'secret_ecom', { expiresIn: '1h' });
-    const refreshToken = jwt.sign({ userId: user._id }, 'secret_ecom_refresh', { expiresIn: '1h' });
+    const accessToken = generateAccessToken(user._id, '5m');
+    const refreshToken = generateRefreshToken();
+
+    const newSession = new Session({ userId: user._id, refreshToken: refreshToken });
+
+    newSession.save();
 
     return res.status(200).json({ success: 1, message: 'Login successful', accessToken, refreshToken, user });
   } catch (err) {
@@ -56,12 +82,12 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-interface AuthenticatedRequest extends Request {
+interface AuthorizedRequest extends Request {
   user?: string | JwtPayload;
 }
 
 // API for fetching user data
-router.get('/fetchuser', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/fetchuser', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
     const { userId } = req.user as { userId: string };
     const user = await User.findById(userId);
@@ -87,16 +113,28 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
       return res.status(400).json({ success: 0, error: 'Missing refresh token' });
     }
 
-    // Verify the refresh token
-    const decoded = jwt.verify(refreshToken, 'secret_ecom_refresh');
-    const userId = (decoded as { userId: string }).userId;
+    const session = await Session.findOne({ refreshToken: refreshToken });
+
+    if (!session) {
+      return res.status(401).json({ success: 0, error: 'Missing session information' });
+    }
+
+    const userId = session.userId;
+
     const user = await User.findById(userId);
 
     // Generate a new access token
-    const accessToken = jwt.sign({ userId: userId }, 'secret_ecom', { expiresIn: '1h' });
-    const newRefreshToken = jwt.sign({ userId: userId }, 'secret_ecom_refresh', { expiresIn: '1h' });
+    const newAccessToken = generateAccessToken(userId, '5m');
+    const newRefreshToken = generateRefreshToken();
 
-    res.json({ success: 1, accessToken, newRefreshToken, user });
+    // Update session
+
+    session.updatedAt = new Date();
+    session.refreshToken = newRefreshToken;
+
+    await session.save();
+
+    res.json({ success: 1, newAccessToken, newRefreshToken, user });
   } catch (err) {
     console.error('Error refreshing access token:', err);
     return res.status(401).json({ success: 0, error: 'Invalid refresh token' });
@@ -104,7 +142,7 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
 });
 
 // API for adding a product to the user's cart
-router.post('/addtocart', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/addtocart', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
     const { productId, color, quantity, size } = req.body;
 
@@ -128,7 +166,7 @@ router.post('/addtocart', authenticateJWT, async (req: AuthenticatedRequest, res
 });
 
 // API for removing a product from the user's cart
-router.post('/removefromcart', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/removefromcart', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
     const { cartItemId } = req.body;
 

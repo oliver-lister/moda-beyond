@@ -40,6 +40,15 @@ const userSchema = new mongoose.Schema({
   cart: [cartItemSchema],
 });
 
+const sessionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  refreshToken: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now, required: true },
+  updatedAt: { type: Date, default: Date.now, required: true },
+});
+
+const Session = mongoose.model('Session', sessionSchema);
+
 // Define the CartItem interface
 interface CartItem {
   _id?: string;
@@ -64,4 +73,4 @@ interface UserDocument extends Document {
 
 const User = mongoose.model<UserDocument>('Users', userSchema);
 
-export { Product, User };
+export { Product, User, Session };
