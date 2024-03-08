@@ -5,7 +5,7 @@ import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../types/UserProps";
 import { useEffect, useState } from "react";
 
-const CartItem = ({ productId, size, quantity, color }: CartItemProps) => {
+const CartItem = ({ productId, size, quantity, color, remove }: CartItemProps) => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {

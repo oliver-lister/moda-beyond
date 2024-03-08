@@ -1,11 +1,17 @@
 import { Link, useParams, Params } from "react-router-dom";
-import { Breadcrumbs, Anchor, Container, Stack } from "@mantine/core";
+import {
+  Breadcrumbs,
+  Anchor,
+  Container,
+  Stack,
+  Loader,
+  Center,
+} from "@mantine/core";
 import styles from "./product.module.css";
 import ProductDisplay from "./ProductDisplay/ProductDisplay.tsx";
 import SimilarProducts from "./SimilarProducts/SimilarProducts.tsx";
 import { useEffect, useState } from "react";
 import ProductProps from "../../types/ProductProps.ts";
-import Loading from "../../components/Loading/Loading.tsx";
 
 const Product = () => {
   const { productId }: Readonly<Params<string>> | undefined = useParams();
@@ -39,9 +45,9 @@ const Product = () => {
 
   if (!product) {
     return (
-      <>
-        <Loading />
-      </>
+      <Center>
+        <Loader />
+      </Center>
     );
   }
 
@@ -62,7 +68,7 @@ const Product = () => {
             {breadcrumbItems}
           </Breadcrumbs>
           <ProductDisplay product={product} />
-          <SimilarProducts product={product} />
+          <SimilarProducts />
         </Stack>
       </Container>
     </section>

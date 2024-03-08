@@ -1,58 +1,58 @@
 import { useState, useEffect } from "react";
 import ProductProps from "../types/ProductProps";
-
-export interface Query {
-  prop: string;
-  value: string | null;
-}
+import { useSearchParams } from "react-router-dom";
 
 interface FetchProductsResult {
   products: ProductProps[] | null;
   error: Error | null;
 }
 
-export const useFetchProducts = (initialSortQuery: Query[] | null) => {
+export const useFetchProducts = () => {
   const [products, setProducts] = useState<FetchProductsResult>({
     products: null,
     error: null,
   });
-  const [query, setQuery] = useState<Query[] | null>(initialSortQuery);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let queryString = "";
-
-        if (query && query.length > 0) {
-          queryString = query
-            .map(({ prop, value }) => `${prop}=${value}`)
-            .join("&");
+    setIsLoading(true);
+    if (searchParams.get("search")) {
+      const searchProducts = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/products/searchproducts${
+              searchParams ? "?" + searchParams.toString() : ""
+            }`
+          );
+          const productData = await response.json();
+          setProducts({ products: productData, error: null });
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        } finally {
+          setIsLoading(false);
         }
-
-        const response = await fetch(
-          `http://localhost:3000/products/fetchproducts?${queryString}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
+      };
+      searchProducts();
+    } else {
+      const fetchProducts = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/products/fetchproducts${
+              searchParams ? "?" + searchParams.toString() : ""
+            }`
+          );
+          const productData = await response.json();
+          setProducts({ products: productData, error: null });
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        } finally {
+          setIsLoading(false);
         }
+      };
+      fetchProducts();
+    }
+  }, [searchParams]);
 
-        const products = await response.json();
-        setProducts({ products, error: null });
-      } catch (error) {
-        setProducts({
-          products: [],
-          error:
-            error instanceof Error ? error : new Error("An error occurred"),
-        });
-      }
-    };
-    fetchProducts();
-  }, [query]);
-
-  const updateQuery = (newSortQuery: Query[] | null) => {
-    setQuery(newSortQuery);
-  };
-
-  return { ...products, updateQuery };
+  return { ...products, isLoading };
 };

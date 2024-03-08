@@ -7,12 +7,9 @@ import {
   Box,
   Text,
 } from "@mantine/core";
-import styles from "./shop.module.css";
-import { useEffect, useState } from "react";
-import Item from "../../components/Item/Item.tsx";
-import Loading from "../../components/Loading/Loading.tsx";
-import ProductProps from "../../types/ProductProps.ts";
+import ItemContainer from "./ItemContainer/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
+import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
 
 type SortOption = {
   sortBy: string;
@@ -26,44 +23,8 @@ const sortOptions: { [key: string]: SortOption } = {
 };
 
 const Shop = () => {
-  const [products, setProducts] = useState<ProductProps[] | null>(null);
+  const { products, isLoading } = useFetchProducts();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    if (!searchParams.get("search")) {
-      const fetchProducts = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/products/fetchproducts${
-              searchParams ? "?" + searchParams.toString() : ""
-            }`
-          );
-          const productData = await response.json();
-          setProducts(productData);
-        } catch (error) {
-          console.error("Error fetching products:", error);
-        }
-      };
-
-      fetchProducts();
-    } else {
-      const searchProducts = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/products/searchproducts${
-              searchParams ? "?" + searchParams.toString() : ""
-            }`
-          );
-          const productData = await response.json();
-          setProducts(productData);
-        } catch (error) {
-          console.error("Error fetching products:", error);
-        }
-      };
-
-      searchProducts();
-    }
-  }, [searchParams]);
 
   const handleChangeSort = (value: string) => {
     const sort = sortOptions[value];
@@ -72,12 +33,8 @@ const Shop = () => {
     setSearchParams(searchParams);
   };
 
-  if (!products) {
-    return <Loading />;
-  }
-
   return (
-    <section className={styles.shop_category}>
+    <section style={{ padding: "1rem 0" }}>
       <Container size="xl">
         <Stack gap="lg">
           <SimpleGrid cols={3} style={{ alignItems: "center" }}>
@@ -86,11 +43,17 @@ const Shop = () => {
                 ? `Showing results for ${searchParams.get("search")}`
                 : searchParams.get("category")?.toUpperCase()}
             </Text>
-            <Box className={styles.index} style={{ textAlign: "center" }}>
-              <Text>
-                <span>Showing 1-{products.length}</span> out of{" "}
-                {products.length} products.
-              </Text>
+            <Box style={{ textAlign: "center" }}>
+              {!isLoading && products ? (
+                <Text>
+                  <span style={{ fontWeight: "600" }}>
+                    Showing 1-{products.length}
+                  </span>{" "}
+                  out of {products.length} products.
+                </Text>
+              ) : (
+                <div>Loading</div>
+              )}
             </Box>
             <Group justify="flex-end">
               <Select
@@ -108,11 +71,7 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
-            {products.map(({ _id, ...rest }) => (
-              <Item key={_id} _id={_id} {...rest} />
-            ))}
-          </SimpleGrid>
+          <ItemContainer products={products} isLoading={isLoading} />
         </Stack>
       </Container>
     </section>
