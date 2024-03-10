@@ -25,6 +25,7 @@ const SimilarProducts = () => {
                 }: ProductProps) => (
                   <Item
                     key={_id}
+                    _id={_id}
                     brand={brand}
                     name={name}
                     images={images}

@@ -3,43 +3,13 @@ import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../types/UserProps";
-import { useEffect, useState } from "react";
-import ProductProps from "../../../types/ProductProps";
 
-const CartItem = ({ productId, size, quantity, color }: CartItemProps) => {
-  const [product, setProduct] = useState<ProductProps | null>(null);
-
-  useEffect(() => {
-    const fetchProductById = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/products/fetchproductbyid/${productId}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const productData = await response.json();
-        setProduct(productData);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        // Handle the error
-      }
-    };
-
-    fetchProductById();
-  }, [productId]);
-
-  if (!product) {
-    return null;
-  }
-
+const CartItem = ({ product, color, size, quantity }: CartItemProps) => {
   return (
     <li>
       <Grid align="center" className={styles.grid_row}>
         <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
-          <Link to={`/product/${productId}`} className={styles.link}>
+          <Link to={`/product/${product._id}`} className={styles.link}>
             <Group wrap="nowrap">
               <Image
                 src={product.images[0]}

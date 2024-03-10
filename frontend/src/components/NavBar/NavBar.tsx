@@ -7,7 +7,6 @@ import {
   Menu,
   rem,
   UnstyledButton,
-  Button,
   Title,
   TextInput,
 } from "@mantine/core";
@@ -93,63 +92,59 @@ const NavBar = () => {
             <form onSubmit={handleSearchSubmit}>
               <TextInput ref={searchInputRef} leftSection={<IconSearch />} />
             </form>
-            {user ? (
-              <Menu>
-                <Menu.Target>
-                  <UnstyledButton className={styles.profile}>
-                    <IconUserCircle
-                      style={{ width: rem(32), height: rem(32) }}
-                    />
-                  </UnstyledButton>
-                </Menu.Target>
-                <Menu.Dropdown>
+            <Menu>
+              <Menu.Target>
+                <UnstyledButton className={styles.profile}>
+                  <IconUserCircle style={{ width: rem(32), height: rem(32) }} />
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {user ? (
+                  <>
+                    <Menu.Item className={styles.profile_menu_item}>
+                      <Link
+                        to="/profile"
+                        onClick={() => opened && toggle()}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <Group>
+                          <IconUserCircle
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
+                          Profile
+                        </Group>
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item className={styles.profile_menu_item}>
+                      <Link
+                        to="/"
+                        onClick={() => {
+                          dispatch(signOut());
+                        }}
+                      >
+                        <Group>
+                          <IconLogout
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
+                          Logout
+                        </Group>
+                      </Link>
+                    </Menu.Item>
+                  </>
+                ) : (
                   <Menu.Item className={styles.profile_menu_item}>
-                    <Link
-                      to="/profile"
-                      onClick={() => opened && toggle()}
-                      style={{ textDecoration: "none" }}
-                    >
+                    <Link to="/login">
                       <Group>
-                        <IconUserCircle
+                        <IconLogin
                           style={{ width: rem(16), height: rem(16) }}
                         />
-                        Profile
+                        Login
                       </Group>
                     </Link>
                   </Menu.Item>
-                  <Menu.Item className={styles.profile_menu_item}>
-                    <Link
-                      to="/"
-                      onClick={() => {
-                        dispatch(signOut());
-                      }}
-                    >
-                      <Group>
-                        <IconLogout
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
-                        Logout
-                      </Group>
-                    </Link>
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-            ) : (
-              <Button
-                component={Link}
-                to="/login"
-                onClick={() => opened && toggle()}
-                leftSection={<IconLogin />}
-                variant="outline"
-                c="var(--mantine-color-white)"
-                styles={{
-                  root: { border: "1px solid var(--mantine-color-white)" },
-                }}
-              >
-                Login / Register
-              </Button>
-            )}
-
+                )}
+              </Menu.Dropdown>
+            </Menu>
             <Link
               to="/cart"
               className={styles.cart}

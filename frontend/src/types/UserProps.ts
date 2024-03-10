@@ -1,3 +1,5 @@
+import ProductProps from "./ProductProps";
+
 interface Address {
   street: string;
   city: string;
@@ -6,7 +8,8 @@ interface Address {
 
 export interface CartItemProps {
   _id?: string;
-  productId: string;
+  productId?: string;
+  product?: ProductProps;
   color: string | null;
   size: string | null;
   quantity: number;
