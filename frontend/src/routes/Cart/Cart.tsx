@@ -20,10 +20,27 @@ import { useEffect, useState } from "react";
 import ProductProps from "../../types/ProductProps.ts";
 import CartItemContainer from "./CartItemContainer/CartItemContainer.tsx";
 
+export type DeliveryData = {
+  standard: { fee: number; due: string };
+  express: { fee: number; due: string };
+  pickup: { fee: number; due: string };
+};
+
+const deliveryData = {
+  standard: { fee: 16, due: "16th May 2024" },
+  express: { fee: 22, due: "16th May 2024" },
+  pickup: { fee: 6, due: "16th May 2024" },
+};
+
 const Cart = () => {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const auth = useSelector((state: RootState) => state.auth);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [cart, setCart] = useState<CartItemProps[] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [delivery, setDelivery] = useState<keyof DeliveryData>("standard");
+
+  const handleDeliveryChange = (value: keyof DeliveryData) => {
+    setDelivery(value);
+  };
 
   useEffect(() => {
     const getProductData = async (productId: CartItemProps["productId"]) => {
@@ -48,6 +65,10 @@ const Cart = () => {
         const newCart = await Promise.all(
           cart.map(async (item) => {
             const productData = await getProductData(item.productId);
+            if (productData === undefined)
+              throw new Error(
+                "Could not find product data for " + item.productId
+              );
             return { ...item, product: productData };
           })
         );
@@ -58,14 +79,15 @@ const Cart = () => {
         setIsLoading(false);
       }
     };
-    if (!user || !cart) {
-      setIsLoading(false);
-    } else {
-      getCartData(user.cart);
-    }
-  }, [user, cart]);
 
-  if (isLoading) {
+    if (!auth.user) {
+      return;
+    }
+
+    getCartData(auth.user.cart);
+  }, [auth]);
+
+  if (isLoading || auth.isLoading) {
     return (
       <Center style={{ height: "80vh" }}>
         <Loader />
@@ -73,7 +95,7 @@ const Cart = () => {
     );
   }
 
-  if (!isLoading && !user) {
+  if (!isLoading && !auth.user) {
     return (
       <section className={styles.cart}>
         <Container size="xl" className={styles.no_items}>
@@ -93,7 +115,7 @@ const Cart = () => {
     );
   }
 
-  if (!isLoading && user && user.cart.length === 0) {
+  if (!isLoading && auth.user && auth.user.cart.length === 0) {
     return (
       <section className={styles.cart}>
         <Container size="xl" className={styles.no_items}>
@@ -112,37 +134,41 @@ const Cart = () => {
       </section>
     );
   }
-
-  if (!isLoading && user && !cart) {
-    return <div>whoops... uncaught error here..</div>;
-  }
-
-  return (
-    <section className={styles.container}>
-      <Container size="xl">
-        <Grid>
-          <GridCol span={{ base: 12, lg: 8 }} className={styles.cart}>
-            <Stack className={styles.cart}>
-              <h2 className={styles.heading}>Shopping Cart</h2>
-              <Stack gap="xs" className={styles.grid}>
-                <p className={styles.sub_heading}>Parcel from The Shopper</p>
-                <Alert
-                  title="Estimated delivery: March 2 - 6"
-                  icon={<IconTruck />}
-                  className={styles.alert}
-                />
-                <CartItemContainer cart={cart} isLoading={isLoading} />
-                <Delivery />
+  if (cart) {
+    return (
+      <section className={styles.container}>
+        <Container size="xl">
+          <Grid>
+            <GridCol span={{ base: 12, lg: 8 }} className={styles.cart}>
+              <Stack className={styles.cart}>
+                <h2 className={styles.heading}>Shopping Cart</h2>
+                <Stack gap="xs" className={styles.grid}>
+                  <p className={styles.sub_heading}>Parcel from The Shopper</p>
+                  <Alert
+                    title={"Estimated delivery: " + deliveryData[delivery].due}
+                    icon={<IconTruck />}
+                    className={styles.alert}
+                  />
+                  <CartItemContainer cart={cart} />
+                  <Delivery
+                    delivery={delivery}
+                    deliveryData={deliveryData}
+                    handleDeliveryChange={handleDeliveryChange}
+                  />
+                </Stack>
               </Stack>
-            </Stack>
-          </GridCol>
-          <GridCol span={{ base: 12, lg: 4 }}>
-            <OrderSummary />
-          </GridCol>
-        </Grid>
-      </Container>
-    </section>
-  );
+            </GridCol>
+            <GridCol span={{ base: 12, lg: 4 }}>
+              <OrderSummary
+                cart={cart}
+                deliveryFee={deliveryData[delivery].fee}
+              />
+            </GridCol>
+          </Grid>
+        </Container>
+      </section>
+    );
+  }
 };
 
 export default Cart;

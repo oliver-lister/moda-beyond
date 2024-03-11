@@ -1,11 +1,20 @@
 import { Stack, Group, Radio } from "@mantine/core";
 import styles from "./delivery.module.css";
+import { DeliveryData } from "../Cart";
 
-const Delivery = () => {
+const Delivery = ({
+  delivery,
+  deliveryData,
+  handleDeliveryChange,
+}: {
+  delivery: string;
+  deliveryData: DeliveryData;
+  handleDeliveryChange: (value: keyof DeliveryData) => void;
+}) => {
   return (
     <Stack className={styles.container} gap={0}>
       <p>Delivery Type</p>
-      <Radio.Group>
+      <Radio.Group value={delivery} onChange={handleDeliveryChange}>
         <Group
           justify="space-between"
           align="center"
@@ -15,7 +24,9 @@ const Delivery = () => {
             <Radio value="standard" id="standard_delivery" />
             <Stack gap={0}>
               <label htmlFor="standard_delivery">Standard Delivery</label>
-              <p className={styles.delivery_estimate}>Estimated: Feb 06-22</p>
+              <p className={styles.delivery_estimate}>
+                Estimated: {deliveryData["standard"].due}
+              </p>
             </Stack>
           </Group>
           <p>$16</p>
@@ -29,7 +40,9 @@ const Delivery = () => {
             <Radio value="express" id="express_delivery" />
             <Stack gap={0}>
               <label htmlFor="express_delivery">Express Delivery</label>
-              <p className={styles.delivery_estimate}>Estimated: Feb 06-15</p>
+              <p className={styles.delivery_estimate}>
+                Estimated: {deliveryData["standard"].due}
+              </p>
             </Stack>
           </Group>
           <p>$22</p>

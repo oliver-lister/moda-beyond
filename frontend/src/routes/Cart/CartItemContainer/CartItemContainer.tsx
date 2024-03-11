@@ -1,29 +1,12 @@
 import { CartItemProps } from "../../../types/UserProps.ts";
-import CartItem from "../CartItem/CartItem.tsx";
+import CartItem from "./CartItem/CartItem.tsx";
 
-const CartItemContainer = ({
-  cart,
-  isLoading,
-}: {
-  cart: CartItemProps[] | null;
-  isLoading: boolean;
-}) => {
-  if (isLoading) {
-    return <div>isLoading...</div>;
-  }
-
+const CartItemContainer = ({ cart }: { cart: CartItemProps[] }) => {
   return (
     <ul>
-      {cart &&
-        cart.map(({ _id, product, color, size, quantity }) => (
-          <CartItem
-            key={_id}
-            product={product}
-            color={color}
-            size={size}
-            quantity={quantity}
-          />
-        ))}
+      {cart.map((item) => (
+        <CartItem key={item._id} {...item} />
+      ))}
     </ul>
   );
 };

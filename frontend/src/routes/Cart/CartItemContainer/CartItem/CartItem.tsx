@@ -2,9 +2,13 @@ import { Image, Grid, Stack, Group, GridCol, Select } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
-import { CartItemProps } from "../../../types/UserProps";
+import { CartItemProps } from "../../../../types/UserProps";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../state/store.ts";
 
-const CartItem = ({ product, color, size, quantity }: CartItemProps) => {
+const CartItem = ({ _id, product, color, size, quantity }: CartItemProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <li>
       <Grid align="center" className={styles.grid_row}>
