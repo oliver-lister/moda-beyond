@@ -1,118 +1,22 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import UserProps from "../../types/UserProps";
-
-interface loginSignupPayload {
-  user: UserProps;
-  accessToken: string;
-  refreshToken: string;
-}
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSlice,
+  ActionReducerMapBuilder,
+} from "@reduxjs/toolkit";
+import UserProps, { CartItemProps } from "../../types/UserProps";
+import { RootState } from "../store";
 
 interface AuthState {
   accessToken: string;
   refreshToken: string;
   user: UserProps | null;
-  isAuthenticated: boolean;
   isLoading: boolean;
 }
 
-const initialState: AuthState = {
-  accessToken: localStorage.getItem("accessToken") || "",
-  refreshToken: localStorage.getItem("refreshToken") || "",
-  user: null,
-  isAuthenticated: false,
-  isLoading: false,
-};
+// AUTHENTICATION REDUCERS
 
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    signOut: (state) => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      state.accessToken = "";
-      state.refreshToken = "";
-      state.user = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginAsync.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(
-        loginAsync.fulfilled,
-        (state, action: PayloadAction<loginSignupPayload>) => {
-          const { user, accessToken, refreshToken } = action.payload;
-
-          state.user = user;
-          state.accessToken = accessToken;
-          state.refreshToken = refreshToken;
-
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
-
-          state.isAuthenticated = true;
-          state.isLoading = false;
-        }
-      )
-      .addCase(signupAsync.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(
-        signupAsync.fulfilled,
-        (state, action: PayloadAction<loginSignupPayload>) => {
-          const { user, accessToken, refreshToken } = action.payload;
-
-          state.user = user;
-          state.accessToken = accessToken;
-          state.refreshToken = refreshToken;
-
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
-
-          state.isAuthenticated = true;
-          state.isLoading = false;
-        }
-      )
-      .addCase(refreshAccessTokenAsync.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(refreshAccessTokenAsync.fulfilled, (state, action) => {
-        const { newAccessToken, newRefreshToken, user } = action.payload;
-
-        state.accessToken = newAccessToken;
-        state.refreshToken = newRefreshToken;
-        localStorage.setItem("accessToken", newAccessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.user = user;
-      })
-      .addCase(refreshAccessTokenAsync.rejected, (state) => {
-        state.accessToken = "";
-        state.refreshToken = "";
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        state.user = null;
-        state.isAuthenticated = false;
-        state.isLoading = false;
-      })
-      .addCase(fetchUserDataAsync.pending, (state) => {
-        state.isLoading = true;
-        console.log("fetchUserDataAsync pending");
-      })
-      .addCase(
-        fetchUserDataAsync.fulfilled,
-        (state, action: PayloadAction<UserProps>) => {
-          state.user = action.payload;
-          state.isLoading = false;
-        }
-      );
-  },
-});
+// User login
 
 interface LoginValues {
   email: string;
@@ -139,11 +43,51 @@ export const loginAsync = createAsyncThunk(
 
       return responseData;
     } catch (err) {
-      console.error("Error submitting form:", err);
-      throw err;
+      if (err instanceof Error) {
+        console.error("Error submitting login form:", err.message);
+        throw err;
+      }
     }
   }
 );
+
+interface loginSignupPayload {
+  user: UserProps;
+  accessToken: string;
+  refreshToken: string;
+}
+
+const loginReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
+  builder
+    .addCase(loginAsync.pending, (state) => {
+      state.isLoading = true;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      state.accessToken = "";
+      state.refreshToken = "";
+      state.user = null;
+    })
+    .addCase(
+      loginAsync.fulfilled,
+      (state, action: PayloadAction<loginSignupPayload>) => {
+        const { user, accessToken, refreshToken } = action.payload;
+
+        state.user = user;
+        state.accessToken = accessToken;
+        state.refreshToken = refreshToken;
+
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        state.isLoading = false;
+      }
+    )
+    .addCase(loginAsync.rejected, (state) => {
+      state.isLoading = false;
+    });
+};
+
+// User signup
 
 interface SignupValues {
   email: string;
@@ -175,11 +119,45 @@ export const signupAsync = createAsyncThunk(
 
       return responseData;
     } catch (err) {
-      console.error("Error submitting signup form:", err);
-      throw err;
+      if (err instanceof Error) {
+        console.error("Error submitting signup form:", err.message);
+        throw err;
+      }
     }
   }
 );
+
+const signupReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
+  builder
+    .addCase(signupAsync.pending, (state) => {
+      state.isLoading = true;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      state.accessToken = "";
+      state.refreshToken = "";
+      state.user = null;
+    })
+    .addCase(
+      signupAsync.fulfilled,
+      (state, action: PayloadAction<loginSignupPayload>) => {
+        const { user, accessToken, refreshToken } = action.payload;
+
+        state.user = user;
+        state.accessToken = accessToken;
+        state.refreshToken = refreshToken;
+
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        state.isLoading = false;
+      }
+    )
+    .addCase(signupAsync.rejected, (state) => {
+      state.isLoading = false;
+    });
+};
+
+// Refresh Access Token using Refresh Token
 
 export const refreshAccessTokenAsync = createAsyncThunk(
   "auth/refreshAccessToken",
@@ -201,29 +179,64 @@ export const refreshAccessTokenAsync = createAsyncThunk(
 
       return responseData;
     } catch (err) {
-      console.error("Error refreshing access token:", err);
-      throw err;
+      if (err instanceof Error) {
+        console.error("Error refreshing access token: ", err.message);
+        throw err;
+      }
     }
   }
 );
 
-interface FetchUserDataAsyncParams {
-  userId: string;
-  accessToken?: string; // Make sure accessToken is optional if it can be undefined
-}
+const refreshAccessTokenReducerBuilder = (
+  builder: ActionReducerMapBuilder<AuthState>
+) => {
+  builder
+    .addCase(refreshAccessTokenAsync.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(refreshAccessTokenAsync.fulfilled, (state, action) => {
+      const { newAccessToken, newRefreshToken, user } = action.payload;
+
+      state.accessToken = newAccessToken;
+      state.refreshToken = newRefreshToken;
+      localStorage.setItem("accessToken", newAccessToken);
+      localStorage.setItem("refreshToken", newRefreshToken);
+      state.isLoading = false;
+      state.user = user;
+    })
+    .addCase(refreshAccessTokenAsync.rejected, (state) => {
+      state.accessToken = "";
+      state.refreshToken = "";
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      state.user = null;
+
+      state.isLoading = false;
+    });
+};
+
+// Fetch user data
 
 export const fetchUserDataAsync = createAsyncThunk(
   "auth/fetchUserDataAsync",
-  async ({ userId, accessToken }: FetchUserDataAsyncParams) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await fetch(`http://localhost:3000/users/fetchuser`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(accessToken && { Authorization: accessToken }),
-        },
-        body: JSON.stringify({ userId }),
-      });
+      const { auth } = thunkAPI.getState() as RootState;
+      if (!auth.user) throw new Error("No user logged in.");
+      const userId = auth.user._id;
+      const accessToken = auth.accessToken;
+      const response = await fetch(
+        `http://localhost:3000/users/fetchuser?userId=${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(accessToken && {
+              Authorization: accessToken,
+            }),
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error fetching user data");
@@ -232,11 +245,118 @@ export const fetchUserDataAsync = createAsyncThunk(
       const userData = await response.json();
       return userData;
     } catch (err) {
-      console.error("Fetch user data error:", err);
-      throw err;
+      if (err instanceof Error) {
+        console.error("Error fetching user data:", err.message);
+        throw err;
+      }
     }
   }
 );
+
+const fetchUserDataReducerBuilder = (
+  builder: ActionReducerMapBuilder<AuthState>
+) => {
+  builder
+    .addCase(fetchUserDataAsync.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(
+      fetchUserDataAsync.fulfilled,
+      (state, action: PayloadAction<UserProps>) => {
+        state.user = action.payload;
+        state.isLoading = false;
+      }
+    )
+    .addCase(fetchUserDataAsync.rejected, (state) => {
+      state.isLoading = false;
+    });
+};
+
+// CART REDUCERS
+
+// Add to Cart
+
+export const addToCartAsync = createAsyncThunk(
+  "auth/addToCartAsync",
+  async ({ productId, color, quantity, size }: CartItemProps, thunkAPI) => {
+    try {
+      const { auth } = thunkAPI.getState() as RootState;
+      const accessToken = auth.accessToken;
+
+      const response = await fetch(`http://localhost:3000/users/addtocart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken && { Authorization: accessToken }),
+        },
+        body: JSON.stringify({
+          productId: productId,
+          color: color,
+          quantity: quantity,
+          size: size,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`Error adding product to cart: ${errorMessage}`);
+      }
+
+      thunkAPI.dispatch(fetchUserDataAsync());
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error: " + err.message);
+        throw err;
+      }
+    }
+  }
+);
+
+const addtoCartReducerBuilder = (
+  builder: ActionReducerMapBuilder<AuthState>
+) => {
+  builder
+    .addCase(addToCartAsync.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(addToCartAsync.fulfilled, (state) => {
+      state.isLoading = false;
+    })
+    .addCase(addToCartAsync.rejected, (state) => {
+      state.isLoading = false;
+    });
+};
+
+// REDUX TK INIT
+
+const initialState: AuthState = {
+  accessToken: localStorage.getItem("accessToken") || "",
+  refreshToken: localStorage.getItem("refreshToken") || "",
+  user: null,
+  isLoading: false,
+};
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    signOut: (state) => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      state.accessToken = "";
+      state.refreshToken = "";
+      state.user = null;
+      state.isLoading = false;
+    },
+  },
+  extraReducers: (builder) => {
+    loginReducerBuilder(builder);
+    signupReducerBuilder(builder);
+    refreshAccessTokenReducerBuilder(builder);
+    fetchUserDataReducerBuilder(builder);
+    addtoCartReducerBuilder(builder);
+  },
+});
 
 export const { signOut } = authSlice.actions;
 

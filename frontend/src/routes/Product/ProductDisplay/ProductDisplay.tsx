@@ -22,8 +22,13 @@ import { useMediaQuery } from "@mantine/hooks";
 import ProductProps from "../../../types/ProductProps";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
+import { useDispatch } from "react-redux";
+import { SerializedError } from "@reduxjs/toolkit";
+import { AppDispatch } from "../../../state/store.ts";
+import { addToCartAsync } from "../../../state/auth/authSlice";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const mobile = useMediaQuery("(max-width: 768px");
 
   // THUMBNAIL CLICKS MOVE IMAGE EMBLA CAROSUEL
@@ -58,45 +63,37 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
     },
   });
 
-  const handleColorClick = (hex: string) => {
+  const handleColorChange = (hex: string) => {
     setSelectedColor(hex === selectedColor ? selectedColor : hex);
   };
 
   const handleSubmit = async () => {
     try {
-      const accessToken = localStorage.getItem("accessToken");
-
-      const response = await fetch("http://localhost:3000/users/addtocart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(accessToken && { Authorization: accessToken }),
-        },
-        body: JSON.stringify({
+      await dispatch(
+        addToCartAsync({
           productId: product._id,
           color: selectedColor,
           quantity: form.values.quantity,
           size: form.values.size,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        notifications.show({
-          title: "Error! Something went wrong.",
-          message: "Please login and try again.",
-          icon: <IconX />,
-        });
-        throw new Error(`Error adding product to cart: ${errorMessage}`);
-      }
+        })
+      ).unwrap();
 
       notifications.show({
         title: "Success! You've added an item to your cart.",
         message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
         icon: <IconShoppingCart />,
       });
-    } catch (error) {
-      console.error("Fetch error:", error);
+    } catch (err) {
+      console.log(
+        "Error adding product to cart:",
+        (err as SerializedError).message
+      );
+
+      notifications.show({
+        title: "Error! Something went wrong.",
+        message: "Please login and try again.",
+        icon: <IconX />,
+      });
     }
   };
 
@@ -205,7 +202,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                           component="button"
                           type="button"
                           color={color.hex}
-                          onClick={() => handleColorClick(color.label)}
+                          onClick={() => handleColorChange(color.label)}
                           style={{ color: "#fff", cursor: "pointer" }}
                         >
                           {selectedColor === color.label && (

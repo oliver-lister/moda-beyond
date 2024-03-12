@@ -1,5 +1,5 @@
 export default interface ProductProps {
-  _id?: string;
+  _id: string;
   name: string;
   category?: "men" | "women" | "kids";
   brand: string;

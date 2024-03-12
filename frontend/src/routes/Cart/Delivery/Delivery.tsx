@@ -9,7 +9,7 @@ const Delivery = ({
 }: {
   delivery: string;
   deliveryData: DeliveryData;
-  handleDeliveryChange: (value: keyof DeliveryData) => void;
+  handleDeliveryChange: (value: string) => void;
 }) => {
   return (
     <Stack className={styles.container} gap={0}>

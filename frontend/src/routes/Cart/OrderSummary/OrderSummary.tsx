@@ -9,7 +9,11 @@ const OrderSummary = ({
   cart: CartItemProps[];
   deliveryFee: number;
 }) => {
-  const cartSum = () => cart.reduce((acc, item) => acc + item.product.price, 0);
+  const cartSum = () =>
+    cart.reduce(
+      (acc, item) => acc + (item.product ? item.product.price : 0),
+      0
+    );
 
   return (
     <Stack className={styles.container}>

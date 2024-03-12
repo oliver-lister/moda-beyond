@@ -88,7 +88,7 @@ interface AuthorizedRequest extends Request {
 // API for fetching user data
 router.get('/fetchuser', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
-    const { userId } = req.user as { userId: string };
+    const userId = req.query.userId;
     const user = await User.findById(userId);
 
     if (!user) {

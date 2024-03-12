@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../../types/UserProps";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
 
-const CartItem = ({ _id, product, color, size, quantity }: CartItemProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+const CartItem = ({ product, color, size, quantity }: CartItemProps) => {
+  if (!product) return <div>No product.</div>;
 
   return (
     <li>

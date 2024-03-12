@@ -7,9 +7,9 @@ interface Address {
 }
 
 export interface CartItemProps {
-  _id: string;
+  _id?: string;
   productId: string;
-  product: ProductProps;
+  product?: ProductProps;
   color: string | null;
   size: string | null;
   quantity: number;

@@ -10,17 +10,18 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { useNavigate } from "react-router-dom";
 import styles from "./loginsignup.module.css";
 import { IconCake, IconLock } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../state/store";
+import { SerializedError } from "@reduxjs/toolkit";
+import { AppDispatch } from "../../state/store.ts";
 import { signupAsync, loginAsync } from "../../state/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -56,11 +57,11 @@ const Signup = () => {
 
   const handleSubmit = async (values: signupValues) => {
     try {
-      dispatch(signupAsync(values));
-      navigate("/");
+      await dispatch(signupAsync(values)).unwrap();
       form.reset();
+      navigate("/");
     } catch (err) {
-      console.error("Error submitting form:", err);
+      console.log("Error submitting form:", (err as SerializedError).message);
     }
   };
 
@@ -121,9 +122,9 @@ const Signup = () => {
 };
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [isIncorrect, setIsIncorrect] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const [isError, setIsError] = useState<boolean>(false);
 
   const form = useForm({
     initialValues: {
@@ -145,12 +146,13 @@ const Login = () => {
 
   const handleSubmit = async (values: loginValues) => {
     try {
-      dispatch(loginAsync(values));
-      navigate("/");
+      setIsError(false);
+      await dispatch(loginAsync(values)).unwrap();
       form.reset();
+      navigate("/");
     } catch (err) {
-      console.error("Error submitting form:", err);
-      setIsIncorrect((prev) => !prev);
+      console.log("Error submitting form:", (err as SerializedError).message);
+      setIsError(true);
     }
   };
 
@@ -161,7 +163,7 @@ const Login = () => {
           <h2 className={styles.heading}>Login</h2>
           <p>Login to purchase products, and review your details!</p>
         </div>
-        {isIncorrect ? (
+        {isError ? (
           <Alert variant="light" color="red" title="Incorrect Details">
             Your username or password was incorrect, please try again.
           </Alert>

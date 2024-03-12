@@ -26,7 +26,7 @@ export type DeliveryData = {
   pickup: { fee: number; due: string };
 };
 
-const deliveryData = {
+const deliveryData: DeliveryData = {
   standard: { fee: 16, due: "16th May 2024" },
   express: { fee: 22, due: "16th May 2024" },
   pickup: { fee: 6, due: "16th May 2024" },
@@ -36,9 +36,9 @@ const Cart = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [cart, setCart] = useState<CartItemProps[] | null>(null);
-  const [delivery, setDelivery] = useState<keyof DeliveryData>("standard");
+  const [delivery, setDelivery] = useState<string>("standard");
 
-  const handleDeliveryChange = (value: keyof DeliveryData) => {
+  const handleDeliveryChange = (value: string) => {
     setDelivery(value);
   };
 
@@ -145,7 +145,10 @@ const Cart = () => {
                 <Stack gap="xs" className={styles.grid}>
                   <p className={styles.sub_heading}>Parcel from The Shopper</p>
                   <Alert
-                    title={"Estimated delivery: " + deliveryData[delivery].due}
+                    title={
+                      "Estimated delivery: " +
+                      deliveryData[delivery as keyof DeliveryData].due
+                    }
                     icon={<IconTruck />}
                     className={styles.alert}
                   />
@@ -161,7 +164,7 @@ const Cart = () => {
             <GridCol span={{ base: 12, lg: 4 }}>
               <OrderSummary
                 cart={cart}
-                deliveryFee={deliveryData[delivery].fee}
+                deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
               />
             </GridCol>
           </Grid>
