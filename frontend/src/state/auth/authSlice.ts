@@ -354,8 +354,8 @@ export const updateCartAsync = createAsyncThunk(
       }
 
       const { cart } = await response.json();
-      return cart;
       // thunkAPI.dispatch(fetchUserDataAsync());
+      return cart;
     } catch (err) {
       if (err instanceof Error) {
         console.error("Error: " + err.message);

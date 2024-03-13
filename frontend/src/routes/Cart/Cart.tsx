@@ -7,6 +7,8 @@ import {
   Alert,
   Center,
   Loader,
+  Text,
+  Title,
 } from "@mantine/core";
 import { IconTruck } from "@tabler/icons-react";
 import styles from "./cart.module.css";
@@ -37,7 +39,7 @@ const Cart = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [cart, setCart] = useState<CartItemProps[] | null>(null);
+  const [cart, setCart] = useState<CartItemProps[]>([]);
   const [delivery, setDelivery] = useState<string>("standard");
 
   const handleDeliveryChange = (value: string) => {
@@ -47,15 +49,20 @@ const Cart = () => {
   const handleRemoveFromCart = async (cartItemId: string) => {
     try {
       if (!cart) throw new Error("No cart exists to remove an item on.");
-      const newCart = cart.filter((item) => {
-        if (!item._id) throw new Error("Item has no _id field.");
-        return item._id.toString() !== cartItemId;
-      });
-      if (!newCart) throw new Error("newCart is undefined.");
-      await dispatch(updateCartAsync(newCart)).unwrap();
+      if (cart.length === 1) {
+        await dispatch(updateCartAsync([])).unwrap();
+        setCart([]);
+      } else {
+        const newCart = cart.filter((item) => {
+          if (!item._id) throw new Error("Item has no _id field.");
+          return item._id.toString() !== cartItemId;
+        });
+        if (!newCart) throw new Error("newCart is undefined.");
+        await dispatch(updateCartAsync(newCart)).unwrap();
 
-      if (!auth.user) throw new Error("No user logged in.");
-      setCart(auth.user.cart);
+        if (!auth.user) throw new Error("No user logged in.");
+        setCart(auth.user.cart);
+      }
     } catch (err) {
       if (err instanceof Error) console.log(err.message);
     }
@@ -179,19 +186,26 @@ const Cart = () => {
         <Grid>
           <GridCol span={{ base: 12, lg: 8 }} className={styles.cart}>
             <Stack className={styles.cart}>
-              <h2 className={styles.heading}>Shopping Cart</h2>
+              <Title order={2}>Shopping Cart</Title>
               <Stack gap="xs" className={styles.grid}>
-                <p className={styles.sub_heading}>Parcel from The Shopper</p>
                 {isLoading || auth.isLoading ? (
                   <Center style={{ height: "40vh" }}>
                     <Loader />
                   </Center>
-                ) : cart && cart.length === 0 ? (
-                  <Button component={Link} to="/">
-                    Start Shopping
-                  </Button>
+                ) : cart.length === 0 ? (
+                  <Center style={{ height: "40vh" }}>
+                    <Stack>
+                      <Text>You have no items in your shopping cart.</Text>
+                      <Button component={Link} to="/">
+                        Start Shopping
+                      </Button>
+                    </Stack>
+                  </Center>
                 ) : (
                   <>
+                    <p className={styles.sub_heading}>
+                      Parcel from The Shopper
+                    </p>
                     <Alert
                       title={
                         "Estimated delivery: " +
@@ -217,12 +231,13 @@ const Cart = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, lg: 4 }}>
-            {cart ? (
+            {cart.length === 0 ? null : (
               <OrderSummary
                 cart={cart}
+                isLoading={isLoading || auth.isLoading}
                 deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
               />
-            ) : null}
+            )}
           </GridCol>
         </Grid>
       </Container>
