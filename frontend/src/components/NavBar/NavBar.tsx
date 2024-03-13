@@ -150,12 +150,16 @@ const NavBar = () => {
               onClick={() => opened && toggle()}
             >
               <Group>
-                {!user || user.cart.length === 0 ? (
+                {!user || (user && user.cart && user.cart.length === 0) ? (
                   <IconShoppingCart
                     style={{ width: rem(32), height: rem(32) }}
                   />
                 ) : (
-                  <Indicator inline label={user.cart.length} size={16}>
+                  <Indicator
+                    inline
+                    label={user.cart && user.cart.length}
+                    size={16}
+                  >
                     <IconShoppingCart
                       style={{ width: rem(32), height: rem(32) }}
                     />

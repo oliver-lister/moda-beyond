@@ -12,11 +12,7 @@ const OrderSummary = ({
   isLoading: boolean;
 }) => {
   const cartSum = () =>
-    cart.reduce(
-      (acc, item) =>
-        acc + (item.product ? item.product.price * item.quantity : 0),
-      0
-    );
+    cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const cartTotalQuantity = () =>
     cart.reduce((acc, item) => acc + item.quantity, 0);

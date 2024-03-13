@@ -24,6 +24,7 @@ const Product = mongoose.model('Product', productSchema);
 const cartItemSchema = new mongoose.Schema({
   productId: { type: String, required: true },
   size: { type: String, required: true },
+  price: { type: Number, required: true },
   color: { type: String, required: true },
   quantity: { type: Number, default: 1 },
 });
@@ -37,7 +38,7 @@ const userSchema = new mongoose.Schema({
   address: { street: String, city: String, zipCode: String },
   shoppingPreference: { type: String, required: true },
   newsletter: { type: Boolean, required: true, default: true },
-  cart: [cartItemSchema],
+  cart: { type: [cartItemSchema], required: true, default: [] },
 });
 
 const sessionSchema = new mongoose.Schema({
@@ -53,6 +54,7 @@ const Session = mongoose.model('Session', sessionSchema);
 interface CartItem {
   _id?: string;
   productId: string;
+  price: number;
   size?: string;
   color?: string;
   quantity?: number;

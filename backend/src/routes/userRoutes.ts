@@ -147,7 +147,7 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
 // API for adding a product to the user's cart
 router.post('/addtocart', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
-    const { productId, color, quantity, size } = req.body;
+    const { productId, color, price, quantity, size } = req.body;
 
     const { userId } = req.user as { userId: string };
     const user = await User.findById(userId);
@@ -157,66 +157,13 @@ router.post('/addtocart', authorizeJWT, async (req: AuthorizedRequest, res: Resp
       return res.status(404).json({ success: 0, error: 'User or product not found' });
     }
 
-    user.cart.push({ productId, color, quantity, size });
+    user.cart.push({ productId, color, price, quantity, size });
 
     await user.save();
 
     return res.json({ success: 1, message: 'Product added to the cart successfully' });
   } catch (err: any) {
     console.error('Error adding product to cart:', err.message);
-    return res.status(500).json({ success: 0, error: err.message });
-  }
-});
-
-// API for removing a product from the user's cart
-router.post('/removefromcart', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
-  try {
-    const { cartItemId } = req.body;
-    const { userId } = req.user as { userId: string };
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ success: 0, error: 'User not found' });
-    }
-
-    user.cart = user.cart.filter((item) => {
-      return item._id?.toString() !== cartItemId;
-    });
-
-    await user.save();
-
-    return res.json({ success: 1, message: 'Product removed from the cart successfully' });
-  } catch (err: any) {
-    return res.status(500).json({ success: 0, error: err.message });
-  }
-});
-
-// API for updating a item's size in the user's cart
-router.post('/updatesize', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
-  try {
-    const { cartItemId, newSize } = req.body;
-    const { userId } = req.user as { userId: string };
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ success: 0, error: 'User not found' });
-    }
-
-    const cartItemIndex = user.cart.findIndex((item) => item._id?.toString() === cartItemId);
-
-    if (cartItemIndex === -1) {
-      return res.status(404).json({ success: 0, error: 'Cart item not found' });
-    }
-
-    // Update the size of the cart item
-    user.cart[cartItemIndex].size = newSize;
-
-    await user.save();
-
-    return res.json({ success: 1, message: 'Item size changed successfully in cart.' });
-  } catch (err: any) {
     return res.status(500).json({ success: 0, error: err.message });
   }
 });

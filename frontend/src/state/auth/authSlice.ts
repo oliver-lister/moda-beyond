@@ -279,7 +279,10 @@ const fetchUserDataReducerBuilder = (
 
 export const addToCartAsync = createAsyncThunk(
   "auth/addToCartAsync",
-  async ({ productId, color, quantity, size }: CartItemProps, thunkAPI) => {
+  async (
+    { productId, color, quantity, size, price }: CartItemProps,
+    thunkAPI
+  ) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
       const accessToken = auth.accessToken;
@@ -295,6 +298,7 @@ export const addToCartAsync = createAsyncThunk(
           color: color,
           quantity: quantity,
           size: size,
+          price: price,
         }),
       });
 
@@ -368,19 +372,11 @@ export const updateCartAsync = createAsyncThunk(
 const updateCartReducerBuilder = (
   builder: ActionReducerMapBuilder<AuthState>
 ) => {
-  builder
-    .addCase(updateCartAsync.pending, (state) => {
-      state.isLoading = true;
-    })
-    .addCase(updateCartAsync.fulfilled, (state, action) => {
-      state.isLoading = false;
-      if (state.user) {
-        state.user.cart = action.payload;
-      }
-    })
-    .addCase(updateCartAsync.rejected, (state) => {
-      state.isLoading = false;
-    });
+  builder.addCase(updateCartAsync.fulfilled, (state, action) => {
+    if (state.user) {
+      state.user.cart = action.payload;
+    }
+  });
 };
 
 // REDUX TK INIT

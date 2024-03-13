@@ -15,13 +15,12 @@ import styles from "./cart.module.css";
 import { Link } from "react-router-dom";
 import Delivery from "./Delivery/Delivery.tsx";
 import OrderSummary from "./OrderSummary/OrderSummary.tsx";
-import { CartItemProps } from "../../types/UserProps.ts";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../state/store.ts";
-import { useEffect, useState } from "react";
-import ProductProps from "../../types/ProductProps.ts";
+import { useState } from "react";
 import CartItemContainer from "./CartItemContainer/CartItemContainer.tsx";
 import { updateCartAsync } from "../../state/auth/authSlice.ts";
+import { CartItemProps } from "../../types/UserProps.ts";
 
 export type DeliveryData = {
   standard: { fee: number; due: string };
@@ -37,9 +36,8 @@ const deliveryData: DeliveryData = {
 
 const Cart = () => {
   const auth = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [cart, setCart] = useState<CartItemProps[]>([]);
   const [delivery, setDelivery] = useState<string>("standard");
 
   const handleDeliveryChange = (value: string) => {
@@ -48,21 +46,14 @@ const Cart = () => {
 
   const handleRemoveFromCart = async (cartItemId: string) => {
     try {
-      if (!cart) throw new Error("No cart exists to remove an item on.");
-      if (cart.length === 1) {
-        await dispatch(updateCartAsync([])).unwrap();
-        setCart([]);
-      } else {
-        const newCart = cart.filter((item) => {
-          if (!item._id) throw new Error("Item has no _id field.");
-          return item._id.toString() !== cartItemId;
-        });
-        if (!newCart) throw new Error("newCart is undefined.");
-        await dispatch(updateCartAsync(newCart)).unwrap();
-
-        if (!auth.user) throw new Error("No user logged in.");
-        setCart(auth.user.cart);
-      }
+      if (!user || !user.cart)
+        throw new Error("No cart exists to remove an item on.");
+      const newCart = user.cart.filter((item: CartItemProps) => {
+        if (!item._id) throw new Error("Item has no _id field.");
+        return item._id.toString() !== cartItemId;
+      });
+      if (!newCart) throw new Error("newCart is undefined.");
+      await dispatch(updateCartAsync(newCart)).unwrap();
     } catch (err) {
       if (err instanceof Error) console.log(err.message);
     }
@@ -70,95 +61,43 @@ const Cart = () => {
 
   const handleUpdateSize = async (cartItemId: string, newSize: string) => {
     try {
+      if (!user) throw new Error("Please log in.");
+      const cart = user.cart;
       if (!cart) throw new Error("No cart exists to update an item on.");
-      const newCart = [...cart];
-      const itemIndex = newCart.findIndex((item) => {
+      const newCart = cart.map((item) => {
         if (!item._id) throw new Error("Item has no _id field.");
-        return item._id.toString() === cartItemId;
+        if (item._id.toString() === cartItemId) {
+          return { ...item, size: newSize };
+        }
+        return item;
       });
 
-      if (itemIndex === -1) throw new Error("Item does not exist in the cart.");
-
-      newCart[itemIndex].size = newSize;
-
       await dispatch(updateCartAsync(newCart)).unwrap();
-
-      if (!auth.user) throw new Error("No user logged in.");
-      setCart(auth.user.cart);
     } catch (err) {
       if (err instanceof Error) console.log(err.message);
     }
   };
-
   const handleUpdateQuantity = async (
     cartItemId: string,
     newQuantity: string
   ) => {
     try {
+      if (!user) throw new Error("Please log in.");
+      const cart = user.cart;
       if (!cart) throw new Error("No cart exists to update an item on.");
-      const newCart = [...cart];
-      const itemIndex = newCart.findIndex((item) => {
+      const newCart = cart.map((item) => {
         if (!item._id) throw new Error("Item has no _id field.");
-        return item._id.toString() === cartItemId;
+        if (item._id.toString() === cartItemId) {
+          return { ...item, quantity: Number(newQuantity) };
+        }
+        return item;
       });
 
-      if (itemIndex === -1) throw new Error("Item does not exist in the cart.");
-
-      newCart[itemIndex].quantity = Number(newQuantity);
-
       await dispatch(updateCartAsync(newCart)).unwrap();
-
-      if (!auth.user) throw new Error("No user logged in.");
-      setCart(auth.user.cart);
     } catch (err) {
       if (err instanceof Error) console.log(err.message);
     }
   };
-
-  useEffect(() => {
-    const getProductData = async (productId: CartItemProps["productId"]) => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/products/fetchproductbyid/${productId}`
-        );
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch product data: ${response.statusText}`
-          );
-        }
-        const productData = await response.json();
-        return productData as ProductProps;
-      } catch (err) {
-        if (err instanceof Error) console.log(err.message);
-      }
-    };
-    const getCartData = async (cart: CartItemProps[]) => {
-      try {
-        setIsLoading(true);
-        const newCart = await Promise.all(
-          cart.map(async (item) => {
-            const productData = await getProductData(item.productId);
-            if (productData === undefined)
-              throw new Error(
-                "Could not find product data for " + item.productId
-              );
-            return { ...item, product: productData };
-          })
-        );
-        setCart(newCart);
-        setIsLoading(false);
-      } catch (err) {
-        if (err instanceof Error) console.log(err.message);
-        setIsLoading(false);
-      }
-    };
-
-    if (!auth.user) {
-      return;
-    }
-
-    getCartData(auth.user.cart);
-  }, [auth]);
 
   if (!auth.user && !auth.isLoading) {
     return (
@@ -179,7 +118,6 @@ const Cart = () => {
       </section>
     );
   }
-
   return (
     <section className={styles.container}>
       <Container size="xl">
@@ -188,11 +126,11 @@ const Cart = () => {
             <Stack className={styles.cart}>
               <Title order={2}>Shopping Cart</Title>
               <Stack gap="xs" className={styles.grid}>
-                {isLoading || auth.isLoading ? (
+                {auth.isLoading ? (
                   <Center style={{ height: "40vh" }}>
                     <Loader />
                   </Center>
-                ) : cart.length === 0 ? (
+                ) : user && user.cart && user.cart.length === 0 ? (
                   <Center style={{ height: "40vh" }}>
                     <Stack>
                       <Text>You have no items in your shopping cart.</Text>
@@ -215,7 +153,7 @@ const Cart = () => {
                       className={styles.alert}
                     />
                     <CartItemContainer
-                      cart={cart}
+                      cart={auth.user && auth.user.cart}
                       handleRemoveFromCart={handleRemoveFromCart}
                       handleUpdateSize={handleUpdateSize}
                       handleUpdateQuantity={handleUpdateQuantity}
@@ -231,10 +169,10 @@ const Cart = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, lg: 4 }}>
-            {cart.length === 0 ? null : (
+            {!user ? null : user.cart.length === 0 ? null : (
               <OrderSummary
-                cart={cart}
-                isLoading={isLoading || auth.isLoading}
+                cart={user.cart}
+                isLoading={auth.isLoading}
                 deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
               />
             )}

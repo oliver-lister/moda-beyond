@@ -75,6 +75,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
           color: selectedColor,
           quantity: form.values.quantity,
           size: form.values.size,
+          price: product.price,
         })
       ).unwrap();
 
