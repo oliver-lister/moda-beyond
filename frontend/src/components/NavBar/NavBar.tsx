@@ -57,7 +57,6 @@ const NavBar = () => {
         { replace: true }
       );
     }
-    searchInputRef.current.value = "";
   };
 
   return (

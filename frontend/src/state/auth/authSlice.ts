@@ -4,8 +4,9 @@ import {
   createSlice,
   ActionReducerMapBuilder,
 } from "@reduxjs/toolkit";
-import UserProps, { CartItemProps } from "../../types/UserProps";
+import UserProps from "../../types/UserProps";
 import { RootState } from "../store";
+import { CartItemProps } from "../../types/UserProps";
 
 interface AuthState {
   accessToken: string;
@@ -327,6 +328,61 @@ const addtoCartReducerBuilder = (
     });
 };
 
+// Update Cart
+
+export const updateCartAsync = createAsyncThunk(
+  "auth/updateCartAsync",
+  async (newCart: CartItemProps[], thunkAPI) => {
+    try {
+      const { auth } = thunkAPI.getState() as RootState;
+      const accessToken = auth.accessToken;
+
+      const response = await fetch(`http://localhost:3000/users/updatecart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken && { Authorization: accessToken }),
+        },
+        body: JSON.stringify({
+          newCart: newCart,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`Error updating cart: ${errorMessage}`);
+      }
+
+      const { cart } = await response.json();
+      return cart;
+      // thunkAPI.dispatch(fetchUserDataAsync());
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error: " + err.message);
+        throw err;
+      }
+    }
+  }
+);
+
+const updateCartReducerBuilder = (
+  builder: ActionReducerMapBuilder<AuthState>
+) => {
+  builder
+    .addCase(updateCartAsync.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(updateCartAsync.fulfilled, (state, action) => {
+      state.isLoading = false;
+      if (state.user) {
+        state.user.cart = action.payload;
+      }
+    })
+    .addCase(updateCartAsync.rejected, (state) => {
+      state.isLoading = false;
+    });
+};
+
 // REDUX TK INIT
 
 const initialState: AuthState = {
@@ -340,7 +396,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    signOut: (state) => {
+    signOut: (state: AuthState) => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       state.accessToken = "";
@@ -355,6 +411,7 @@ const authSlice = createSlice({
     refreshAccessTokenReducerBuilder(builder);
     fetchUserDataReducerBuilder(builder);
     addtoCartReducerBuilder(builder);
+    updateCartReducerBuilder(builder);
   },
 });
 

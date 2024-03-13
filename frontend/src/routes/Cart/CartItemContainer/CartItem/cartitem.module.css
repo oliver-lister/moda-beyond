@@ -14,6 +14,7 @@ li {
 
 .link {
   text-decoration: none;
+  color: var(--mantine-color-black);
 }
 
 .link:hover,

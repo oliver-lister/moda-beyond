@@ -1,10 +1,32 @@
-import { Image, Grid, Stack, Group, GridCol, Select } from "@mantine/core";
+import {
+  Image,
+  Grid,
+  Stack,
+  Group,
+  GridCol,
+  Select,
+  UnstyledButton,
+  Text,
+} from "@mantine/core";
 import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../../types/UserProps";
 
-const CartItem = ({ product, color, size, quantity }: CartItemProps) => {
+const CartItem = ({
+  _id,
+  product,
+  color,
+  size,
+  quantity,
+  handleRemoveFromCart,
+  handleUpdateSize,
+  handleUpdateQuantity,
+}: CartItemProps & {
+  handleRemoveFromCart: (cartItemId: string) => void;
+  handleUpdateSize: (cartItemId: string, newSize: string) => void;
+  handleUpdateQuantity: (cartItemId: string, newQuantity: string) => void;
+}) => {
   if (!product) return <div>No product.</div>;
 
   return (
@@ -19,10 +41,10 @@ const CartItem = ({ product, color, size, quantity }: CartItemProps) => {
                 className={styles.image}
               />
               <Stack gap="sm">
-                <p className={styles.title}>
+                <Text className={styles.title}>
                   {product.brand} {product.name}
-                </p>
-                <p className={styles.color}>Colour: {color}</p>
+                </Text>
+                <Text className={styles.color}>Colour: {color}</Text>
               </Stack>
             </Group>
           </Link>
@@ -34,21 +56,28 @@ const CartItem = ({ product, color, size, quantity }: CartItemProps) => {
               label="Size"
               value={size}
               data={["INTL S", "INTL M", "INTL L", "INTL XL"]}
+              onChange={(value) => value && _id && handleUpdateSize(_id, value)}
             />
             <Select
               className={styles.select}
               label="Quantity"
               value={`${quantity}`}
               data={["1", "2", "3", "4", "5"]}
+              onChange={(value) =>
+                value && _id && handleUpdateQuantity(_id, value)
+              }
             />
           </Group>
         </GridCol>
         <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
           <Stack align="flex-end">
-            <p className={styles.price}>${product.price * quantity}</p>
-            <button className={styles.remove}>
+            <Text className={styles.price}>${product.price * quantity}</Text>
+            <UnstyledButton
+              className={styles.remove}
+              onClick={() => _id && handleRemoveFromCart(_id)}
+            >
               <IconTrash />
-            </button>
+            </UnstyledButton>
           </Stack>
         </GridCol>
       </Grid>
