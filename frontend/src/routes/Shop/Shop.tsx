@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   Box,
   Text,
+  Title,
 } from "@mantine/core";
 import ItemContainer from "./ItemContainer/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
@@ -39,11 +40,11 @@ const Shop = () => {
       <Container size="xl">
         <Stack gap="lg">
           <SimpleGrid cols={3} style={{ alignItems: "center" }}>
-            <Text>
+            <Title order={2} size="1rem">
               {searchParams.get("search")
                 ? `Showing results for ${searchParams.get("search")}`
                 : searchParams.get("category")?.toUpperCase()}
-            </Text>
+            </Title>
             <Box style={{ textAlign: "center" }}>
               {!isLoading && products ? (
                 <Text>

@@ -144,6 +144,19 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
   }
 });
 
+// API for clearing out sessions in database
+router.delete('/clearsessions', async (req: AuthorizedRequest, res: Response) => {
+  try {
+    // Delete all sessions
+    await Session.deleteMany({});
+
+    return res.json({ success: 1, message: 'All sessions cleared successfully' });
+  } catch (err) {
+    console.error('Error clearing sessions:', err);
+    return res.status(500).json({ success: 0, error: 'Internal Server Error' });
+  }
+});
+
 // API for adding a product to the user's cart
 router.post('/addtocart', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {

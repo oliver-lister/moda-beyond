@@ -11,6 +11,7 @@ import {
 import { IconTrash, IconEdit } from "@tabler/icons-react";
 import { ProductProps } from "../../AddProduct/components/AddProductForm";
 import styles from "../viewProducts.module.css";
+import { useNavigate } from "react-router-dom";
 
 const GridRow = ({
   product,
@@ -21,6 +22,7 @@ const GridRow = ({
   openImages: (product: ProductProps) => void;
   removeProduct: (id: string | undefined) => void;
 }) => {
+  const navigate = useNavigate();
   return (
     <>
       <GridCol span={3}>
@@ -53,7 +55,10 @@ const GridRow = ({
       </GridCol>
       <GridCol span={2}>
         <Group justify="center">
-          <UnstyledButton className={styles.edit}>
+          <UnstyledButton
+            className={styles.edit}
+            onClick={() => navigate(`/editproduct/${product._id}`)}
+          >
             <IconEdit />
           </UnstyledButton>
           <UnstyledButton

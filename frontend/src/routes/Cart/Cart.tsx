@@ -64,12 +64,51 @@ const Cart = () => {
       if (!user) throw new Error("Please log in.");
       const cart = user.cart;
       if (!cart) throw new Error("No cart exists to update an item on.");
-      const newCart = cart.map((item) => {
+
+      const itemToUpdate = cart.find((item) => {
         if (!item._id) throw new Error("Item has no _id field.");
-        if (item._id.toString() === cartItemId) {
-          return { ...item, size: newSize };
+        return item._id.toString() === cartItemId;
+      });
+
+      if (!itemToUpdate) throw new Error("Cannot find item to update.");
+
+      const sameItemIndex = cart.findIndex((item) => {
+        return (
+          item.productId === itemToUpdate.productId &&
+          item.size === newSize &&
+          item.color === itemToUpdate.color
+        );
+      });
+
+      let newCart: CartItemProps[] = [];
+
+      // If same item with same size doesn't exist, amend current item to new Size
+      if (sameItemIndex === -1) {
+        newCart = cart.map((item) => {
+          if (!item._id) throw new Error("Item has no _id field.");
+          if (item._id.toString() === cartItemId) {
+            return { ...item, size: newSize };
+          }
+          return item;
+        });
+
+        await dispatch(updateCartAsync(newCart)).unwrap();
+        return;
+      }
+
+      // If same item with same size does exist, add to its quantity
+      cart.forEach((item, index) => {
+        if (!item._id) throw new Error("Item has no _id field.");
+        if (index === sameItemIndex) {
+          const updatedQuantity =
+            Number(item.quantity) + Number(itemToUpdate.quantity);
+          newCart.push({
+            ...item,
+            quantity: updatedQuantity,
+          });
+        } else if (item._id.toString() !== cartItemId) {
+          newCart.push(item);
         }
-        return item;
       });
 
       await dispatch(updateCartAsync(newCart)).unwrap();
@@ -77,6 +116,7 @@ const Cart = () => {
       if (err instanceof Error) console.log(err.message);
     }
   };
+
   const handleUpdateQuantity = async (
     cartItemId: string,
     newQuantity: string

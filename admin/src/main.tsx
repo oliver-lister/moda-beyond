@@ -16,6 +16,7 @@ import "@mantine/carousel/styles.css";
 import "./index.css";
 import AddProduct from "./routes/AddProduct/AddProduct.tsx";
 import ViewProducts from "./routes/ViewProducts/ViewProducts.tsx";
+import EditProduct from "./routes/EditProduct/EditProduct.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
@@ -43,6 +44,16 @@ const router = createBrowserRouter([
       {
         path: "/viewproducts",
         element: <ViewProducts />,
+      },
+      {
+        path: "/editproduct",
+        element: <EditProduct />,
+        children: [
+          {
+            path: ":productId",
+            element: <EditProduct />,
+          },
+        ],
       },
     ],
   },
