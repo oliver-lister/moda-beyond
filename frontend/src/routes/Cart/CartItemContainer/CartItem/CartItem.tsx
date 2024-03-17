@@ -108,7 +108,7 @@ const CartItem = ({
               className={styles.select}
               label="Size"
               value={size}
-              data={["INTL S", "INTL M", "INTL L", "INTL XL"]}
+              data={product.availableSizes}
               onChange={(value) => value && _id && handleUpdateSize(_id, value)}
             />
             <Select

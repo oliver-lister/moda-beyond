@@ -257,20 +257,12 @@ export const fetchUserDataAsync = createAsyncThunk(
 const fetchUserDataReducerBuilder = (
   builder: ActionReducerMapBuilder<AuthState>
 ) => {
-  builder
-    .addCase(fetchUserDataAsync.pending, (state) => {
-      state.isLoading = true;
-    })
-    .addCase(
-      fetchUserDataAsync.fulfilled,
-      (state, action: PayloadAction<UserProps>) => {
-        state.user = action.payload;
-        state.isLoading = false;
-      }
-    )
-    .addCase(fetchUserDataAsync.rejected, (state) => {
-      state.isLoading = false;
-    });
+  builder.addCase(
+    fetchUserDataAsync.fulfilled,
+    (state, action: PayloadAction<UserProps>) => {
+      state.user = action.payload;
+    }
+  );
 };
 
 // CART REDUCERS
@@ -358,7 +350,7 @@ export const updateCartAsync = createAsyncThunk(
       }
 
       const { cart } = await response.json();
-      // thunkAPI.dispatch(fetchUserDataAsync());
+      thunkAPI.dispatch(fetchUserDataAsync());
       return cart;
     } catch (err) {
       if (err instanceof Error) {

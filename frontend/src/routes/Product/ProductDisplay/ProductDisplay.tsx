@@ -22,13 +22,14 @@ import { useMediaQuery } from "@mantine/hooks";
 import ProductProps from "../../../types/ProductProps";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SerializedError } from "@reduxjs/toolkit";
-import { AppDispatch } from "../../../state/store.ts";
-import { addToCartAsync } from "../../../state/auth/authSlice";
+import { RootState, AppDispatch } from "../../../state/store.ts";
+import { addToCartAsync, updateCartAsync } from "../../../state/auth/authSlice";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const auth = useSelector((state: RootState) => state.auth);
   const mobile = useMediaQuery("(max-width: 768px");
 
   // THUMBNAIL CLICKS MOVE IMAGE EMBLA CAROSUEL
@@ -69,21 +70,50 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
 
   const handleSubmit = async () => {
     try {
-      await dispatch(
-        addToCartAsync({
-          productId: product._id,
-          color: selectedColor,
-          quantity: form.values.quantity,
-          size: form.values.size,
-          price: product.price,
-        })
-      ).unwrap();
+      if (!auth.user) throw new Error("No user signed in.");
+      // See if the same item exists in the users cart
+      const sameItemIndex = auth.user.cart.findIndex(
+        (item) =>
+          item.productId === product._id &&
+          item.color === selectedColor &&
+          item.size === form.values.size
+      );
+      // If it doesn't exist, dispatch the new item to be added
+      if (sameItemIndex === -1) {
+        await dispatch(
+          addToCartAsync({
+            productId: product._id,
+            color: selectedColor,
+            quantity: form.values.quantity,
+            size: form.values.size,
+            price: product.price,
+          })
+        ).unwrap();
 
-      notifications.show({
-        title: "Success! You've added an item to your cart.",
-        message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
-        icon: <IconShoppingCart />,
-      });
+        notifications.show({
+          title: "Success! You've added an item to your cart.",
+          message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
+          icon: <IconShoppingCart />,
+        });
+      }
+      // If it does exist, add to its quantity.
+      if (sameItemIndex >= 0) {
+        const newCart = auth.user.cart.map((item, index) => {
+          if (index === sameItemIndex) {
+            const updatedQuantity = Number(item.quantity) + 1;
+            return { ...item, quantity: updatedQuantity };
+          }
+          return item;
+        });
+
+        await dispatch(updateCartAsync(newCart)).unwrap();
+
+        notifications.show({
+          title: "Success! You've added an item to your cart.",
+          message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
+          icon: <IconShoppingCart />,
+        });
+      }
     } catch (err) {
       console.log(
         "Error adding product to cart:",
