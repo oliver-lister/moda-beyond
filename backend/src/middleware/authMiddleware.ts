@@ -1,26 +1,27 @@
 import jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import 'dotenv/config';
-
-interface AuthorizedRequest extends Request {
-  user?: string | jwt.JwtPayload;
-}
+import { AuthorizedRequest } from '../routes/userRoutes/userRoutes';
 
 // JWT Authentication Middleware
 const authorizeJWT = (req: AuthorizedRequest, res: Response, next: NextFunction) => {
   const accessToken = req.header('Authorization');
+  const tokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
 
-  if (!accessToken || !process.env.JWT_ACCESS_TOKEN_SECRET) {
-    return res.status(401).json({ success: 0, error: 'Access Denied - Missing Token or Missing Token Secret' });
+  if (!accessToken) {
+    return res.status(401).json({ success: false, error: 'Access denied, missing token or missing token secret', errorCode: 'MISSING_TOKEN' });
+  }
+
+  if (!tokenSecret) {
+    return res.status(400).json({ success: false, error: 'Bad request: Missing token secret', errorCode: 'MISSING_TOKEN_SECRET' });
   }
 
   try {
-    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN_SECRET);
+    const decoded = jwt.verify(accessToken, tokenSecret);
     req.user = decoded;
     next();
-  } catch (error) {
-    console.error('JWT Verification Error:', error);
-    return res.status(403).json({ success: 0, error: 'Access Denied - Invalid Token' });
+  } catch (err: any) {
+    return res.status(403).json({ success: false, error: `Access denied, invalid token: ${err.message}`, errorCode: 'INVALID_TOKEN' });
   }
 };
 

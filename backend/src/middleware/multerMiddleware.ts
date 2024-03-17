@@ -14,8 +14,8 @@ const tempStorage = multer.diskStorage({
       }
 
       cb(null, folderPath);
-    } catch (error) {
-      console.log(error);
+    } catch (err: any) {
+      throw err;
     }
   },
   filename: (req, file, cb) => {

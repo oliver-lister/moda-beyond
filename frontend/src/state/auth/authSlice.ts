@@ -226,21 +226,24 @@ export const fetchUserDataAsync = createAsyncThunk(
       if (!auth.user) throw new Error("No user logged in.");
       const userId = auth.user._id;
       const accessToken = auth.accessToken;
+
+      if (!accessToken) {
+        throw new Error("No access token.");
+      }
+
       const response = await fetch(
-        `http://localhost:3000/users/fetchuser?userId=${userId}`,
+        `http://localhost:3000/users/${userId}/fetchdata`,
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
-            ...(accessToken && {
-              Authorization: accessToken,
-            }),
+            Authorization: accessToken,
           },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Error fetching user data");
+        const { error } = await response.json();
+        throw new Error(`Error fetching user data: ${error}`);
       }
 
       const userData = await response.json();
@@ -277,26 +280,35 @@ export const addToCartAsync = createAsyncThunk(
   ) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
+      if (!auth.user) {
+        throw new Error(`User not logged in`);
+      }
       const accessToken = auth.accessToken;
 
-      const response = await fetch(`http://localhost:3000/users/addtocart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(accessToken && { Authorization: accessToken }),
-        },
-        body: JSON.stringify({
-          productId: productId,
-          color: color,
-          quantity: quantity,
-          size: size,
-          price: price,
-        }),
-      });
+      if (!accessToken) {
+        throw new Error("No access token.");
+      }
+      const response = await fetch(
+        `http://localhost:3000/users/${auth.user._id}/cart/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: accessToken,
+          },
+          body: JSON.stringify({
+            productId: productId,
+            color: color,
+            quantity: quantity,
+            size: size,
+            price: price,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Error adding product to cart: ${errorMessage}`);
+        const { error } = await response.json();
+        throw new Error(`Error updating cart: ${error}`);
       }
 
       thunkAPI.dispatch(fetchUserDataAsync());
@@ -331,22 +343,33 @@ export const updateCartAsync = createAsyncThunk(
   async (newCart: CartItemProps[], thunkAPI) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
+      if (!auth.user) {
+        throw new Error(`User not logged in`);
+      }
+
       const accessToken = auth.accessToken;
 
-      const response = await fetch(`http://localhost:3000/users/updatecart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(accessToken && { Authorization: accessToken }),
-        },
-        body: JSON.stringify({
-          newCart: newCart,
-        }),
-      });
+      if (!accessToken) {
+        throw new Error("No access token.");
+      }
+
+      const response = await fetch(
+        `http://localhost:3000/users/${auth.user._id}/cart/update`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: accessToken,
+          },
+          body: JSON.stringify({
+            newCart: newCart,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Error updating cart: ${errorMessage}`);
+        const { error } = await response.json();
+        throw new Error(`Error updating cart: ${error}`);
       }
 
       const { cart } = await response.json();

@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express';
-import { tempUpload } from '../middleware/multerMiddleware';
-import { Product } from '../models/models';
-import { port } from '../index';
-import mongoose, { SortOrder } from 'mongoose';
+import { tempUpload } from '../../middleware/multerMiddleware';
+import { Product } from '../../models/models';
+import { port } from '../../index';
+import { SortOrder } from 'mongoose';
 import * as fs from 'fs';
 
 const router = express.Router();
 
-router.post('/addproduct', tempUpload.array('productImg'), async (req, res) => {
+router.post('/add', tempUpload.array('productImg'), async (req, res) => {
   try {
     const newProductData = {
       name: req.body.name,
@@ -24,7 +24,7 @@ router.post('/addproduct', tempUpload.array('productImg'), async (req, res) => {
     const tempPath = './upload/images/tempDir';
     const newPath = `./upload/images/${newProduct.id}`;
 
-    fs.rename(tempPath, newPath, (err) => (err ? console.log(err) : console.log('Successfully renamed the directory with Product Id.')));
+    fs.rename(tempPath, newPath, (err: any) => (err ? console.log(err.message) : console.log('Successfully renamed the directory with Product Id.')));
 
     // Update the product with image URLs
     const imageUrls = (req.files as Express.Multer.File[]).map(
@@ -33,23 +33,17 @@ router.post('/addproduct', tempUpload.array('productImg'), async (req, res) => {
 
     newProduct.images = imageUrls;
 
-    await newProduct.save(); // save new product to MongoDB
+    await newProduct.save();
 
-    res.json({
-      success: 1,
-      product: newProduct,
-    });
-  } catch (err) {
-    res.json({
-      success: 0,
-      error: err,
-    });
+    return res.status(201).json({ success: true, message: 'Product added', product: newProduct });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
-router.post('/removeproduct', async (req, res) => {
+router.delete('/remove/:productId', async (req, res) => {
   try {
-    const id = req.body.id;
+    const id = req.params.productId;
     await Product.findOneAndDelete({ _id: id });
 
     const imageFolderPath = `./upload/images/${id}`;
@@ -57,16 +51,9 @@ router.post('/removeproduct', async (req, res) => {
     // Remove local image file folder
     fs.rmSync(imageFolderPath, { recursive: true, force: true });
 
-    console.log('Product removed: ' + id);
-    res.json({
-      success: 1,
-      name: `${id} deleted`,
-    });
-  } catch (err) {
-    res.json({
-      success: 0,
-      error: err,
-    });
+    return res.status(204).json({ success: true, message: `Product deleted: ${id}` });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
@@ -81,10 +68,10 @@ router.get('/fetchproducts', async (req: Request, res: Response) => {
 
     const sort = { [sortBy as string]: sortOrder as SortOrder };
     const products = await Product.find(query).sort(sort);
-    res.send(products);
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+
+    return res.status(200).json({ success: true, message: 'Products fetched successfully', products });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
@@ -98,6 +85,7 @@ router.get('/searchproducts', async (req: Request, res: Response) => {
 
     const sort = { [sortBy as string]: sortOrder as SortOrder };
 
+    // Uncomment next line to create text indexes on startup
     // Product.createIndexes();
 
     const products = await Product.find(
@@ -106,29 +94,24 @@ router.get('/searchproducts', async (req: Request, res: Response) => {
         score: { $meta: 'textScore' },
       },
     ).sort({ score: { $meta: 'textScore' }, ...sort });
-    res.send(products);
-  } catch (error) {
-    console.error('Error searching products:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+
+    return res.status(200).json({ success: true, message: 'Products searched and fetched successfully', products });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
 router.get('/fetchproductbyid/:productId', async (req, res) => {
   try {
     const productId = req.params.productId;
-
-    // Convert productId to ObjectId
-    const objectId = new mongoose.Types.ObjectId(productId);
-
-    const product = await Product.findOne({ _id: objectId });
+    const product = await Product.findById(productId);
 
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
     }
-    res.send(product);
-  } catch (error) {
-    console.error('Error fetching product by ID:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
