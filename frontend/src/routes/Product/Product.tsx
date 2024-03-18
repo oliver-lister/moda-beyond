@@ -22,16 +22,20 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/products/fetchproductbyid/${productId}`
+          `http://localhost:3000/products/fetchproductbyid/${productId}`,
+          {
+            method: "GET",
+          }
         );
 
+        const responseData = await response.json();
+
         if (!response.ok) {
-          throw new Error("Failed to fetch product");
+          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
 
-        const productData = await response.json();
-
-        setProduct(productData);
+        const { product } = responseData;
+        setProduct(product);
       } catch (error) {
         console.error("Error fetching product:", error);
       }

@@ -8,6 +8,8 @@ import UserProps from "../../types/UserProps";
 import { RootState } from "../store";
 import { CartItemProps } from "../../types/UserProps";
 
+// Types
+
 interface AuthState {
   accessToken: string;
   refreshToken: string;
@@ -15,20 +17,42 @@ interface AuthState {
   isLoading: boolean;
 }
 
-// AUTHENTICATION REDUCERS
-
-// User login
-
 interface LoginValues {
   email: string;
   password: string;
 }
 
+interface LoginPayload {
+  user: UserProps;
+  accessToken: string;
+  refreshToken: string;
+}
+
+interface SignupPayload {
+  newUser: UserProps;
+  accessToken: string;
+  refreshToken: string;
+}
+
+interface SignupValues {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  newsletter: boolean;
+  shoppingPreference: string;
+}
+
+// AUTHENTICATION REDUCERS
+
+// User login
+
 export const loginAsync = createAsyncThunk(
   "auth/loginAsync",
   async (values: LoginValues) => {
     try {
-      const response = await fetch("http://localhost:3000/users/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,27 +60,21 @@ export const loginAsync = createAsyncThunk(
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to login.");
-      }
-
       const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
 
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Error submitting login form:", err.message);
+        console.log("Error submitting login form:", err.message);
         throw err;
       }
     }
   }
 );
-
-interface loginSignupPayload {
-  user: UserProps;
-  accessToken: string;
-  refreshToken: string;
-}
 
 const loginReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
   builder
@@ -70,7 +88,7 @@ const loginReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
     })
     .addCase(
       loginAsync.fulfilled,
-      (state, action: PayloadAction<loginSignupPayload>) => {
+      (state, action: PayloadAction<LoginPayload>) => {
         const { user, accessToken, refreshToken } = action.payload;
 
         state.user = user;
@@ -90,21 +108,11 @@ const loginReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
 
 // User signup
 
-interface SignupValues {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dob: string;
-  newsletter: boolean;
-  shoppingPreference: string;
-}
-
 export const signupAsync = createAsyncThunk(
   "auth/signupAsync",
   async (values: SignupValues) => {
     try {
-      const response = await fetch("http://localhost:3000/users/signup", {
+      const response = await fetch("http://localhost:3000/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,16 +120,16 @@ export const signupAsync = createAsyncThunk(
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to register new user: " + values);
-      }
-
       const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
 
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Error submitting signup form:", err.message);
+        console.log("Error submitting signup form:", err.message);
         throw err;
       }
     }
@@ -140,10 +148,10 @@ const signupReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
     })
     .addCase(
       signupAsync.fulfilled,
-      (state, action: PayloadAction<loginSignupPayload>) => {
-        const { user, accessToken, refreshToken } = action.payload;
+      (state, action: PayloadAction<SignupPayload>) => {
+        const { newUser, accessToken, refreshToken } = action.payload;
 
-        state.user = user;
+        state.user = newUser;
         state.accessToken = accessToken;
         state.refreshToken = refreshToken;
 
@@ -164,7 +172,7 @@ export const refreshAccessTokenAsync = createAsyncThunk(
   "auth/refreshAccessToken",
   async (refreshToken: string) => {
     try {
-      const response = await fetch("http://localhost:3000/users/refreshtoken", {
+      const response = await fetch("http://localhost:3000/auth/refreshtoken", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,16 +180,16 @@ export const refreshAccessTokenAsync = createAsyncThunk(
         body: JSON.stringify({ refreshToken }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to refresh access token.");
-      }
-
       const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
 
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Error refreshing access token: ", err.message);
+        console.log("Error refreshing access token: ", err.message);
         throw err;
       }
     }
@@ -211,7 +219,6 @@ const refreshAccessTokenReducerBuilder = (
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       state.user = null;
-
       state.isLoading = false;
     });
 };
@@ -224,7 +231,7 @@ export const fetchUserDataAsync = createAsyncThunk(
     try {
       const { auth } = thunkAPI.getState() as RootState;
       if (!auth.user) throw new Error("No user logged in.");
-      const userId = auth.user._id;
+      const userId = auth.user._id.toString();
       const accessToken = auth.accessToken;
 
       if (!accessToken) {
@@ -241,16 +248,16 @@ export const fetchUserDataAsync = createAsyncThunk(
         }
       );
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const { error } = await response.json();
-        throw new Error(`Error fetching user data: ${error}`);
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
-      const userData = await response.json();
-      return userData;
+      return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Error fetching user data:", err.message);
+        console.log("Error fetching user data:", err.message);
         throw err;
       }
     }
@@ -262,8 +269,9 @@ const fetchUserDataReducerBuilder = (
 ) => {
   builder.addCase(
     fetchUserDataAsync.fulfilled,
-    (state, action: PayloadAction<UserProps>) => {
-      state.user = action.payload;
+    (state, action: PayloadAction<AuthState>) => {
+      const { user } = action.payload;
+      state.user = user;
     }
   );
 };
@@ -288,8 +296,11 @@ export const addToCartAsync = createAsyncThunk(
       if (!accessToken) {
         throw new Error("No access token.");
       }
+      const userId = auth.user._id.toString();
+      console.log(userId);
+
       const response = await fetch(
-        `http://localhost:3000/users/${auth.user._id}/cart/add`,
+        `http://localhost:3000/users/${userId}/cart/add`,
         {
           method: "POST",
           headers: {
@@ -307,14 +318,14 @@ export const addToCartAsync = createAsyncThunk(
       );
 
       if (!response.ok) {
-        const { error } = await response.json();
-        throw new Error(`Error updating cart: ${error}`);
+        const responseData = await response.json();
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
       thunkAPI.dispatch(fetchUserDataAsync());
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Error: " + err.message);
+        console.log("Error: " + err.message);
         throw err;
       }
     }
@@ -352,9 +363,10 @@ export const updateCartAsync = createAsyncThunk(
       if (!accessToken) {
         throw new Error("No access token.");
       }
+      const userId = auth.user._id.toString();
 
       const response = await fetch(
-        `http://localhost:3000/users/${auth.user._id}/cart/update`,
+        `http://localhost:3000/users/${userId}/cart/update`,
         {
           method: "PUT",
           headers: {
@@ -366,18 +378,18 @@ export const updateCartAsync = createAsyncThunk(
           }),
         }
       );
+      const responseData = await response.json();
 
       if (!response.ok) {
-        const { error } = await response.json();
-        throw new Error(`Error updating cart: ${error}`);
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
-      const { cart } = await response.json();
+      const { cart } = responseData;
       thunkAPI.dispatch(fetchUserDataAsync());
       return cart;
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Error: " + err.message);
+        console.log("Error: " + err.message);
         throw err;
       }
     }

@@ -157,7 +157,10 @@ const NavBar = () => {
                 ) : (
                   <Indicator
                     inline
-                    label={user.cart && user.cart.length}
+                    label={
+                      user.cart &&
+                      user.cart.reduce((acc, item) => acc + item.quantity, 0)
+                    }
                     size={16}
                   >
                     <IconShoppingCart

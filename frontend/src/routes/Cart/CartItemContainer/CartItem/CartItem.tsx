@@ -33,30 +33,30 @@ const CartItem = ({
   const [product, setProduct] = useState<ProductProps | null>(null);
 
   useEffect(() => {
-    const getProductData = async (productId: CartItemProps["productId"]) => {
+    const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/products/fetchproductbyid/${productId}`
+          `http://localhost:3000/products/fetchproductbyid/${productId}`,
+          {
+            method: "GET",
+          }
         );
+
+        const responseData = await response.json();
+
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch product data: ${response.statusText}`
-          );
+          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        const productData = await response.json();
-        return productData as ProductProps;
+
+        const { product } = responseData;
+        setProduct(product);
       } catch (err) {
-        if (err instanceof Error) console.log(err.message);
-      }
-    };
-    const fetchData = async () => {
-      const data = await getProductData(productId);
-      if (data) {
-        setProduct(data);
+        if (err instanceof Error)
+          console.log("Error fetching product: ", err.message);
       }
     };
 
-    fetchData();
+    fetchProduct();
   }, [productId]);
 
   if (!product)

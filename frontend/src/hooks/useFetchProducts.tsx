@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 interface FetchProductsResult {
   products: ProductProps[] | null;
-  error: Error | null;
+  error: string | null;
 }
 
 export const useFetchProducts = () => {
@@ -23,12 +23,26 @@ export const useFetchProducts = () => {
           const response = await fetch(
             `http://localhost:3000/products/searchproducts${
               searchParams ? "?" + searchParams.toString() : ""
-            }`
+            }`,
+            {
+              method: "GET",
+            }
           );
-          const productData = await response.json();
-          setProducts({ products: productData, error: null });
-        } catch (error) {
-          console.error("Error fetching products:", error);
+          const responseData = await response.json();
+
+          if (!response.ok) {
+            setProducts({
+              products: null,
+              error: `${responseData.error}, ${responseData.errorCode}`,
+            });
+            throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+          }
+
+          const { products } = responseData;
+          setProducts({ products: products, error: null });
+        } catch (err) {
+          if (err instanceof Error)
+            console.error("Error fetching products:", err.message);
         } finally {
           setIsLoading(false);
         }
@@ -40,12 +54,26 @@ export const useFetchProducts = () => {
           const response = await fetch(
             `http://localhost:3000/products/fetchproducts${
               searchParams ? "?" + searchParams.toString() : ""
-            }`
+            }`,
+            {
+              method: "GET",
+            }
           );
-          const productData = await response.json();
-          setProducts({ products: productData, error: null });
-        } catch (error) {
-          console.error("Error fetching products:", error);
+          const responseData = await response.json();
+
+          if (!response.ok) {
+            setProducts({
+              products: null,
+              error: `${responseData.error}, ${responseData.errorCode}`,
+            });
+            throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+          }
+
+          const { products } = responseData;
+          setProducts({ products: products, error: null });
+        } catch (err) {
+          if (err instanceof Error)
+            console.error("Error fetching products:", err.message);
         } finally {
           setIsLoading(false);
         }

@@ -90,7 +90,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
 // API for refreshing JWT accessToken
 
-router.get('/refreshtoken', async (req: Request, res: Response) => {
+router.post('/refreshtoken', async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body;
 
