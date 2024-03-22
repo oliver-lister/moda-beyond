@@ -36,6 +36,7 @@ export interface ProductProps {
   category: string;
   availableSizes: string[];
   availableColorHexes: string[];
+  availableColors?: [{ label: string; hex: string }];
   description: string;
   material: string;
   price: number;
@@ -70,7 +71,9 @@ const EditProductForm = ({ product }: { product: ProductProps }) => {
   const form = useForm({
     initialValues: {
       ...product,
-      availableColorHexes: product.availableColors.map((color) => color.hex),
+      availableColorHexes: product.availableColors
+        ? product.availableColors.map((color) => color.hex)
+        : [],
       colorHex: "",
     },
     validate: yupResolver(schema),

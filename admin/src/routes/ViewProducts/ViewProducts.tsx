@@ -13,10 +13,19 @@ const ViewProducts = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/products/fetchproducts"
+          "http://localhost:3000/products/fetchproducts",
+          {
+            method: "GET",
+          }
         );
-        const data = await response.json();
-        setProducts(data);
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+        }
+
+        const { products } = responseData;
+        setProducts(products);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -27,19 +36,20 @@ const ViewProducts = () => {
 
   const removeProduct = async (_id: ProductProps["_id"]) => {
     try {
-      const apiUrl = "http://localhost:3000/products/removeproduct";
+      if (!_id) throw new Error("Product _id is undefined");
+      const response = await fetch(
+        `http://localhost:3000/products/remove/${_id.toString()}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: _id }),
-      });
-
-      console.log("Server response:", await response.json());
+      if (!response.ok) {
+        const responseData = await response.json();
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
     } catch (err) {
-      console.error("Error submitting form:", err);
+      console.error("Error removing product:", err);
     }
   };
 

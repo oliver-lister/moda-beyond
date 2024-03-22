@@ -143,28 +143,24 @@ const AddProductForm = () => {
         formData.append("productImg", image, image.name);
       });
 
-      const response = await fetch(
-        "http://localhost:3000/products/addproduct",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("http://localhost:3000/products/add", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to submit product data: " + formData);
+        const responseData = await response.json();
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
-      const responseData = await response.json();
-
       setTimeout(() => {
-        console.log("Server response:", responseData);
         notifications.show({
           title: "Product Added",
           message: "The product has been added to the database",
           icon: checkIcon,
           color: "green",
         });
+
         setIsLoading((prev) => !prev);
         form.reset();
       }, 2000);
