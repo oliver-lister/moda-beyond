@@ -67,7 +67,7 @@ const EditProduct = () => {
         <Title>Edit Product</Title>
         <Text c="gray.8">Edit a product in the MongoDB Database</Text>
       </Box>
-      <Box>
+      <Stack>
         {productList ? (
           <Select
             placeholder="Please search for a product."
@@ -96,10 +96,10 @@ const EditProduct = () => {
           )
         ) : (
           <Box>
-            <Text></Text>
+            <Text>No product selected.</Text>
           </Box>
         )}
-      </Box>
+      </Stack>
     </Stack>
   );
 };

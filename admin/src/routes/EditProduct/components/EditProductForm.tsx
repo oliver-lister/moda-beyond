@@ -6,10 +6,6 @@ import {
   MultiSelect,
   Textarea,
   NumberInput,
-  FileInput,
-  FileInputProps,
-  Pill,
-  Center,
   Button,
   Stack,
   rem,
@@ -23,7 +19,7 @@ import {
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { IconUpload, IconCheck } from "@tabler/icons-react";
+import { IconCheck } from "@tabler/icons-react";
 import { yupResolver } from "mantine-form-yup-resolver";
 import * as yup from "yup";
 import { useForm } from "@mantine/form";
@@ -121,85 +117,51 @@ const EditProductForm = ({ product }: { product: ProductProps }) => {
   };
 
   const handleSubmit = async (values: ProductProps) => {
-    setIsLoading((prev) => !prev);
+    setIsLoading(true);
     try {
       const availableColorHexes = form.values.availableColorHexes;
       const availableColors = await findAvailableColors(availableColorHexes);
 
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("category", values.category);
-      formData.append("brand", values.brand);
-      formData.append("availableSizes", JSON.stringify(values.availableSizes));
-      formData.append("availableColors", JSON.stringify(availableColors));
-      formData.append("material", values.material);
-      formData.append("price", String(values.price));
-
-      values.images.forEach((image) => {
-        formData.append("productImg", image, image.name);
-      });
-
       const response = await fetch(
-        "http://localhost:3000/products/editproduct",
+        `http://localhost:3000/products/edit/${product._id}`,
         {
-          method: "POST",
-          body: formData,
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: values.name,
+            category: values.category,
+            brand: values.brand,
+            availableSizes: values.availableSizes,
+            availableColors: availableColors,
+            material: values.material,
+            description: values.description,
+            price: values.price.toString(),
+          }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to edit product data: " + formData);
+        const responseData = await response.json();
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
-      const responseData = await response.json();
-
-      setTimeout(() => {
-        console.log("Server response:", responseData);
-        notifications.show({
-          title: "Product Edited",
-          message: "The product has been edited in the database",
-          icon: checkIcon,
-          color: "green",
-        });
-        setIsLoading((prev) => !prev);
-        form.reset();
-      }, 2000);
+      notifications.show({
+        title: "Product Edited",
+        message: "The product has been edited in the database",
+        icon: checkIcon,
+        color: "green",
+      });
+      setIsLoading(false);
     } catch (err) {
-      console.error("Error submitting form:", err);
-      setIsLoading((prev) => !prev);
+      if (err instanceof Error)
+        console.error("Error submitting form:", err.message);
+      setIsLoading(false);
     }
   };
 
-  // Pill component for multiple image upload
-  const FilePill: FileInputProps["valueComponent"] = ({ value }) => {
-    if (value === null) {
-      return null;
-    }
-
-    if (Array.isArray(value)) {
-      return (
-        <Pill.Group>
-          {value.map((file, index) => (
-            <Pill key={index}>
-              <Center>{file.name}</Center>
-            </Pill>
-          ))}
-        </Pill.Group>
-      );
-    }
-
-    return <Pill>{value.name}</Pill>;
-  };
-
-  // Modals
-  const openResetModal = () =>
-    modals.openConfirmModal({
-      title: "Are you sure you want to clear the form?",
-      labels: { confirm: "Confirm", cancel: "Cancel" },
-      onConfirm: () => {
-        form.reset();
-      },
-    });
+  // Modal
 
   const openSubmitModal = (values: ProductProps) =>
     modals.openConfirmModal({
@@ -215,11 +177,6 @@ const EditProductForm = ({ product }: { product: ProductProps }) => {
 
   return (
     <form onSubmit={form.onSubmit((values) => openSubmitModal(values))}>
-      <Group justify="flex-end" mb={5}>
-        <Button onClick={openResetModal} color="gray">
-          Clear Form
-        </Button>
-      </Group>
       <Stack>
         <Fieldset style={{ position: "relative" }}>
           <LoadingOverlay
@@ -294,24 +251,11 @@ const EditProductForm = ({ product }: { product: ProductProps }) => {
                 {...form.getInputProps("description")}
               />
             </GridCol>
-            <GridCol span={{ base: 12, xl: 6 }}>
+            <GridCol span={{ base: 12 }}>
               <TextInput
                 label="Material"
                 description="Describe the product's materials."
                 {...form.getInputProps("material")}
-              />
-            </GridCol>
-            <GridCol span={{ base: 12, xl: 6 }}>
-              <FileInput
-                label="Upload Images"
-                description="Upload all images of the product, PNG, JPEG, WEBP are accepted."
-                leftSection={<IconUpload size={15} />}
-                placeholder="Click here"
-                multiple={true}
-                valueComponent={FilePill}
-                clearable
-                accept="image/png,image/jpeg,image/webp"
-                {...form.getInputProps("images")}
               />
             </GridCol>
           </Grid>
@@ -321,7 +265,7 @@ const EditProductForm = ({ product }: { product: ProductProps }) => {
             Processing
           </Button>
         ) : (
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Update Product</Button>
         )}
       </Stack>
     </form>

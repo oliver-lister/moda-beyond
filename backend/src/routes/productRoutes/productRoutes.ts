@@ -7,7 +7,7 @@ import * as fs from 'fs';
 
 const router = express.Router();
 
-router.post('/add', tempUpload.array('productImg'), async (req, res) => {
+router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Response) => {
   try {
     const newProductData = {
       name: req.body.name,
@@ -15,6 +15,7 @@ router.post('/add', tempUpload.array('productImg'), async (req, res) => {
       brand: req.body.brand,
       availableSizes: JSON.parse(req.body.availableSizes),
       availableColors: JSON.parse(req.body.availableColors),
+      description: req.body.description,
       material: req.body.material,
       price: req.body.price,
     };
@@ -41,7 +42,46 @@ router.post('/add', tempUpload.array('productImg'), async (req, res) => {
   }
 });
 
-router.delete('/remove/:productId', async (req, res) => {
+router.patch('/edit/:productId', async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.productId;
+    if (!productId) return res.status(404).json({ success: false, error: 'Product ID not supplied', errorCode: 'NO_PRODUCT_ID' });
+
+    const newProductData = {
+      name: req.body.name,
+      category: req.body.category,
+      brand: req.body.brand,
+      availableSizes: req.body.availableSizes,
+      availableColors: req.body.availableColors,
+      description: req.body.description,
+      material: req.body.material,
+      price: req.body.price,
+    };
+    console.log(newProductData);
+
+    const productToUpdate = await Product.findById(productId);
+    if (!productToUpdate) return res.status(404).json({ success: false, error: 'Cannot find product to update', errorCode: 'PRODUCT_NOT_FOUND' });
+
+    // Update each property individually
+    if (newProductData.name) productToUpdate.name = newProductData.name;
+    if (newProductData.category) productToUpdate.category = newProductData.category;
+    if (newProductData.brand) productToUpdate.brand = newProductData.brand;
+    if (newProductData.availableSizes) productToUpdate.availableSizes = newProductData.availableSizes;
+    if (newProductData.availableColors) productToUpdate.availableColors = newProductData.availableColors;
+    if (newProductData.description) productToUpdate.description = newProductData.description;
+    if (newProductData.material) productToUpdate.material = newProductData.material;
+    productToUpdate.lastPrice = productToUpdate.price;
+    if (newProductData.price) productToUpdate.price = newProductData.price;
+
+    await productToUpdate.save();
+
+    return res.status(200).json({ success: true, message: 'Product edited', product: productToUpdate });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.delete('/remove/:productId', async (req: Request, res: Response) => {
   try {
     const id = req.params.productId;
     await Product.findOneAndDelete({ _id: id });

@@ -137,6 +137,7 @@ const AddProductForm = () => {
       formData.append("availableSizes", JSON.stringify(values.availableSizes));
       formData.append("availableColors", JSON.stringify(availableColors));
       formData.append("material", values.material);
+      formData.append("description", values.description);
       formData.append("price", String(values.price));
 
       values.images.forEach((image) => {
