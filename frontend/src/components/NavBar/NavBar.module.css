@@ -68,6 +68,22 @@
   background-color: var(--mantine-color-dark-4);
 }
 
+.initials {
+  color: black;
+  background-color: var(--mantine-color-white);
+  padding: 0.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+}
+
+.initials:hover {
+  background-color: var(--mantine-color-dark-1);
+}
+
 .profile svg,
 .cart svg {
   color: white;

@@ -9,6 +9,8 @@ import {
   UnstyledButton,
   Title,
   TextInput,
+  Text,
+  Box,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -94,7 +96,18 @@ const NavBar = () => {
             <Menu>
               <Menu.Target>
                 <UnstyledButton className={styles.profile}>
-                  <IconUserCircle style={{ width: rem(32), height: rem(32) }} />
+                  {user ? (
+                    <Box className={styles.initials}>
+                      <Text>
+                        {user.firstName[0].toUpperCase() +
+                          user.lastName[0].toUpperCase()}
+                      </Text>
+                    </Box>
+                  ) : (
+                    <IconUserCircle
+                      style={{ width: rem(32), height: rem(32) }}
+                    />
+                  )}
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>

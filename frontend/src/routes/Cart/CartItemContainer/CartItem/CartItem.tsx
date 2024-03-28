@@ -31,10 +31,12 @@ const CartItem = ({
   handleUpdateQuantity: (cartItemId: string, newQuantity: string) => void;
 }) => {
   const [product, setProduct] = useState<ProductProps | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(
           `http://localhost:3000/products/fetchproductbyid/${productId}`,
           {
@@ -50,16 +52,18 @@ const CartItem = ({
 
         const { product } = responseData;
         setProduct(product);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof Error)
           console.log("Error fetching product: ", err.message);
+        setIsLoading(false);
       }
     };
 
     fetchProduct();
   }, [productId]);
 
-  if (!product)
+  if (!product && isLoading)
     return (
       <Grid align="center" className={styles.grid_row}>
         <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
@@ -81,6 +85,30 @@ const CartItem = ({
         </GridCol>
       </Grid>
     );
+
+  if (!product) {
+    return (
+      <Grid align="center" className={styles.grid_row}>
+        <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
+          <Text>No product found.</Text>
+        </GridCol>
+        <GridCol
+          span={{ base: 12, md: 4 }}
+          order={{ base: 3, md: 2 }}
+        ></GridCol>
+        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
+          <Stack align="flex-end">
+            <UnstyledButton
+              className={styles.remove}
+              onClick={() => _id && handleRemoveFromCart(_id)}
+            >
+              <IconTrash />
+            </UnstyledButton>
+          </Stack>
+        </GridCol>
+      </Grid>
+    );
+  }
 
   return (
     <li>

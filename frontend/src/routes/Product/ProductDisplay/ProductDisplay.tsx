@@ -8,8 +8,6 @@ import {
   Group,
   Badge,
   ColorSwatch,
-  CheckIcon,
-  rem,
   Select,
   Button,
   Text,
@@ -26,11 +24,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { SerializedError } from "@reduxjs/toolkit";
 import { RootState, AppDispatch } from "../../../state/store.ts";
 import { addToCartAsync, updateCartAsync } from "../../../state/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
   const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector((state: RootState) => state.auth);
   const mobile = useMediaQuery("(max-width: 768px");
+  const navigate = useNavigate();
 
   // THUMBNAIL CLICKS MOVE IMAGE EMBLA CAROSUEL
   const { width } = useViewportSize();
@@ -125,6 +125,8 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
         message: "Please login and try again.",
         icon: <IconX />,
       });
+
+      navigate("/login");
     }
   };
 
@@ -199,17 +201,21 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
               <p className={styles.name}>{product.name}</p>
 
               <Group gap="xs" className={styles.prices}>
-                {product.lastPrice && (
+                {product.lastPrice && product.lastPrice > product.price && (
                   <p className={styles.lastPrice}>${product.lastPrice}</p>
                 )}
                 <p
                   className={`${styles.price} ${
-                    product.lastPrice && styles.sale
+                    product.lastPrice &&
+                    product.lastPrice > product.price &&
+                    styles.sale
                   }`}
                 >
                   ${product.price}
                 </p>
-                {product.lastPrice && <Badge color="red">Sale</Badge>}
+                {product.lastPrice && product.lastPrice > product.price && (
+                  <Badge color="red">Sale</Badge>
+                )}
               </Group>
             </div>
 
@@ -235,13 +241,15 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                           color={color.hex}
                           onClick={() => handleColorChange(color.label)}
                           style={{ color: "#fff", cursor: "pointer" }}
-                        >
-                          {selectedColor === color.label && (
-                            <CheckIcon
-                              style={{ width: rem(12), height: rem(12) }}
-                            />
-                          )}
-                        </ColorSwatch>
+                          styles={{
+                            root: {
+                              outline:
+                                selectedColor === color.label
+                                  ? "2px solid var(--mantine-color-blue-4)"
+                                  : "",
+                            },
+                          }}
+                        />
                       ))}
                   </Group>
                 </Stack>
@@ -261,23 +269,13 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
             <Accordion.Item value="Description">
               <Accordion.Control>Description</Accordion.Control>
               <Accordion.Panel className={styles.accordion_content}>
-                Mid-weight cotton-rich denim; minimal stretch; unlined; opaque -
-                Slim fit; tapered leg - Zip fly with button fastening - Classic
-                five-pocket design
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value="Size & Fit">
-              <Accordion.Control>Size & Fit</Accordion.Control>
-              <Accordion.Panel className={styles.accordion_content}>
-                Length: Inside Leg: 77cm, Front Rise: 27cm, Leg Opening: 32cm
-                (size W32/L32). Our model is 186.7cm (6’1.5”) tall with a 96.5cm
-                (38”) chest and a 81.3cm (32”) waist.
+                {product.description}
               </Accordion.Panel>
             </Accordion.Item>
             <Accordion.Item value="Material">
               <Accordion.Control>Material</Accordion.Control>
               <Accordion.Panel className={styles.accordion_content}>
-                Main: 99% Cotton & 1% Elastane
+                {product.material}
               </Accordion.Panel>
             </Accordion.Item>
             <Accordion.Item value="Returns">

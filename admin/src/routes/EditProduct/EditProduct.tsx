@@ -44,16 +44,14 @@ const EditProduct = () => {
 
   // Assign Product to Edit based on Url Params
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (!productList) return;
+    if (!productList) return;
 
-      const product = productList.find((product) => product._id === productId);
-      if (!product) return;
-
+    const product = productList.find((product) => product._id === productId);
+    if (product) {
       setProductToEdit(product);
-    };
-
-    fetchProduct();
+    } else {
+      setProductToEdit(null);
+    }
   }, [productId, productList]);
 
   const handleChange = (value: string) => {

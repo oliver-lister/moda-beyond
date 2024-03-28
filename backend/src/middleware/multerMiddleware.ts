@@ -19,7 +19,7 @@ const tempStorage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    const filename = `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`;
+    const filename = `${file.fieldname}_${Date.now()}_${file.originalname}`;
     cb(null, filename);
   },
 });

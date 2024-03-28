@@ -27,7 +27,7 @@ const Layout = () => {
               size="sm"
             />
             <Text className={styles.logo}>
-              <span>THE SHOPPER</span> ADMIN PANEL
+              <span>ModaBeyond</span> ADMIN PANEL
             </Text>
           </Group>
         </AppShell.Header>

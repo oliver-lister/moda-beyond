@@ -1,5 +1,17 @@
-import { SimpleGrid, Button, Stack, Title, Box } from "@mantine/core";
-import { IconTablePlus, IconZoomScan } from "@tabler/icons-react";
+import {
+  SimpleGrid,
+  Button,
+  Stack,
+  Title,
+  Box,
+  Container,
+} from "@mantine/core";
+import {
+  IconTablePlus,
+  IconZoomScan,
+  IconEdit,
+  IconBackspace,
+} from "@tabler/icons-react";
 import styles from "./dashboard.module.css";
 import { Link } from "react-router-dom";
 
@@ -8,12 +20,22 @@ const Dashboard = () => {
     {
       label: "Add Product",
       path: "/addproduct",
-      left: <IconTablePlus size="2rem" />,
+      left: <IconTablePlus />,
     },
     {
       label: "View Products",
       path: "/viewproducts",
-      left: <IconZoomScan size="2rem" />,
+      left: <IconZoomScan />,
+    },
+    {
+      label: "Edit Product",
+      path: "/editproduct",
+      left: <IconEdit />,
+    },
+    {
+      label: "Clear Sessions",
+      path: "/clearsessions",
+      left: <IconBackspace />,
     },
   ];
 
@@ -21,20 +43,24 @@ const Dashboard = () => {
     <>
       <Stack>
         <Title order={1}>Dashboard</Title>
+
         <Box className={styles.grid_box}>
-          <SimpleGrid cols={{ base: 1, md: 1, lg: 2 }}>
-            {dashMenu.map((link) => (
-              <Button
-                component={Link}
-                to={link.path}
-                leftSection={link.left}
-                h="250px"
-                fz="2rem"
-              >
-                {link.label}
-              </Button>
-            ))}
-          </SimpleGrid>
+          <Container size="xl">
+            <SimpleGrid cols={{ base: 1, md: 1, lg: 2, xl: 4 }}>
+              {dashMenu.map((link, index) => (
+                <Button
+                  component={Link}
+                  to={link.path}
+                  leftSection={link.left}
+                  h={100}
+                  radius="0.5rem"
+                  key={index}
+                >
+                  {link.label}
+                </Button>
+              ))}
+            </SimpleGrid>
+          </Container>
         </Box>
       </Stack>
     </>

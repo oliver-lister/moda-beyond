@@ -5,6 +5,7 @@ import {
   IconTablePlus,
   IconZoomScan,
   IconEdit,
+  IconBackspace,
 } from "@tabler/icons-react";
 
 const NavBar = ({ toggle }: { toggle: () => void }) => {
@@ -15,6 +16,11 @@ const NavBar = ({ toggle }: { toggle: () => void }) => {
     { label: "View Products", path: "/viewproducts", left: <IconZoomScan /> },
     { label: "Add Product", path: "/addproduct", left: <IconTablePlus /> },
     { label: "Edit Product", path: "/editproduct", left: <IconEdit /> },
+    {
+      label: "Clear Sessions",
+      path: "/clearsessions",
+      left: <IconBackspace />,
+    },
   ];
 
   return (

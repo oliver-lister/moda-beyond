@@ -34,7 +34,7 @@ const GridHeader = () => {
       <GridCol span={2}>
         <Center style={{ textAlign: "center" }}>
           <Text size="sm" style={{ fontWeight: "600" }}>
-            Remove / Edit
+            Edit / Remove
           </Text>
         </Center>
       </GridCol>

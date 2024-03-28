@@ -30,6 +30,10 @@ const theme = createTheme({
   },
 });
 
+// Redux
+import { Provider } from "react-redux";
+import { store } from "./state/store.ts";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -64,11 +68,13 @@ const root = ReactDOM.createRoot(rootContainer);
 
 root.render(
   <React.StrictMode>
-    <MantineProvider theme={theme}>
-      <ModalsProvider>
-        <Notifications />
-        <RouterProvider router={router} />
-      </ModalsProvider>
-    </MantineProvider>
+    <Provider store={store}>
+      <MantineProvider theme={theme}>
+        <ModalsProvider>
+          <Notifications />
+          <RouterProvider router={router} />
+        </ModalsProvider>
+      </MantineProvider>
+    </Provider>
   </React.StrictMode>
 );

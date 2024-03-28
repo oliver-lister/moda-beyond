@@ -271,21 +271,20 @@ const AddProductForm = () => {
               />
             </GridCol>
             <GridCol span={{ base: 12, xl: 6 }}>
-              <Group gap={2} align="flex-end">
-                <ColorInput
-                  format="hex"
-                  label="Available Colours"
-                  description="Select available colours, one at a time."
-                  {...form.getInputProps("colorHex")}
-                />
-                <Button size="sm" onClick={addColor}>
-                  Add Colour
-                </Button>
-                <MultiSelect
-                  {...form.getInputProps("availableColorHexes")}
-                  style={{ flex: 1 }}
-                />
-              </Group>
+              <Stack>
+                <Group gap={2} align="flex-end">
+                  <ColorInput
+                    format="hex"
+                    label="Available Colours"
+                    description="Select available colours, one at a time."
+                    {...form.getInputProps("colorHex")}
+                  />
+                  <Button size="sm" onClick={addColor}>
+                    Add Colour
+                  </Button>
+                </Group>
+                <MultiSelect {...form.getInputProps("availableColorHexes")} />
+              </Stack>
             </GridCol>
             <GridCol span={{ base: 12 }}>
               <Textarea

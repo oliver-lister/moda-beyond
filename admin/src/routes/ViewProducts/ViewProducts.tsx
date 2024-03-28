@@ -61,8 +61,8 @@ const ViewProducts = () => {
         <>
           {clickedProduct.images.length > 1 ? (
             <Carousel withIndicators>
-              {clickedProduct.images.map((img) => (
-                <Carousel.Slide>
+              {clickedProduct.images.map((img, index) => (
+                <Carousel.Slide key={index}>
                   <Image src={img} />
                 </Carousel.Slide>
               ))}
@@ -82,8 +82,24 @@ const ViewProducts = () => {
         <Text c="gray.8">Review products in the MongoDB Database</Text>
       </Box>
       <Box>
-        <Grid align="center" style={{ padding: "1rem 1rem" }}>
+        <Grid
+          align="center"
+          style={{
+            padding: "1rem 1rem",
+            backgroundColor: "var(--mantine-color-gray-2",
+            boxShadow: "0 4px 4px -2px var(--mantine-color-gray-5)",
+          }}
+        >
           <GridHeader />
+        </Grid>
+        <Grid
+          align="center"
+          style={{
+            padding: "1rem 1rem",
+            maxHeight: "70dvh",
+            overflowY: "auto",
+          }}
+        >
           {products.length > 0 ? (
             products.map((product: ProductProps) => (
               <GridRow

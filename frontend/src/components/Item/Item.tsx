@@ -20,11 +20,19 @@ const Item = ({ _id, images, name, brand, price, lastPrice }: ProductProps) => {
           <p className={styles.name}>{name}</p>
           <Stack gap="xs">
             <Group gap="xs" className={styles.prices}>
-              {lastPrice && <p className={styles.lastPrice}>${lastPrice}</p>}
-              <p className={`${styles.price} ${lastPrice && styles.sale}`}>
+              {lastPrice && lastPrice > price && (
+                <p className={styles.lastPrice}>${lastPrice}</p>
+              )}
+              <p
+                className={`${styles.price} ${
+                  lastPrice && lastPrice > price && styles.sale
+                }`}
+              >
                 ${price}
               </p>
-              {lastPrice && <Badge color="red">Sale</Badge>}
+              {lastPrice && lastPrice > price && (
+                <Badge color="red">Sale</Badge>
+              )}
             </Group>
           </Stack>
         </div>
