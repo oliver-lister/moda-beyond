@@ -54,7 +54,10 @@ const Shop = () => {
                   out of {products.length} products.
                 </Text>
               ) : (
-                <div>Loading</div>
+                <Text>
+                  <span style={{ fontWeight: "600" }}>Showing 1-#</span> out of
+                  # products.
+                </Text>
               )}
             </Box>
             <Group justify="flex-end">
