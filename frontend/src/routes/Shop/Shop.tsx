@@ -7,7 +7,10 @@ import {
   Box,
   Text,
   Title,
+  Pagination,
+  Center,
 } from "@mantine/core";
+import { useState } from "react";
 import ItemContainer from "./ItemContainer/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
 import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
@@ -24,17 +27,26 @@ const sortOptions: { [key: string]: SortOption } = {
 };
 
 const Shop = () => {
-  const { products, isLoading } = useFetchProducts();
+  const { products, isLoading, totalCount } = useFetchProducts();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [activePage, setPage] = useState<number>(1);
 
   const handleChangeSort = (value: string | null) => {
     if (value) {
       const sort = sortOptions[value];
       searchParams.set("sortBy", sort.sortBy);
       searchParams.set("sortOrder", sort.sortOrder.toString());
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
     }
   };
+
+  const handleChangePage = (value: number) => {
+    searchParams.set("page", value.toString())
+    setSearchParams(searchParams);
+    setPage(value);
+  }
+
   return (
     <section style={{ padding: "1rem 0" }}>
       <Container size="xl">
@@ -49,9 +61,9 @@ const Shop = () => {
               {!isLoading && products ? (
                 <Text>
                   <span style={{ fontWeight: "600" }}>
-                    Showing 1-{products.length}
+                    Showing {(activePage > 1 ? (activePage - 1) * 12 + 1 : 1)}-{(activePage > 1 ? (activePage - 1) * 12 : 0) + products.length}
                   </span>{" "}
-                  out of {products.length} products.
+                  out of {totalCount} products.
                 </Text>
               ) : (
                 <Text>
@@ -77,6 +89,9 @@ const Shop = () => {
             </Group>
           </SimpleGrid>
           <ItemContainer products={products} isLoading={isLoading} />
+          <Center>
+          <Pagination total={Math.ceil((totalCount / 12)) } value={activePage} onChange={handleChangePage} />
+          </Center>
         </Stack>
       </Container>
     </section>

@@ -40,9 +40,9 @@ const Footer = () => {
   };
 
   const navMenu = [
-    { label: "Women", path: "/shop?category=women" },
-    { label: "Men", path: "/shop?category=men" },
-    { label: "Kids", path: "/shop?category=kids" },
+    { label: "Women", path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1" },
+    { label: "Men", path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1" },
+    { label: "Kids", path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1" },
     { label: "Cart", path: "/cart" },
     { label: "Login / Signup", path: "/login" },
   ];

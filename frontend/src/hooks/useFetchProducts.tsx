@@ -4,12 +4,14 @@ import { useSearchParams } from "react-router-dom";
 
 interface FetchProductsResult {
   products: ProductProps[] | null;
+  totalCount: number;
   error: string | null;
 }
 
 export const useFetchProducts = () => {
   const [products, setProducts] = useState<FetchProductsResult>({
     products: null,
+    totalCount: 0,
     error: null,
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -33,13 +35,14 @@ export const useFetchProducts = () => {
           if (!response.ok) {
             setProducts({
               products: null,
+              totalCount: 0,
               error: `${responseData.error}, ${responseData.errorCode}`,
             });
             throw new Error(`${responseData.error}, ${responseData.errorCode}`);
           }
 
-          const { products } = responseData;
-          setProducts({ products: products, error: null });
+          const { products, totalCount } = responseData;
+          setProducts({ products: products, totalCount: totalCount, error: null });
         } catch (err) {
           if (err instanceof Error)
             console.error("Error fetching products:", err.message);
@@ -64,13 +67,14 @@ export const useFetchProducts = () => {
           if (!response.ok) {
             setProducts({
               products: null,
+              totalCount: 0,
               error: `${responseData.error}, ${responseData.errorCode}`,
             });
             throw new Error(`${responseData.error}, ${responseData.errorCode}`);
           }
 
-          const { products } = responseData;
-          setProducts({ products: products, error: null });
+          const { products, totalCount } = responseData;
+          setProducts({ products: products, totalCount: totalCount, error: null });
         } catch (err) {
           if (err instanceof Error)
             console.error("Error fetching products:", err.message);

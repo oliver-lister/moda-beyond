@@ -29,9 +29,9 @@ import { useSearchParams } from "react-router-dom";
 import { useRef } from "react";
 
 const navMenu = [
-  { label: "Women", path: "/shop?category=women&sortBy=date&sortOrder=-1" },
-  { label: "Men", path: "/shop?category=men&sortBy=date&sortOrder=-1" },
-  { label: "Kids", path: "/shop?category=kids&sortBy=date&sortOrder=-1" },
+  { label: "Women", path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1" },
+  { label: "Men", path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1" },
+  { label: "Kids", path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1" },
 ];
 
 const NavBar = () => {

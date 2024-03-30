@@ -13,8 +13,8 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
   return (
     <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
       {isLoading
-        ? Array.from({ length: 8 }).map(() => (
-            <Skeleton animate width={200} height={350}></Skeleton>
+        ? Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton animate width={200} height={350} key={index}></Skeleton>
           ))
         : products &&
           products.map(({ _id, ...rest }) => (
