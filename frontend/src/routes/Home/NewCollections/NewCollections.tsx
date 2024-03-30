@@ -1,4 +1,4 @@
-import styles from "./NewCollections.module.css";
+import styles from "./newCollections.module.css";
 import { Stack, SimpleGrid, Center, Loader } from "@mantine/core";
 import Item from "../../../components/Item/Item.tsx";
 import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";

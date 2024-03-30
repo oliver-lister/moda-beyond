@@ -1,5 +1,5 @@
 import { Button, Container, Group, Image, SimpleGrid } from "@mantine/core";
-import styles from "./Hero.module.css";
+import styles from "./hero.module.css";
 import { IconArrowRight, IconCircleCheckFilled } from "@tabler/icons-react";
 import heroImage from "../../../assets/images/hero_image.png";
 

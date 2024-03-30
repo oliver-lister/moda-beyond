@@ -1,4 +1,4 @@
-import styles from "./Popular.module.css";
+import styles from "./popular.module.css";
 import { Center, Loader, SimpleGrid, Stack} from "@mantine/core";
 import Item from "../../../components/Item/Item.tsx";
 import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";

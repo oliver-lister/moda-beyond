@@ -9,6 +9,10 @@
 
 /* CAROUSEL */
 
+.carousel {
+  max-width: 100vh;
+}
+
 /* PRODUCT INFO */
 
 .brand {
