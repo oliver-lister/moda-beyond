@@ -79,7 +79,8 @@ const NavBar = () => {
                   <Link
                     to={link.path}
                     className={`${styles.link} ${
-                      pathname === link.path && styles.active
+                      searchParams.get("category") ===
+                        link.label.toLowerCase() && styles.active
                     }`}
                     onClick={toggle}
                   >
