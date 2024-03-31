@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../state/store.ts";
-import { refreshAccessTokenAsync } from "../state/auth/authSlice";
+import { AppDispatch, RootState } from "../../state/store.ts";
+import { refreshAccessTokenAsync } from "../../state/auth/authSlice.ts";
 
-import NavBar from "../components/NavBar/NavBar";
-import MessageBar from "../components/MessageBar/MessageBar";
-import Footer from "../components/Footer/Footer";
-import Copyright from "../components/Copyright/Copyright";
+import NavBar from "./NavBar/NavBar.tsx";
+import MessageBar from "./MessageBar/MessageBar.tsx";
+import Footer from "./Footer/Footer.tsx";
+import Copyright from "./Copyright/Copyright.tsx";
 
 const Layout = () => {
   const dispatch = useDispatch<AppDispatch>();

@@ -4,13 +4,6 @@
   padding: 1rem 0;
 }
 
-.heading {
-  text-transform: uppercase;
-  font-weight: 600;
-  text-decoration: none;
-  color: white;
-}
-
 .newsletter p {
   opacity: 0.8;
 }

@@ -1,6 +1,6 @@
 import styles from "./MessageBar.module.css";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { Carousel } from "@mantine/carousel";
 
@@ -11,8 +11,18 @@ const messageBarItems = [
 ];
 
 const MessageBar = () => {
-  const autoplay = useRef(Autoplay({ delay: 6000 }));
+  const [prefersReducedMotion, setPrefersReducedMotion] =
+    useState<boolean>(false);
 
+  useEffect(() => {
+    const QUERY = "(prefers-reduced-motion: no-preference)";
+    const mediaQueryList = window.matchMedia(QUERY);
+    setPrefersReducedMotion(!mediaQueryList.matches);
+  }, []);
+
+  const autoplay = useRef(
+    Autoplay({ jump: prefersReducedMotion, delay: 6000 })
+  );
   return (
     <Carousel
       withControls={false}

@@ -6,6 +6,8 @@ import {
   TextInput,
   Button,
   GridCol,
+  Text,
+  Box,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
@@ -19,6 +21,51 @@ import {
   IconBrandYoutube,
   IconMail,
 } from "@tabler/icons-react";
+
+const navMenu = [
+  {
+    label: "Women",
+    path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1",
+  },
+  {
+    label: "Men",
+    path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1",
+  },
+  {
+    label: "Kids",
+    path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1",
+  },
+  { label: "Cart", path: "/cart" },
+  { label: "Login / Signup", path: "/login" },
+];
+
+const socials = [
+  {
+    label: "Facebook",
+    path: "https://www.facebook.com/",
+    icon: <IconBrandFacebook size={15} />,
+  },
+  {
+    label: "Twitter",
+    path: "https://www.twitter.com/",
+    icon: <IconBrandTwitter size={15} />,
+  },
+  {
+    label: "Instagram",
+    path: "https://www.instagram.com/",
+    icon: <IconBrandInstagram size={15} />,
+  },
+  {
+    label: "Pinterest",
+    path: "https://www.pinterest.com/",
+    icon: <IconBrandPinterest size={15} />,
+  },
+  {
+    label: "Youtube",
+    path: "https://www.youtube.com/",
+    icon: <IconBrandYoutube size={15} />,
+  },
+];
 
 const Footer = () => {
   const form = useForm({
@@ -39,50 +86,14 @@ const Footer = () => {
     form.reset();
   };
 
-  const navMenu = [
-    { label: "Women", path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1" },
-    { label: "Men", path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1" },
-    { label: "Kids", path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1" },
-    { label: "Cart", path: "/cart" },
-    { label: "Login / Signup", path: "/login" },
-  ];
-
-  const socials = [
-    {
-      label: "Facebook",
-      path: "https://www.facebook.com/",
-      icon: <IconBrandFacebook size={15} />,
-    },
-    {
-      label: "Twitter",
-      path: "https://www.twitter.com/",
-      icon: <IconBrandTwitter size={15} />,
-    },
-    {
-      label: "Instagram",
-      path: "https://www.instagram.com/",
-      icon: <IconBrandInstagram size={15} />,
-    },
-    {
-      label: "Pinterest",
-      path: "https://www.pinterest.com/",
-      icon: <IconBrandPinterest size={15} />,
-    },
-    {
-      label: "Youtube",
-      path: "https://www.youtube.com/",
-      icon: <IconBrandYoutube size={15} />,
-    },
-  ];
-
   return (
     <>
-      <div className={styles.footer}>
+      <Box className={styles.footer}>
         <Container size="xl">
           <Grid gutter="xl">
             <GridCol span={{ base: 6, md: 4 }} order={{ base: 2, md: 1 }}>
               <Stack gap="sm" className={styles.nav}>
-                <h4 className={styles.heading}>The Shopper</h4>
+                <Text fw={600}>MØDA-BEYOND</Text>
                 <nav>
                   <ul className={styles.list}>
                     {navMenu.map((link, index) => (
@@ -98,7 +109,7 @@ const Footer = () => {
             </GridCol>
             <GridCol span={{ base: 6, md: 4 }} order={{ base: 3, md: 2 }}>
               <Stack gap="sm" className={styles.socials}>
-                <h4 className={styles.heading}>Follow Us</h4>
+                <Text fw={600}>FOLLOW US</Text>
                 <nav>
                   <ul className={styles.list}>
                     {socials.map((link, index) => (
@@ -120,10 +131,8 @@ const Footer = () => {
             </GridCol>
             <GridCol span={{ base: 12, md: 4 }} order={{ base: 1, md: 3 }}>
               <Stack gap="sm" className={styles.newsletter}>
-                <h4 className={styles.heading}>Stay in touch</h4>
-                <p>
-                  Sign up to our newsletter for your <span>$20 voucher.*</span>
-                </p>
+                <Text fw={600}>STAY IN TOUCH</Text>
+                <Text>Sign up to our newsletter for your $20 voucher.*</Text>
                 <form onSubmit={form.onSubmit(() => handleSubmit())}>
                   <TextInput
                     withAsterisk
@@ -140,7 +149,7 @@ const Footer = () => {
             </GridCol>
           </Grid>
         </Container>
-      </div>
+      </Box>
     </>
   );
 };

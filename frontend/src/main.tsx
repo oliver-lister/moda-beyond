@@ -3,8 +3,8 @@ import ReactDOM from "react-dom/client";
 
 // React Router
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./routes/Layout.tsx";
-import ErrorPage from "./routes/error-page.tsx";
+import Layout from "./routes/Root/Layout.tsx";
+import ErrorPage from "./routes/Root/error-page.tsx";
 import Home from "./routes/Home/Home.tsx";
 import Shop from "./routes/Shop/Shop.tsx";
 import Product from "./routes/Product/Product.tsx";

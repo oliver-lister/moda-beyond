@@ -23,15 +23,21 @@ import {
 import styles from "./NavBar.module.css";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../state/store.ts";
-import { signOut } from "../../state/auth/authSlice.ts";
+import { AppDispatch, RootState } from "../../../state/store.ts";
+import { signOut } from "../../../state/auth/authSlice.ts";
 import { useSearchParams } from "react-router-dom";
 import { useRef } from "react";
 
 const navMenu = [
-  { label: "Women", path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1" },
+  {
+    label: "Women",
+    path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1",
+  },
   { label: "Men", path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1" },
-  { label: "Kids", path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1" },
+  {
+    label: "Kids",
+    path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1",
+  },
 ];
 
 const NavBar = () => {
@@ -71,7 +77,13 @@ const NavBar = () => {
               className={`${styles.logo} ${pathname === "/" && styles.active}`}
               onClick={() => opened && toggle()}
             >
-              <Title order={1}>The Shopper</Title>
+              <Title
+                order={1}
+                ff="EBGaramond-Regular"
+                fz={{ base: "1rem", sm: "1.5rem", lg: "2rem" }}
+              >
+                møda-beyond
+              </Title>
             </Link>
             <ul className={`${styles.list} ${opened && styles.opened}`}>
               {navMenu.map((link, index) => (

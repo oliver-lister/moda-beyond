@@ -8,6 +8,7 @@ import GridRow from "./components/GridRow";
 
 const ViewProducts = () => {
   const [products, setProducts] = useState<ProductProps[]>([]);
+  console.log(products);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,6 +26,7 @@ const ViewProducts = () => {
         }
 
         const { products } = responseData;
+
         setProducts(products);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -32,7 +34,7 @@ const ViewProducts = () => {
     };
 
     fetchProducts();
-  }, [products]);
+  }, []);
 
   const removeProduct = async (_id: ProductProps["_id"]) => {
     try {

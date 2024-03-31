@@ -1,23 +1,19 @@
-import Hero from "./Hero/Hero";
-import Popular from "./Popular/Popular";
-import ExclusiveOffers from "./Offers/ExclusiveOffers";
-import NewCollections from "./NewCollections/NewCollections";
-import { Container, Stack } from "@mantine/core";
+import NewArrivals from "./NewArrivals/NewArrivals";
+import { Container, Stack, Box } from "@mantine/core";
 import styles from "./Home.module.css";
+import OnSale from "./OnSale/OnSale";
 
 const Home = () => {
   return (
     <>
-      <div className={styles.home}>
+      <Box className={styles.home}>
         <Container size="xl">
           <Stack gap="lg">
-            <Hero />
-            <Popular />
-            <ExclusiveOffers />
-            <NewCollections />
+            <OnSale />
+            <NewArrivals />
           </Stack>
         </Container>
-      </div>
+      </Box>
     </>
   );
 };
