@@ -104,15 +104,18 @@ router.get('/fetchproducts', async (req: Request, res: Response) => {
     const page = req.query.page !== undefined ? parseInt(req.query.page as string) : 1;
     const pageSize = 12;
 
-    const query = req.query ? {...req.query} : {};
+    const query = req.query ? { ...req.query } : {};
 
-    delete query.sortBy
-    delete query.sortOrder
+    delete query.sortBy;
+    delete query.sortOrder;
     delete query.page;
 
     const sort = { [sortBy as string]: sortOrder as SortOrder };
 
-    const products = await Product.find(query).sort(sort).limit(pageSize).skip((page - 1) * pageSize);
+    const products = await Product.find(query)
+      .sort(sort)
+      .limit(pageSize)
+      .skip((page - 1) * pageSize);
     const totalCount = await Product.countDocuments(query);
 
     return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
@@ -141,9 +144,11 @@ router.get('/searchproducts', async (req: Request, res: Response) => {
       {
         score: { $meta: 'textScore' },
       },
-    ).sort({ score: { $meta: 'textScore' }, ...sort }).limit(pageSize).skip((page - 1) * pageSize);
+    )
+      .sort({ score: { $meta: 'textScore' }, ...sort })
+      .limit(pageSize)
+      .skip((page - 1) * pageSize);
     const totalCount = await Product.countDocuments({ ...searchQuery });
-
 
     return res.status(200).json({ success: true, message: 'Products searched and fetched successfully', products, totalCount });
   } catch (err: any) {

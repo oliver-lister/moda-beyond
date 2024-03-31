@@ -8,7 +8,6 @@ import GridRow from "./components/GridRow";
 
 const ViewProducts = () => {
   const [products, setProducts] = useState<ProductProps[]>([]);
-  console.log(products);
 
   useEffect(() => {
     const fetchProducts = async () => {

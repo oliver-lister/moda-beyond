@@ -98,6 +98,7 @@ const ProductForm = ({ product }: { product: ProductProps }) => {
         title: "Error! Something went wrong.",
         message: "Please login and try again.",
         icon: <IconX />,
+        color: "red",
       });
 
       navigate("/login");

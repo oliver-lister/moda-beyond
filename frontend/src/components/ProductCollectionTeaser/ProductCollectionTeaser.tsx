@@ -12,27 +12,30 @@ const ProductCollectionTeaser = ({
 }) => {
   const { products, isLoading } = useFetchProducts(query);
 
-  const productSlides =
-    products &&
-    products.slice(0, cap).map(({ _id, ...rest }) => (
-      <Carousel.Slide key={_id}>
-        <Item _id={_id} {...rest} />
-      </Carousel.Slide>
-    ));
+  const productSlides = !isLoading
+    ? products &&
+      products.slice(0, cap).map(({ _id, ...rest }) => (
+        <Carousel.Slide key={_id}>
+          <Item _id={_id} {...rest} />
+        </Carousel.Slide>
+      ))
+    : Array.from({ length: 6 }).map((_, index) => (
+        <Carousel.Slide key={index}>
+          <Skeleton width={250} height={300} />
+        </Carousel.Slide>
+      ));
 
   return (
-    <Skeleton visible={isLoading}>
-      <Carousel
-        slideGap="lg"
-        slideSize={250}
-        align="start"
-        draggable={true}
-        skipSnaps={true}
-        containScroll="keepSnaps"
-      >
-        {productSlides}
-      </Carousel>
-    </Skeleton>
+    <Carousel
+      slideGap="lg"
+      slideSize={250}
+      align="start"
+      draggable={true}
+      skipSnaps={true}
+      containScroll="keepSnaps"
+    >
+      {productSlides}
+    </Carousel>
   );
 };
 
