@@ -56,10 +56,17 @@ const Product = () => {
   }
 
   const breadcrumbItems = [
-    { title: product.category, href: `/${product.category}` },
-    { title: product.name, href: "#" },
+    {
+      title: product.category?.toUpperCase(),
+      href: `/shop?category=${product.category}&sortBy=date&sortOrder=-1`,
+    },
+    {
+      title: product.brand.toUpperCase(),
+      href: `/shop?brand=${product.brand}&sortBy=date&sortOrder=-1`,
+    },
+    { title: product.name.toUpperCase(), href: "#" },
   ].map((item, index) => (
-    <Anchor component={Link} to={item.href} key={index}>
+    <Anchor component={Link} to={item.href} key={index} size="sm" c="gray">
       {item.title}
     </Anchor>
   ));
@@ -72,7 +79,7 @@ const Product = () => {
             {breadcrumbItems}
           </Breadcrumbs>
           <ProductDisplay product={product} />
-          <SimilarProducts />
+          <SimilarProducts product={product} />
         </Stack>
       </Container>
     </section>

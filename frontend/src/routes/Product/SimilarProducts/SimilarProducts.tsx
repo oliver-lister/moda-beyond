@@ -4,8 +4,10 @@ import { Stack, SimpleGrid, Text, Loader, Center } from "@mantine/core";
 import ProductProps from "../../../types/ProductProps.ts";
 import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";
 
-const SimilarProducts = () => {
-  const { products, isLoading } = useFetchProducts();
+const SimilarProducts = ({ product }: { product: ProductProps }) => {
+  const { products, isLoading } = useFetchProducts(
+    `category=${product.category}&brand=${product.brand}`
+  );
 
   return (
     <section className={styles.similar_products}>
@@ -22,17 +24,18 @@ const SimilarProducts = () => {
                   brand,
                   price,
                   lastPrice,
-                }: ProductProps) => (
-                  <Item
-                    key={_id}
-                    _id={_id}
-                    brand={brand}
-                    name={name}
-                    images={images}
-                    price={price}
-                    lastPrice={lastPrice}
-                  />
-                )
+                }: ProductProps) =>
+                  product._id !== _id ? (
+                    <Item
+                      key={_id}
+                      _id={_id}
+                      brand={brand}
+                      name={name}
+                      images={images}
+                      price={price}
+                      lastPrice={lastPrice}
+                    />
+                  ) : null
               )
             ) : (
               <Text>No similar products found.</Text>

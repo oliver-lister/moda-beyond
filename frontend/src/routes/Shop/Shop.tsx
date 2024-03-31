@@ -1,6 +1,5 @@
 import {
   Select,
-  Group,
   Stack,
   Container,
   SimpleGrid,
@@ -9,6 +8,7 @@ import {
   Title,
   Pagination,
   Center,
+  Group,
 } from "@mantine/core";
 import { useState } from "react";
 import ItemContainer from "./ItemContainer/ItemContainer.tsx";
@@ -36,23 +36,26 @@ const Shop = () => {
       const sort = sortOptions[value];
       searchParams.set("sortBy", sort.sortBy);
       searchParams.set("sortOrder", sort.sortOrder.toString());
-      searchParams.set("page", "1");
       setSearchParams(searchParams);
+      handleChangePage(1);
     }
   };
 
   const handleChangePage = (value: number) => {
-    searchParams.set("page", value.toString())
+    searchParams.set("page", value.toString());
     setSearchParams(searchParams);
     setPage(value);
-  }
+  };
 
   return (
     <section style={{ padding: "1rem 0" }}>
       <Container size="xl">
         <Stack gap="lg">
-          <SimpleGrid cols={3} style={{ alignItems: "center" }}>
-            <Title order={2} size="1rem">
+          <SimpleGrid
+            cols={{ base: 1, md: 3 }}
+            style={{ alignItems: "center" }}
+          >
+            <Title order={1} size="1rem" ta={{ base: "center", md: "left" }}>
               {searchParams.get("search")
                 ? `Showing results for ${searchParams.get("search")}`
                 : searchParams.get("category")?.toUpperCase()}
@@ -61,7 +64,9 @@ const Shop = () => {
               {!isLoading && products ? (
                 <Text>
                   <span style={{ fontWeight: "600" }}>
-                    Showing {(activePage > 1 ? (activePage - 1) * 12 + 1 : 1)}-{(activePage > 1 ? (activePage - 1) * 12 : 0) + products.length}
+                    Showing {activePage > 1 ? (activePage - 1) * 12 + 1 : 1}-
+                    {(activePage > 1 ? (activePage - 1) * 12 : 0) +
+                      products.length}
                   </span>{" "}
                   out of {totalCount} products.
                 </Text>
@@ -74,6 +79,7 @@ const Shop = () => {
             </Box>
             <Group justify="flex-end">
               <Select
+                maw={250}
                 allowDeselect={false}
                 data={[
                   { label: "New Arrivals", value: "date_new_to_old" },
@@ -90,7 +96,11 @@ const Shop = () => {
           </SimpleGrid>
           <ItemContainer products={products} isLoading={isLoading} />
           <Center>
-          <Pagination total={Math.ceil((totalCount / 12)) } value={activePage} onChange={handleChangePage} />
+            <Pagination
+              total={Math.ceil(totalCount / 12)}
+              value={activePage}
+              onChange={handleChangePage}
+            />
           </Center>
         </Stack>
       </Container>
