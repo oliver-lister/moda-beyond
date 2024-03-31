@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
-import styles from "./Footer.module.css";
+import styles from "./footer.module.css";
 import { Link } from "react-router-dom";
 import {
   IconBrandFacebook,
