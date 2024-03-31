@@ -21,7 +21,7 @@ const ProductPhotos = ({ images }: { images: string[] }) => {
       const height = imageElement.getBoundingClientRect().height;
       setColHeight(height);
     }
-  }, [width]);
+  }, [images, width]);
 
   // THUMBNAIL CLICKS MOVE IMAGE EMBLA CAROSUEL
   const handleImageClick = useCallback(
@@ -41,8 +41,8 @@ const ProductPhotos = ({ images }: { images: string[] }) => {
             className={styles.thumbnails}
             style={
               !mobile
-                ? { maxHeight: colHeight ? colHeight + "px" : "none" }
-                : {}
+                ? { maxHeight: colHeight ? colHeight + "px" : undefined }
+                : undefined
             }
           >
             {images.map((img, index) => (

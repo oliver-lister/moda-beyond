@@ -8,7 +8,7 @@ interface FetchProductsResult {
   error: string | null;
 }
 
-export const useFetchProducts = (queryString: string | undefined) => {
+export const useFetchProducts = (queryString?: string | undefined) => {
   const [products, setProducts] = useState<FetchProductsResult>({
     products: null,
     totalCount: 0,
@@ -19,11 +19,6 @@ export const useFetchProducts = (queryString: string | undefined) => {
 
   useEffect(() => {
     const fetchProducts = async (type: string, query: string) => {
-      console.log(
-        `http://localhost:3000/products/${type}products${
-          query ? "?" + query : ""
-        }`
-      );
       try {
         setIsLoading(true);
         const response = await fetch(

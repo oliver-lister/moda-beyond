@@ -10,10 +10,11 @@ import {
   Center,
   Group,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ItemContainer from "./ItemContainer/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
 import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
+import ProductProps from "../../types/ProductProps.ts";
 
 type SortOption = {
   sortBy: string;
@@ -29,7 +30,21 @@ const sortOptions: { [key: string]: SortOption } = {
 const Shop = () => {
   const { products, isLoading, totalCount } = useFetchProducts();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
+
+  useEffect(() => {
+    const category = searchParams.get("category");
+    const brand = searchParams.get("brand");
+    const searchTerm = searchParams.get("search");
+    if (category) {
+      setSearchingFor(category.toUpperCase());
+    } else if (brand) {
+      setSearchingFor(brand.toUpperCase());
+    } else if (searchTerm) {
+      setSearchingFor(`Searching for '${searchTerm}'`);
+    }
+  }, [searchParams]);
 
   const handleChangeSort = (value: string | null) => {
     if (value) {
@@ -47,6 +62,23 @@ const Shop = () => {
     setPage(value);
   };
 
+  const ProductCounter = ({ products }: { products: ProductProps[] }) => {
+    return (
+      <Text>
+        <span style={{ fontWeight: "600" }}>
+          Showing{" "}
+          {products.length > 0
+            ? activePage > 1
+              ? (activePage - 1) * 12 + 1
+              : 1
+            : 0}
+          -{(activePage > 1 ? (activePage - 1) * 12 : 0) + products.length}
+        </span>{" "}
+        out of {totalCount} products.
+      </Text>
+    );
+  };
+
   return (
     <section style={{ padding: "1rem 0" }}>
       <Container size="xl">
@@ -56,25 +88,13 @@ const Shop = () => {
             style={{ alignItems: "center" }}
           >
             <Title order={1} size="1rem" ta={{ base: "center", md: "left" }}>
-              {searchParams.get("search")
-                ? `Showing results for ${searchParams.get("search")}`
-                : searchParams.get("category")?.toUpperCase()}
+              {searchingFor}
             </Title>
             <Box style={{ textAlign: "center" }}>
               {!isLoading && products ? (
-                <Text>
-                  <span style={{ fontWeight: "600" }}>
-                    Showing {activePage > 1 ? (activePage - 1) * 12 + 1 : 1}-
-                    {(activePage > 1 ? (activePage - 1) * 12 : 0) +
-                      products.length}
-                  </span>{" "}
-                  out of {totalCount} products.
-                </Text>
+                <ProductCounter products={products} />
               ) : (
-                <Text>
-                  <span style={{ fontWeight: "600" }}>Showing 1-#</span> out of
-                  # products.
-                </Text>
+                <Text>Loading...</Text>
               )}
             </Box>
             <Group justify="flex-end">
@@ -94,7 +114,14 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          <ItemContainer products={products} isLoading={isLoading} />
+          {products && products.length > 0 ? (
+            <ItemContainer products={products} isLoading={isLoading} />
+          ) : (
+            <Center h="60vh">
+              <Text fw={600}>No products found for this search query.</Text>
+            </Center>
+          )}
+
           <Center>
             <Pagination
               total={Math.ceil(totalCount / 12)}

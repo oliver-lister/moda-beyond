@@ -49,7 +49,7 @@ const Product = () => {
 
   if (!product) {
     return (
-      <Center>
+      <Center h="80vh">
         <Loader />
       </Center>
     );

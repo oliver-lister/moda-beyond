@@ -40,12 +40,3 @@ const ProductCollectionTeaser = ({
 };
 
 export default ProductCollectionTeaser;
-
-{
-  /* <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
-        {products &&
-          products
-            .slice(0, cap)
-            .map(({ _id, ...rest }) => <Item key={_id} _id={_id} {...rest} />)}
-      </SimpleGrid> */
-}

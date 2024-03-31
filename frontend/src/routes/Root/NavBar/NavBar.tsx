@@ -59,11 +59,13 @@ const NavBar = () => {
     if (text.length === 0) {
       searchParams.delete("search");
       setSearchParams(searchParams, { replace: true });
+      searchInputRef.current.value = "";
     } else {
       setSearchParams(
         { search: text, sortBy: "date", sortOrder: "-1" },
         { replace: true }
       );
+      searchInputRef.current.value = "";
     }
   };
 
