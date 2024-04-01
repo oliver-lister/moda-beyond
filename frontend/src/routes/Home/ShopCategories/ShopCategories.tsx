@@ -1,8 +1,8 @@
 import { SimpleGrid } from "@mantine/core";
 import CategoryCard from "../../../components/CategoryCard/CategoryCard";
-import women_category_card from "../../../assets/images/women_category_card.webp";
-import men_category_card from "../../../assets/images/men_category_card.webp";
-import kids_category_card from "../../../assets/images/kids_category_card.webp";
+import women_category_card from "../../../assets/images/categoryCards/women_category_card.webp";
+import men_category_card from "../../../assets/images/categoryCards/men_category_card.webp";
+import kids_category_card from "../../../assets/images/categoryCards/kids_category_card.webp";
 
 const ShopCategories = () => {
   return (

@@ -130,9 +130,11 @@ const Footer = () => {
               </Stack>
             </GridCol>
             <GridCol span={{ base: 12, md: 4 }} order={{ base: 1, md: 3 }}>
-              <Stack gap="sm" className={styles.newsletter}>
+              <Stack gap="sm">
                 <Text fw={600}>STAY IN TOUCH</Text>
-                <Text>Sign up to our newsletter for your $20 voucher.*</Text>
+                <Text opacity={0.8}>
+                  Sign up to our newsletter for your $20 voucher.*
+                </Text>
                 <form onSubmit={form.onSubmit(() => handleSubmit())}>
                   <TextInput
                     withAsterisk

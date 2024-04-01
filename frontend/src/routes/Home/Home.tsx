@@ -3,6 +3,7 @@ import { Container, Stack, Box } from "@mantine/core";
 import OnSale from "./OnSale/OnSale";
 import WebsiteInfo from "./WebsiteInfo/WebsiteInfo";
 import ShopCategories from "./ShopCategories/ShopCategories";
+import ShopByBrand from "./ShopByBrand/ShopByBrand";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
           <Stack gap="lg" my="xl">
             <ShopCategories />
             <OnSale />
+            <ShopByBrand />
             <NewArrivals />
             <WebsiteInfo />
           </Stack>

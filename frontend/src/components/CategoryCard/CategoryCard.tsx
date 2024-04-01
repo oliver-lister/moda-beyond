@@ -15,7 +15,7 @@ const CategoryCard = ({
     <Link to={link}>
       <Box className={styles.card}>
         <Box className={styles.card__thumbnail}>
-          <Image src={image} className={styles.image_background} />
+          <Image src={image} />
           <Box className={styles.card__title}>
             <Text>SHOP {label.toUpperCase()}</Text>
           </Box>
