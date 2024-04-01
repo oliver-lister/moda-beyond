@@ -32,8 +32,10 @@ const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
+  const [sort, setSort] = useState<string>("date_new_to_old");
 
   useEffect(() => {
+    // set 'Searching For' title based on searchParams
     const category = searchParams.get("category");
     const brand = searchParams.get("brand");
     const searchTerm = searchParams.get("search");
@@ -44,15 +46,33 @@ const Shop = () => {
     } else if (searchTerm) {
       setSearchingFor(`Searching for '${searchTerm}'`);
     }
+
+    // set Page based on searchParams
+    setPage(Number(searchParams.get("page")));
+
+    // set Sort Option based on searchParams
+    const sortBy = searchParams.get("sortBy");
+    const sortOrder = Number(searchParams.get("sortOrder"));
+
+    if (sortBy && sortOrder) {
+      const newSort = Object.keys(sortOptions).find((key) => {
+        const option = sortOptions[key];
+        return option.sortBy === sortBy && option.sortOrder === sortOrder;
+      });
+      if (newSort) {
+        setSort(newSort);
+      }
+    }
   }, [searchParams]);
 
   const handleChangeSort = (value: string | null) => {
     if (value) {
       const sort = sortOptions[value];
+      setSort(value);
       searchParams.set("sortBy", sort.sortBy);
       searchParams.set("sortOrder", sort.sortOrder.toString());
-      setSearchParams(searchParams);
       handleChangePage(1);
+      setSearchParams(searchParams);
     }
   };
 
@@ -109,7 +129,7 @@ const Shop = () => {
                   },
                   { label: "Price: High to Low", value: "price_high_to_low" },
                 ]}
-                defaultValue={"date_new_to_old"}
+                value={sort}
                 onChange={handleChangeSort}
               />
             </Group>
