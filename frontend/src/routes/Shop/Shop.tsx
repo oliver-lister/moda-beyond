@@ -48,7 +48,8 @@ const Shop = () => {
     }
 
     // set Page based on searchParams
-    setPage(Number(searchParams.get("page")));
+    const pageNum = Number(searchParams.get("page"));
+    if (pageNum) setPage(pageNum);
 
     // set Sort Option based on searchParams
     const sortBy = searchParams.get("sortBy");

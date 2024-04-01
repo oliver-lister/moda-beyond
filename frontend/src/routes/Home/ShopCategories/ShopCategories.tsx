@@ -9,17 +9,17 @@ const ShopCategories = () => {
     <section>
       <SimpleGrid cols={{ base: 1, md: 3 }}>
         <CategoryCard
-          link="/shop?category=women&sortBy=date&sortOrder=-1"
+          link="/shop?category=women&page=1&sortBy=date&sortOrder=-1"
           image={women_category_card}
           label="Women"
         />
         <CategoryCard
-          link="/shop?category=men&sortBy=date&sortOrder=-1"
+          link="/shop?category=men&page=1&sortBy=date&sortOrder=-1"
           image={men_category_card}
           label="Men"
         />
         <CategoryCard
-          link="/shop?category=kids&sortBy=date&sortOrder=-1"
+          link="/shop?category=kids&page=1&sortBy=date&sortOrder=-1"
           image={kids_category_card}
           label="Kids"
         />
