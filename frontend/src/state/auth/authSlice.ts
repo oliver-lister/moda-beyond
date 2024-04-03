@@ -297,7 +297,6 @@ export const addToCartAsync = createAsyncThunk(
         throw new Error("No access token.");
       }
       const userId = auth.user._id.toString();
-      console.log(userId);
 
       const response = await fetch(
         `http://localhost:3000/users/${userId}/cart/add`,

@@ -36,7 +36,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                   {product.brand}
                 </Anchor>
               </Title>
-              <Title order={1} fw={600} fz="2rem">
+              <Title order={1} fw={600} fz={{ base: "1.5rem", md: "2rem" }}>
                 {product.name}
               </Title>
               <Group gap="xs" className={styles.prices}>

@@ -18,8 +18,11 @@ import "@mantine/notifications/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import "@mantine/dates/styles.css";
 import "@mantine/carousel/styles.css";
-
 import "./index.css";
+
+// Redux
+import { Provider } from "react-redux";
+import { store } from "./state/store.ts";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
@@ -32,10 +35,6 @@ const theme = createTheme({
     xl: "1280px",
   },
 });
-
-// Redux
-import { Provider } from "react-redux";
-import { store } from "./state/store.ts";
 
 const router = createBrowserRouter([
   {

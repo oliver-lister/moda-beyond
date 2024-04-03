@@ -50,6 +50,8 @@ const ProductPhotos = ({ images }: { images: string[] }) => {
                 key={index}
                 src={img}
                 onClick={() => handleImageClick(index)}
+                w={200}
+                h={200}
               />
             ))}
           </Stack>
@@ -70,7 +72,7 @@ const ProductPhotos = ({ images }: { images: string[] }) => {
         >
           {images.map((img, index) => (
             <Carousel.Slide key={index}>
-              <Image src={img} ref={imageRef} />
+              <Image src={img} ref={imageRef} w={950} h={600} />
             </Carousel.Slide>
           ))}
         </Carousel>

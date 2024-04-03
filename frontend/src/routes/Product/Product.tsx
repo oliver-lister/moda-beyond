@@ -4,6 +4,7 @@ import {
   Anchor,
   Container,
   Stack,
+  Text,
   Loader,
   Center,
 } from "@mantine/core";
@@ -47,26 +48,25 @@ const Product = () => {
     return <div>Please search for a product</div>;
   }
 
-  if (!product) {
-    return (
-      <Center h="80vh">
-        <Loader />
-      </Center>
-    );
-  }
-
   const breadcrumbItems = [
     {
-      title: product.category?.toUpperCase(),
-      href: `/shop?category=${product.category}&sortBy=date&sortOrder=-1`,
+      title: product && product.category && product.category.toUpperCase(),
+      href: `/shop?category=${
+        product && product.category
+      }&sortBy=date&sortOrder=-1`,
     },
     {
-      title: product.brand.toUpperCase(),
-      href: `/shop?brand=${product.brand}&sortBy=date&sortOrder=-1`,
+      title: product && product.brand && product.brand.toUpperCase(),
+      href: `/shop?brand=${product && product.brand}&sortBy=date&sortOrder=-1`,
     },
-    { title: product.name.toUpperCase(), href: "#" },
   ].map((item, index) => (
-    <Anchor component={Link} to={item.href} key={index} size="sm" c="gray">
+    <Anchor
+      component={Link}
+      to={item.href}
+      key={index}
+      fz={{ base: "xs", lg: "sm" }}
+      c="gray"
+    >
       {item.title}
     </Anchor>
   ));
@@ -75,11 +75,25 @@ const Product = () => {
     <section className={styles.product}>
       <Container size="xl">
         <Stack gap="lg">
-          <Breadcrumbs className={styles.breadcrumbs}>
-            {breadcrumbItems}
+          <Breadcrumbs className={styles.breadcrumbs} separatorMargin="0.5rem">
+            {product ? (
+              breadcrumbItems
+            ) : (
+              <Text fz={{ base: "xs", lg: "sm" }} c="gray">
+                LOADING...
+              </Text>
+            )}
           </Breadcrumbs>
-          <ProductDisplay product={product} />
-          <SimilarProducts product={product} />
+          {product ? (
+            <>
+              <ProductDisplay product={product} />
+              <SimilarProducts product={product} />
+            </>
+          ) : (
+            <Center h="70vh">
+              <Loader />
+            </Center>
+          )}
         </Stack>
       </Container>
     </section>

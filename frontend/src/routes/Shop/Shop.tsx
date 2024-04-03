@@ -135,14 +135,7 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          {products && products.length > 0 ? (
-            <ItemContainer products={products} isLoading={isLoading} />
-          ) : (
-            <Center h="60vh">
-              <Text fw={600}>No products found for this search query.</Text>
-            </Center>
-          )}
-
+          <ItemContainer products={products} isLoading={isLoading} />
           <Center>
             <Pagination
               total={Math.ceil(totalCount / 12)}

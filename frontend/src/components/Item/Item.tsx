@@ -13,7 +13,13 @@ const Item = ({ _id, images, name, brand, price, lastPrice }: ProductProps) => {
     >
       <article className={styles.item}>
         <div className={styles.imageBox}>
-          <Image src={images[0]} className={styles.image} />
+          <Image
+            src={images[0]}
+            className={styles.image}
+            width={250}
+            height={300}
+            alt="Product"
+          />
         </div>
         <div className={styles.content}>
           <p className={styles.brand}>{brand}</p>

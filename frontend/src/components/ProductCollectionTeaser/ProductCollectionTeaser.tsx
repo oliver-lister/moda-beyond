@@ -12,18 +12,15 @@ const ProductCollectionTeaser = ({
 }) => {
   const { products, isLoading } = useFetchProducts(query);
 
-  const productSlides = !isLoading
-    ? products &&
-      products.slice(0, cap).map(({ _id, ...rest }) => (
-        <Carousel.Slide key={_id}>
+  const productSlides =
+    products &&
+    products.slice(0, cap).map(({ _id, ...rest }) => (
+      <Carousel.Slide key={_id}>
+        <Skeleton visible={isLoading} animate>
           <Item _id={_id} {...rest} />
-        </Carousel.Slide>
-      ))
-    : Array.from({ length: 6 }).map((_, index) => (
-        <Carousel.Slide key={index}>
-          <Skeleton width={250} height={300} />
-        </Carousel.Slide>
-      ));
+        </Skeleton>
+      </Carousel.Slide>
+    ));
 
   return (
     <Carousel

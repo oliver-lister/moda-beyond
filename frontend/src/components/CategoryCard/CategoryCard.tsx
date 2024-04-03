@@ -12,10 +12,10 @@ const CategoryCard = ({
   label: string;
 }) => {
   return (
-    <Link to={link}>
+    <Link to={link} className={styles.link}>
       <Box className={styles.card}>
         <Box className={styles.card__thumbnail}>
-          <Image src={image} />
+          <Image src={image} w={600} h={600} alt="Category fashion image" />
           <Box className={styles.card__title}>
             <Text>SHOP {label.toUpperCase()}</Text>
           </Box>

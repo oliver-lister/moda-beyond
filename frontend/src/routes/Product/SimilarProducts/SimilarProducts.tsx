@@ -1,6 +1,6 @@
 import Item from "../../../components/Item/Item";
 import styles from "./similarproducts.module.css";
-import { Stack, SimpleGrid, Text, Loader, Center } from "@mantine/core";
+import { Stack, SimpleGrid, Text, Skeleton } from "@mantine/core";
 import ProductProps from "../../../types/ProductProps.ts";
 import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";
 
@@ -8,6 +8,10 @@ const SimilarProducts = ({ product }: { product: ProductProps }) => {
   const { products, isLoading } = useFetchProducts(
     `category=${product.category}&brand=${product.brand}`
   );
+
+  const SkeletonArray = Array.from({ length: 6 }).map((_, i) => {
+    return <Skeleton key={i} width={200} height={300} />;
+  });
 
   return (
     <section className={styles.similar_products}>
@@ -41,9 +45,7 @@ const SimilarProducts = ({ product }: { product: ProductProps }) => {
               <Text>No similar products found.</Text>
             )
           ) : (
-            <Center>
-              <Loader />
-            </Center>
+            <>{SkeletonArray}</>
           )}
         </SimpleGrid>
       </Stack>
