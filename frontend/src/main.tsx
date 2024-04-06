@@ -23,6 +23,10 @@ import "./index.css";
 // Redux
 import { Provider } from "react-redux";
 import { store } from "./state/store.ts";
+import Profile from "./routes/Account/components/Profile.tsx";
+import AccountLayout from "./routes/Account/AccountLayout.tsx";
+import LoginAndSecurity from "./routes/Account/components/LoginAndSecurity.tsx";
+import DeleteAccount from "./routes/Account/components/DeleteAccount.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
@@ -43,24 +47,32 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "/shop", element: <Shop /> },
+      { path: "shop", element: <Shop /> },
       {
-        path: "/product",
+        path: "product/:productId",
         element: <Product />,
+      },
+      {
+        path: "/user",
         children: [
           {
-            path: ":productId",
-            element: <Product />,
+            path: "account",
+            element: <AccountLayout />,
+            children: [
+              { path: "profile", element: <Profile /> },
+              { path: "login-and-security", element: <LoginAndSecurity /> },
+              { path: "delete-account", element: <DeleteAccount /> },
+            ],
+          },
+          {
+            path: "cart",
+            element: <Cart />,
+          },
+          {
+            path: "login",
+            element: <LoginSignup />,
           },
         ],
-      },
-      {
-        path: "/cart",
-        element: <Cart />,
-      },
-      {
-        path: "/login",
-        element: <LoginSignup />,
       },
     ],
   },

@@ -14,9 +14,17 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
     return (
       <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
         {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} width={200} height={400} />
+          <Skeleton key={i} width={200} height={400} animate />
         ))}
       </SimpleGrid>
+    );
+  }
+
+  if (!isLoading && !products) {
+    return (
+      <Center h="60vh">
+        <Text fw={600}>Cannot connect to database.</Text>
+      </Center>
     );
   }
 
@@ -27,6 +35,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
       </Center>
     );
   }
+
   return (
     <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
       {products &&

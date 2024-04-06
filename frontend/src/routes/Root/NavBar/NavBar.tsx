@@ -3,7 +3,7 @@ import {
   Flex,
   Group,
   Burger,
-  Title,
+  Text,
   Box,
   List,
   Stack,
@@ -86,14 +86,14 @@ const NavBar = () => {
                   hiddenFrom="lg"
                 />
                 <Link to="/" className={styles.logo}>
-                  <Title
-                    order={1}
+                  <Text
                     ff="EBGaramond-Regular"
                     fz={{ base: "1.4rem", lg: "2rem" }}
+                    fw={600}
                     m={{ base: "1rem 0.5rem", lg: "0" }}
                   >
                     møda-beyond
-                  </Title>
+                  </Text>
                 </Link>
               </Group>
               <List
@@ -126,7 +126,7 @@ const NavBar = () => {
               </Box>
               <ProfileMenu user={user} />
               <Link
-                to="/cart"
+                to="/user/cart"
                 className={styles.cart}
                 onClick={() => opened && toggle()}
               >

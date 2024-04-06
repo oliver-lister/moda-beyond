@@ -1,0 +1,22 @@
+.account {
+  background-color: var(--mantine-color-gray-1);
+}
+
+.navlink {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.navlink:hover {
+  background-color: var(--mantine-color-gray-2);
+}
+
+.navlink.active {
+  font-weight: 600;
+  background-color: var(--mantine-color-white);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.navlink:nth-last-of-type(0) {
+  color: var(--mantine-color-red);
+}

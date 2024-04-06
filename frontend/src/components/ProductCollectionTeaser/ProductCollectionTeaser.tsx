@@ -1,4 +1,4 @@
-import { Skeleton } from "@mantine/core";
+import { Skeleton, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import Item from "../Item/Item.tsx";
 import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
@@ -11,6 +11,10 @@ const ProductCollectionTeaser = ({
   cap: number;
 }) => {
   const { products, isLoading } = useFetchProducts(query);
+
+  if (!products && !isLoading) {
+    return <Text>Cannot access database.</Text>;
+  }
 
   const productSlides =
     products &&

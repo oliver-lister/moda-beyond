@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../state/store.ts";
 import { refreshAccessTokenAsync } from "../../state/auth/authSlice.ts";
+import { notifications } from "@mantine/notifications";
+import { IconUser } from "@tabler/icons-react";
 
 import NavBar from "./NavBar/NavBar.tsx";
 import MessageBar from "./MessageBar/MessageBar.tsx";
@@ -17,7 +19,19 @@ const Layout = () => {
     const storedRefreshToken = localStorage.getItem("refreshToken");
     if (storedRefreshToken && !user) {
       // Refresh the access token upon refresh
-      dispatch(refreshAccessTokenAsync(storedRefreshToken));
+      try {
+        dispatch(refreshAccessTokenAsync(storedRefreshToken));
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log(err.message);
+
+          notifications.show({
+            title: "Sorry, you've been logged out.",
+            message: "We could authenticate your session, please log in again.",
+            icon: <IconUser />,
+          });
+        }
+      }
     }
   }, []);
 

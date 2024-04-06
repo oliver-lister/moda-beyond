@@ -1,4 +1,4 @@
-import { Menu, UnstyledButton, Box, Text, Group, rem } from "@mantine/core";
+import { Menu, UnstyledButton, Group, rem } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { IconUserCircle, IconLogout, IconLogin } from "@tabler/icons-react";
 import styles from "../NavBar.module.css";
@@ -7,6 +7,7 @@ import { AppDispatch } from "../../../../state/store.ts";
 import { signOut } from "../../../../state/auth/authSlice.ts";
 import UserProps from "../../../../types/UserProps";
 import { useDisclosure } from "@mantine/hooks";
+import InitialsAvatar from "../../../../components/InitialsAvatar/InitialsAvatar.tsx";
 
 const ProfileMenu = ({ user }: { user: UserProps | null }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,12 +18,10 @@ const ProfileMenu = ({ user }: { user: UserProps | null }) => {
       <Menu.Target>
         <UnstyledButton className={styles.profile}>
           {user ? (
-            <Box className={styles.initials}>
-              <Text>
-                {user.firstName[0].toUpperCase() +
-                  user.lastName[0].toUpperCase()}
-              </Text>
-            </Box>
+            <InitialsAvatar
+              firstNameLetter={user.firstName[0]}
+              lastNameLetter={user.lastName[0]}
+            />
           ) : (
             <IconUserCircle style={{ width: rem(32), height: rem(32) }} />
           )}
@@ -33,7 +32,7 @@ const ProfileMenu = ({ user }: { user: UserProps | null }) => {
           <>
             <Menu.Item className={styles.profile_menu_item}>
               <Link
-                to="/profile"
+                to="/user/account/profile"
                 onClick={() => opened && toggle()}
                 style={{ textDecoration: "none" }}
               >
@@ -59,7 +58,7 @@ const ProfileMenu = ({ user }: { user: UserProps | null }) => {
           </>
         ) : (
           <Menu.Item className={styles.profile_menu_item}>
-            <Link to="/login">
+            <Link to="/user/login">
               <Group>
                 <IconLogin style={{ width: rem(16), height: rem(16) }} />
                 Login
