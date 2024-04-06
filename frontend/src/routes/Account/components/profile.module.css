@@ -1,0 +1,16 @@
+
+
+.wrapper {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: $mantine-breakpoint-sm) {
+  .account {
+    background-color: var(--mantine-color-gray-1);
+  }
+  .wrapper {
+    justify-content: center;
+  }
+}

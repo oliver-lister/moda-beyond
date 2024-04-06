@@ -1,0 +1,5 @@
+.card_inner {
+  padding: 1.5rem;
+  min-width: 400px;
+  background-color: var(--mantine-color-white);
+}

@@ -1,12 +1,4 @@
-import {
-  Container,
-  Grid,
-  GridCol,
-  NavLink,
-  Stack,
-  Title,
-  Center,
-} from "@mantine/core";
+import { Container, Grid, GridCol, NavLink, Stack, Title } from "@mantine/core";
 import styles from "./AccountLayout.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
@@ -40,14 +32,19 @@ const AccountLayout = () => {
 
   return (
     <section className={styles.account}>
-      <Container size="xl" py="1rem" mih="70vh">
-        <Grid gutter="xl">
-          <GridCol span={{ base: 12, md: 3 }}>
+      <Container
+        size="xl"
+        py={{ base: 0, md: "1rem" }}
+        mih="70vh"
+        styles={{ root: { paddingInline: 0 } }}
+      >
+        <Grid>
+          <GridCol span={{ base: 12, md: 3 }} visibleFrom="md" pl="1.5rem">
             <Stack>
               <Title order={1} fz="1.5rem">
                 Account
               </Title>
-              <Stack>
+              <Stack gap="xs">
                 {navLinks.map((link, index) => (
                   <NavLink
                     key={index}
@@ -67,9 +64,7 @@ const AccountLayout = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, md: 9 }}>
-            <Center>
-              <Outlet context={{ user }} />
-            </Center>
+            <Outlet context={{ user }} />
           </GridCol>
         </Grid>
       </Container>
