@@ -13,12 +13,12 @@ import {
 import { IconTruck } from "@tabler/icons-react";
 import styles from "./cart.module.css";
 import { Link } from "react-router-dom";
-import Delivery from "./Delivery/Delivery.tsx";
-import OrderSummary from "./OrderSummary/OrderSummary.tsx";
+import Delivery from "./components/Delivery/Delivery.tsx";
+import OrderSummary from "./components/OrderSummary/OrderSummary.tsx";
+import CartItemContainer from "./components/CartItemContainer/CartItemContainer.tsx";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../state/store.ts";
 import { useState } from "react";
-import CartItemContainer from "./CartItemContainer/CartItemContainer.tsx";
 import { updateCartAsync } from "../../state/auth/authSlice.ts";
 import { CartItemProps } from "../../types/UserProps.ts";
 

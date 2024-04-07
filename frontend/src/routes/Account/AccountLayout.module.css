@@ -2,6 +2,12 @@
   background-color: var(--mantine-color-white);
 }
 
+@media (min-width: $mantine-breakpoint-sm) {
+  .account {
+    background-color: var(--mantine-color-gray-1);
+  }
+}
+
 .navlink {
   border-radius: 0.5rem;
   overflow: hidden;
@@ -19,10 +25,4 @@
 
 .navlink:nth-last-of-type(0) {
   color: var(--mantine-color-red);
-}
-
-@media (min-width: $mantine-breakpoint-sm) {
-  .account {
-    background-color: var(--mantine-color-gray-1);
-  }
 }

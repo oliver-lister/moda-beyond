@@ -1,4 +1,4 @@
-import UserProps from "../../../../types/UserProps";
+import UserProps from "../../../../../types/UserProps";
 import { Group, Indicator, rem } from "@mantine/core";
 import { IconShoppingCart } from "@tabler/icons-react";
 

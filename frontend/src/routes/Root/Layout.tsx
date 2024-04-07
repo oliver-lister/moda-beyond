@@ -6,10 +6,10 @@ import { refreshAccessTokenAsync } from "../../state/auth/authSlice.ts";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
 
-import NavBar from "./NavBar/NavBar.tsx";
-import MessageBar from "./MessageBar/MessageBar.tsx";
-import Footer from "./Footer/Footer.tsx";
-import Copyright from "./Copyright/Copyright.tsx";
+import NavBar from "./components/NavBar/NavBar.tsx";
+import MessageBar from "./components/MessageBar/MessageBar.tsx";
+import Footer from "./components/Footer/Footer.tsx";
+import Copyright from "./components/Copyright/Copyright.tsx";
 
 const Layout = () => {
   const dispatch = useDispatch<AppDispatch>();

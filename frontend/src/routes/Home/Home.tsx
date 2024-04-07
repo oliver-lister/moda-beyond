@@ -1,9 +1,9 @@
-import NewArrivals from "./NewArrivals/NewArrivals";
+import NewArrivals from "./components/NewArrivals";
 import { Container, Stack, Box } from "@mantine/core";
-import OnSale from "./OnSale/OnSale";
-import WebsiteInfo from "./WebsiteInfo/WebsiteInfo";
-import ShopCategories from "./ShopCategories/ShopCategories";
-import ShopByBrand from "./ShopByBrand/ShopByBrand";
+import OnSale from "./components/OnSale";
+import WebsiteInfo from "./components/WebsiteInfo";
+import ShopCategories from "./components/ShopCategories";
+import ShopByBrand from "./components/ShopByBrand";
 
 const Home = () => {
   return (

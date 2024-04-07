@@ -1,8 +1,8 @@
-import Item from "../../../components/Item/Item";
+import Item from "../../../../components/Item/Item.tsx";
 import styles from "./similarproducts.module.css";
 import { Stack, SimpleGrid, Text, Skeleton } from "@mantine/core";
-import ProductProps from "../../../types/ProductProps.ts";
-import { useFetchProducts } from "../../../hooks/useFetchProducts.tsx";
+import ProductProps from "../../../../types/ProductProps.ts";
+import { useFetchProducts } from "../../../../hooks/useFetchProducts.tsx";
 
 const SimilarProducts = ({ product }: { product: ProductProps }) => {
   const { products, isLoading } = useFetchProducts(

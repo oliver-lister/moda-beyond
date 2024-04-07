@@ -10,7 +10,7 @@ import {
   Anchor,
   Box,
 } from "@mantine/core";
-import ProductProps from "../../../types/ProductProps";
+import ProductProps from "../../../../types/ProductProps.ts";
 import ProductAccordion from "./components/ProductAccordion.tsx";
 import ProductPhotos from "./components/ProductPhotos.tsx";
 import ProductForm from "./components/ProductForm.tsx";

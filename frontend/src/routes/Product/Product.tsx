@@ -9,8 +9,8 @@ import {
   Center,
 } from "@mantine/core";
 import styles from "./product.module.css";
-import ProductDisplay from "./ProductDisplay/ProductDisplay.tsx";
-import SimilarProducts from "./SimilarProducts/SimilarProducts.tsx";
+import ProductDisplay from "./components/ProductDisplay/ProductDisplay.tsx";
+import SimilarProducts from "./components/SimilarProducts/SimilarProducts.tsx";
 import { useEffect, useState } from "react";
 import ProductProps from "../../types/ProductProps.ts";
 

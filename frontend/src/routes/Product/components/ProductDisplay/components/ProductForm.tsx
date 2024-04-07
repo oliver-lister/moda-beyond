@@ -2,16 +2,16 @@ import styles from "../productdisplay.module.css";
 import { Stack, Group, ColorSwatch, Select, Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
-import ProductProps from "../../../../types/ProductProps";
+import ProductProps from "../../../../../types/ProductProps.ts";
 import { useState } from "react";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { SerializedError } from "@reduxjs/toolkit";
-import { RootState, AppDispatch } from "../../../../state/store.ts";
+import { RootState, AppDispatch } from "../../../../../state/store.ts";
 import {
   addToCartAsync,
   updateCartAsync,
-} from "../../../../state/auth/authSlice";
+} from "../../../../../state/auth/authSlice.ts";
 import { useNavigate } from "react-router-dom";
 
 const ProductForm = ({ product }: { product: ProductProps }) => {

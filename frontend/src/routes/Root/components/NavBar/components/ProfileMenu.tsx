@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { IconUserCircle, IconLogout, IconLogin } from "@tabler/icons-react";
 import styles from "../NavBar.module.css";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
-import { signOut } from "../../../../state/auth/authSlice.ts";
-import UserProps from "../../../../types/UserProps";
+import { AppDispatch } from "../../../../../state/store.ts";
+import { signOut } from "../../../../../state/auth/authSlice.ts";
+import UserProps from "../../../../../types/UserProps.ts";
 import { useDisclosure } from "@mantine/hooks";
-import InitialsAvatar from "../../../../components/InitialsAvatar/InitialsAvatar.tsx";
+import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
 
 const ProfileMenu = ({ user }: { user: UserProps | null }) => {
   const dispatch = useDispatch<AppDispatch>();

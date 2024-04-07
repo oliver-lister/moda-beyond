@@ -12,7 +12,7 @@ import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../state/store.ts";
+import { RootState } from "../../../../state/store.ts";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import ProfileMenu from "./components/ProfileMenu.tsx";

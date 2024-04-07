@@ -11,7 +11,7 @@ import {
   Group,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import ItemContainer from "./ItemContainer/ItemContainer.tsx";
+import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
 import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
 import ProductProps from "../../types/ProductProps.ts";

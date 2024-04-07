@@ -10,6 +10,9 @@ import Shop from "./routes/Shop/Shop.tsx";
 import Product from "./routes/Product/Product.tsx";
 import Cart from "./routes/Cart/Cart.tsx";
 import LoginSignup from "./routes/Login/LoginSignup.tsx";
+import AccountLayout from "./routes/Account/AccountLayout.tsx";
+import LoginAndSecurity from "./routes/Account/LoginAndSecurity/LoginAndSecurity.tsx";
+import DeleteAccount from "./routes/Account/DeleteAccount/DeleteAccount.tsx";
 
 // Mantine
 import "@mantine/core/styles.css";
@@ -23,10 +26,7 @@ import "./index.css";
 // Redux
 import { Provider } from "react-redux";
 import { store } from "./state/store.ts";
-import Profile from "./routes/Account/components/Profile.tsx";
-import AccountLayout from "./routes/Account/AccountLayout.tsx";
-import LoginAndSecurity from "./routes/Account/components/LoginAndSecurity.tsx";
-import DeleteAccount from "./routes/Account/components/DeleteAccount.tsx";
+import Profile from "./routes/Account/Profile/Profile.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({

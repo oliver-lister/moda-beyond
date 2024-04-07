@@ -1,6 +1,6 @@
 import { Accordion } from "@mantine/core";
 import styles from "../productdisplay.module.css";
-import ProductProps from "../../../../types/ProductProps";
+import ProductProps from "../../../../../types/ProductProps";
 
 const ProductAccordion = ({ product }: { product: ProductProps }) => {
   return (
