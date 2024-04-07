@@ -2,6 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://oliver-lister.github.io/moda-beyond",
   "type": "module",
   "scripts": {
     "dev": "vite",
