@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 // React Router
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import Layout from "./routes/Root/Layout.tsx";
 import ErrorPage from "./routes/Root/error-page.tsx";
 import Home from "./routes/Home/Home.tsx";
@@ -40,43 +40,46 @@ const theme = createTheme({
   },
 });
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    errorElement: <ErrorPage />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "shop", element: <Shop /> },
-      {
-        path: "product/:productId",
-        element: <Product />,
-      },
-      {
-        path: "/user",
-        children: [
-          {
-            path: "account",
-            element: <AccountLayout />,
-            children: [
-              { path: "profile", element: <Profile /> },
-              { path: "login-and-security", element: <LoginAndSecurity /> },
-              { path: "delete-account", element: <DeleteAccount /> },
-            ],
-          },
-          {
-            path: "cart",
-            element: <Cart />,
-          },
-          {
-            path: "login",
-            element: <LoginSignup />,
-          },
-        ],
-      },
-    ],
-  },
-]);
+const router = createHashRouter(
+  [
+    {
+      path: "/",
+      element: <Layout />,
+      errorElement: <ErrorPage />,
+      children: [
+        { index: true, element: <Home /> },
+        { path: "shop", element: <Shop /> },
+        {
+          path: "product/:productId",
+          element: <Product />,
+        },
+        {
+          path: "/user",
+          children: [
+            {
+              path: "account",
+              element: <AccountLayout />,
+              children: [
+                { path: "profile", element: <Profile /> },
+                { path: "login-and-security", element: <LoginAndSecurity /> },
+                { path: "delete-account", element: <DeleteAccount /> },
+              ],
+            },
+            {
+              path: "cart",
+              element: <Cart />,
+            },
+            {
+              path: "login",
+              element: <LoginSignup />,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  { basename: "/moda-beyond/" }
+);
 
 const rootContainer = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootContainer);
