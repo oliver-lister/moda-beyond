@@ -18,6 +18,7 @@ import { useState } from "react";
 import ProfileMenu from "./components/ProfileMenu.tsx";
 import SearchBox from "./components/SearchBox.tsx";
 import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
+import MobileNav from "./components/MobileNav/MobileNav.tsx";
 
 const navMenu = [
   {
@@ -144,6 +145,7 @@ const NavBar = () => {
           </Box>
         </Stack>
       </Container>
+      <MobileNav navMenu={navMenu} toggle={toggle} opened={opened} />
     </nav>
   );
 };
