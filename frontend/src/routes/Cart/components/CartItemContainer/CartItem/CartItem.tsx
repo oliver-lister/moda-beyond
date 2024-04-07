@@ -38,7 +38,7 @@ const CartItem = ({
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://localhost:3000/products/fetchproductbyid/${productId}`,
+          `${import.meta.env.VITE_BACKEND_HOST}/products/fetchproductbyid/${productId}`,
           {
             method: "GET",
           }

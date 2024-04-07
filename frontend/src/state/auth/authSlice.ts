@@ -52,7 +52,7 @@ export const loginAsync = createAsyncThunk(
   "auth/loginAsync",
   async (values: LoginValues) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export const signupAsync = createAsyncThunk(
   "auth/signupAsync",
   async (values: SignupValues) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/signup", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +172,7 @@ export const refreshAccessTokenAsync = createAsyncThunk(
   "auth/refreshAccessToken",
   async (refreshToken: string) => {
     try {
-      const response = await fetch("http://localhost:3000/auth/refreshtoken", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/auth/refreshtoken`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -239,7 +239,7 @@ export const fetchUserDataAsync = createAsyncThunk(
       }
 
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/fetchdata`,
+        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/fetchdata`,
         {
           method: "GET",
           headers: {
@@ -299,7 +299,7 @@ export const addToCartAsync = createAsyncThunk(
       const userId = auth.user._id.toString();
 
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/cart/add`,
+        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/add`,
         {
           method: "POST",
           headers: {
@@ -365,7 +365,7 @@ export const updateCartAsync = createAsyncThunk(
       const userId = auth.user._id.toString();
 
       const response = await fetch(
-        `http://localhost:3000/users/${userId}/cart/update`,
+        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/update`,
         {
           method: "PUT",
           headers: {

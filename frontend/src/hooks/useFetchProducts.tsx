@@ -22,7 +22,7 @@ export const useFetchProducts = (queryString?: string | undefined) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://localhost:3000/products/${type}products${
+          `${import.meta.env.VITE_BACKEND_HOST}/products/${type}products${
             query ? "?" + query : ""
           }`,
           {
