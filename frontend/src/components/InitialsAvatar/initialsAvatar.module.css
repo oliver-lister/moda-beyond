@@ -1,12 +1,14 @@
 .initials {
-  color: black;
-  background-color: var(--mantine-color-white);
-  padding: 0.2rem;
+  color: var(--mantine-color-white);
+  background: linear-gradient(
+    to right,
+    var(--mantine-color-grape-5),
+    var(--mantine-color-violet-5)
+  );
+  padding: 0.35rem 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 2rem;
-  height: 2rem;
   border-radius: 50%;
   text-align: center;
   vertical-align: middle;

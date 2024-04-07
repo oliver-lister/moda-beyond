@@ -13,7 +13,7 @@ const ShoppingCartButton = ({ user }: { user: UserProps | null }) => {
       {!user || (user && user.cart && user.cart.length === 0) ? (
         <IconShoppingCart style={{ width: rem(32), height: rem(32) }} />
       ) : (
-        <Indicator inline label={totalProductsInCart} size={16}>
+        <Indicator inline label={totalProductsInCart} size={16} color="violet">
           <IconShoppingCart style={{ width: rem(32), height: rem(32) }} />
         </Indicator>
       )}

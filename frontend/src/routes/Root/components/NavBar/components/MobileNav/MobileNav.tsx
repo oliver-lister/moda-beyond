@@ -38,7 +38,7 @@ const MobileNav = ({
               to={link.path}
               className={`${styles.link} ${
                 searchParams.get("category") === link.label.toLowerCase()
-                  ? styles.active + " " + "gradient-text"
+                  ? "gradient-text"
                   : ""
               }`}
               onClick={toggle}

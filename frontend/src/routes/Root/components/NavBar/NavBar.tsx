@@ -1,13 +1,4 @@
-import {
-  Container,
-  Flex,
-  Group,
-  Burger,
-  Text,
-  Box,
-  List,
-  Stack,
-} from "@mantine/core";
+import { Container, Flex, Group, Burger, Box, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -87,38 +78,34 @@ const NavBar = () => {
                   aria-label="Toggle navigation"
                   hiddenFrom="lg"
                 />
-                <Link to="/" className={styles.logo}>
-                  <Text
-                    ff="EBGaramond-Regular"
-                    fz={{ base: "1.4rem", lg: "2rem" }}
-                    fw={600}
-                    m={{ base: "1rem 0.5rem", lg: "0" }}
-                    className={pathname === "/" ? "gradient-text" : ""}
-                  >
-                    møda-beyond
-                  </Text>
-                </Link>
-              </Group>
-              <List
-                className={`${styles.list} ${opened && styles.opened}`}
-                visibleFrom="lg"
-              >
-                {navMenu.map((link, index) => (
-                  <li key={index} className={styles.list_item}>
+                <ul className={`${styles.list} ${opened && styles.opened}`}>
+                  <li className={styles.list_item}>
                     <Link
-                      to={link.path}
-                      className={`${styles.link} ${
-                        searchParams.get("category") ===
-                        link.label.toLowerCase()
-                          ? styles.active + " " + "gradient-text"
-                          : ""
+                      to="/"
+                      className={`${styles.link} ${styles.logo} ${
+                        pathname === "/" ? styles.active : ""
                       }`}
                     >
-                      {link.label}
+                      møda-beyond
                     </Link>
                   </li>
-                ))}
-              </List>
+                  {navMenu.map((link, index) => (
+                    <li key={index} className={styles.list_item}>
+                      <Link
+                        to={link.path}
+                        className={`${styles.link} ${
+                          searchParams.get("category") ===
+                          link.label.toLowerCase()
+                            ? styles.active
+                            : ""
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Group>
             </Group>
             <Group align="center" justify="flex-end" gap={10}>
               <Box visibleFrom="lg">

@@ -149,7 +149,7 @@ const Cart = () => {
                 <h2 className={styles.heading}>Shopping Cart</h2>
                 <p>You're currently not signed in.</p>
               </div>
-              <Button component={Link} to="/login">
+              <Button component={Link} to="/user/login">
                 Login
               </Button>
             </Stack>

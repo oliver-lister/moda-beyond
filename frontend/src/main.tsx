@@ -32,11 +32,11 @@ import Profile from "./routes/Account/Profile/Profile.tsx";
 const theme = createTheme({
   fontFamily: "Figtree, sans-serif",
   breakpoints: {
-    xs: "450px",
-    sm: "640px",
-    md: "768px",
-    lg: "1024px",
-    xl: "1280px",
+    xs: "28em",
+    sm: "40em",
+    md: "48em",
+    lg: "68em",
+    xl: "80em",
   },
 });
 

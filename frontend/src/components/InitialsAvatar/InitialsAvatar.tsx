@@ -10,7 +10,7 @@ const InitialsAvatar = ({
 }) => {
   return (
     <Box className={styles.initials}>
-      <Text>{firstNameLetter + lastNameLetter}</Text>
+      <Text fw={600}>{firstNameLetter + lastNameLetter}</Text>
     </Box>
   );
 };

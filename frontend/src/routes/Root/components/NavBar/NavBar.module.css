@@ -9,15 +9,15 @@
 }
 
 .logo {
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  text-decoration: none;
-  font-weight: bold;
-  color: var(--mantine-color-white);
+  font-size: 1.4rem;
+  font-family: "EBGaramond-Regular";
 }
 
-.logo:hover {
-  color: var(--mantine-color-dark-1);
+@media (min-width: $mantine-breakpoint-lg) {
+  .logo {
+    font-size: 2rem;
+    margin: 0;
+  }
 }
 
 .list {
@@ -26,7 +26,25 @@
   align-items: center;
   text-align: center;
   background-color: var(--mantine-color-dark-7);
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+}
+
+.list_item {
+  height: 100%;
+}
+
+@media (max-width: $mantine-breakpoint-lg) {
+  .list_item:not(.list_item:nth-of-type(1)) {
+    display: none;
+  }
+
+  .link.active::before {
+    display: none;
+  }
+
+  .list {
+    grid-template-columns: 1fr;
+  }
 }
 
 .link {
@@ -37,6 +55,10 @@
   color: var(--mantine-color-white);
   display: block;
   padding: 1rem 2rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .link.active::before {
