@@ -48,7 +48,7 @@ const ProductPhotos = ({ images }: { images: string[] }) => {
             {images.map((img, index) => (
               <Image
                 key={index}
-                src={img}
+                src={import.meta.env.VITE_BACKEND_HOST + img}
                 onClick={() => handleImageClick(index)}
                 w={200}
                 h={200}
@@ -72,7 +72,12 @@ const ProductPhotos = ({ images }: { images: string[] }) => {
         >
           {images.map((img, index) => (
             <Carousel.Slide key={index}>
-              <Image src={img} ref={imageRef} w={950} h={600} />
+              <Image
+                src={import.meta.env.VITE_BACKEND_HOST + img}
+                ref={imageRef}
+                w={950}
+                h={600}
+              />
             </Carousel.Slide>
           ))}
         </Carousel>

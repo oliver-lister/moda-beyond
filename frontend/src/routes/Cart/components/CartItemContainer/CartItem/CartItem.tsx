@@ -38,7 +38,9 @@ const CartItem = ({
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/fetchproductbyid/${productId}`,
+          `${
+            import.meta.env.VITE_BACKEND_HOST
+          }/products/fetchproductbyid/${productId}`,
           {
             method: "GET",
           }
@@ -117,7 +119,7 @@ const CartItem = ({
           <Link to={`/product/${product._id}`} className={styles.link}>
             <Group wrap="nowrap">
               <Image
-                src={product.images[0]}
+                src={import.meta.env.VITE_BACKEND_HOST + product.images[0]}
                 height={100}
                 className={styles.image}
               />
