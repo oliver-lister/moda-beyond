@@ -182,7 +182,7 @@ const Cart = () => {
                 ) : (
                   <>
                     <p className={styles.sub_heading}>
-                      Parcel from The Shopper
+                      Parcel from MØDA-BEYOND
                     </p>
                     <Alert
                       title={

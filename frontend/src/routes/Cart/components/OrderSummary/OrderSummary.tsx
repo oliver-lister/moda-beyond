@@ -20,7 +20,7 @@ const OrderSummary = ({
   return (
     <Stack className={styles.container}>
       <p className={styles.coupon}>
-        Do you have a coupon, gift card or THE SHOPPER reward?
+        Do you have a coupon, gift card or MØDA-BEYOND reward?
       </p>
       <Stack className={styles.summary}>
         <h3>Order Summary</h3>

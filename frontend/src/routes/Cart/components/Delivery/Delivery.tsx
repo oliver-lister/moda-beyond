@@ -57,7 +57,7 @@ const Delivery = ({
             <Stack gap={0}>
               <label htmlFor="pickup">Pick Up In-store</label>
               <p className={styles.delivery_estimate}>
-                Collect from THE SHOPPER
+                Collect from MØDA-BEYOND
               </p>
             </Stack>
           </Group>

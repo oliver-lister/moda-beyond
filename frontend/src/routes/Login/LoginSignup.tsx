@@ -112,7 +112,7 @@ const Signup = () => {
           {...form.getInputProps("shoppingPreference")}
         />
         <Checkbox
-          label="Sign up for THE SHOPPER news and get a $20 voucher for your next purchase. You'll receive sales alerts, exclusive offers and the latest on styles & trends."
+          label="Sign up for MØDA-BEYOND news and get a $20 voucher for your next purchase. You'll receive sales alerts, exclusive offers and the latest on styles & trends."
           {...form.getInputProps("newsletter")}
         />
         <Button type="submit">Create My Account</Button>

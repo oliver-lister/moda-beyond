@@ -20,7 +20,7 @@ const ProductAccordion = ({ product }: { product: ProductProps }) => {
       <Accordion.Item value="Returns">
         <Accordion.Control>Returns</Accordion.Control>
         <Accordion.Panel className={styles.accordion_content}>
-          *THE SHOPPER returns are free for 30 days unless marked. Find out more
+          *MØDA-BEYOND returns are free for 30 days unless marked. Find out more
           about our return policy.
         </Accordion.Panel>
       </Accordion.Item>
