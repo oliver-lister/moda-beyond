@@ -7,6 +7,24 @@ import * as fs from 'fs';
 
 const router = express.Router();
 
+// const updateProductImgUrls = async (id: string) => {
+//   try {
+//     // Retrieve the product
+//     const productToChange = await Product.findById(id);
+//     if (!productToChange) return;
+
+//     // Map over the images and slice URLs
+//     const newArr = productToChange.images.map((url) => url.slice(21));
+
+//     // Update the product with new image URLs
+//     await Product.findByIdAndUpdate(id, { images: newArr });
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// updateProductImgUrls('6602957dd64e6c5891d2428a');
+
 router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Response) => {
   try {
     const newProductData = {
@@ -28,9 +46,7 @@ router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Re
     fs.rename(tempPath, newPath, (err: any) => (err ? console.log(err.message) : console.log('Successfully renamed the directory with Product Id.')));
 
     // Update the product with image URLs
-    const imageUrls = (req.files as Express.Multer.File[]).map(
-      (img: Express.Multer.File) => `http://localhost:${port}/images/${newProduct.id}/${img.filename}`,
-    );
+    const imageUrls = (req.files as Express.Multer.File[]).map((img: Express.Multer.File) => `/images/${newProduct.id}/${img.filename}`);
 
     newProduct.images = imageUrls;
 
