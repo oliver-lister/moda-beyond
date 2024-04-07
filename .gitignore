@@ -16,6 +16,7 @@ out/
 
 # Ignore frontend build artifacts (if using a specific build tool)
 /frontend/build
+/frontend/dist
 
 # Ignore backend build artifacts (if using a specific build tool)
 /backend/build
