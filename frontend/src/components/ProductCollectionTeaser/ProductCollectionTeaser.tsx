@@ -16,15 +16,18 @@ const ProductCollectionTeaser = ({
     return <Text>Cannot access database.</Text>;
   }
 
-  const productSlides =
-    products &&
-    products.slice(0, cap).map(({ _id, ...rest }) => (
-      <Carousel.Slide key={_id}>
-        <Skeleton visible={isLoading} animate>
+  const productSlides = !isLoading
+    ? products &&
+      products.slice(0, cap).map(({ _id, ...rest }) => (
+        <Carousel.Slide key={_id}>
           <Item _id={_id} {...rest} />
-        </Skeleton>
-      </Carousel.Slide>
-    ));
+        </Carousel.Slide>
+      ))
+    : Array.from({ length: 6 }).map((_, i) => (
+        <Carousel.Slide key={i}>
+          <Skeleton width="100%" height="370" />
+        </Carousel.Slide>
+      ));
 
   return (
     <Carousel
