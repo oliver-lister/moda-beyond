@@ -10,7 +10,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
   products,
   isLoading,
 }) => {
-  if (isLoading && !products) {
+  if (isLoading) {
     return (
       <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
         {Array.from({ length: 12 }).map((_, i) => (
