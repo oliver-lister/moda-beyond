@@ -144,7 +144,13 @@ const Footer = () => {
                     className={styles.newsletter_input}
                   />
                   <Group justify="flex-end" mt="md">
-                    <Button type="submit">Submit</Button>
+                    <Button
+                      type="submit"
+                      variant="gradient"
+                      gradient={{ from: "grape", to: "violet", deg: 90 }}
+                    >
+                      Submit
+                    </Button>
                   </Group>
                 </form>
               </Stack>

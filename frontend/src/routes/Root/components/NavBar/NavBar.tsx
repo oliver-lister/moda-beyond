@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../state/store.ts";
 import { useSearchParams } from "react-router-dom";
@@ -36,6 +36,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const [opened, { toggle }] = useDisclosure();
+  const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState({
     text: "",
@@ -92,6 +93,7 @@ const NavBar = () => {
                     fz={{ base: "1.4rem", lg: "2rem" }}
                     fw={600}
                     m={{ base: "1rem 0.5rem", lg: "0" }}
+                    className={pathname === "/" ? "gradient-text" : ""}
                   >
                     møda-beyond
                   </Text>
@@ -107,7 +109,9 @@ const NavBar = () => {
                       to={link.path}
                       className={`${styles.link} ${
                         searchParams.get("category") ===
-                          link.label.toLowerCase() && styles.active
+                        link.label.toLowerCase()
+                          ? styles.active + " " + "gradient-text"
+                          : ""
                       }`}
                     >
                       {link.label}
