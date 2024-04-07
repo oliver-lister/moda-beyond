@@ -17,13 +17,17 @@ import ProductProps from "../../types/ProductProps.ts";
 const Product = () => {
   const { productId }: Readonly<Params<string>> | undefined = useParams();
   const [product, setProduct] = useState<ProductProps | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     // Fetch products from backend
     const fetchProduct = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/fetchproductbyid/${productId}`,
+          `${
+            import.meta.env.VITE_BACKEND_HOST
+          }/products/fetchproductbyid/${productId}`,
           {
             method: "GET",
           }
@@ -37,8 +41,10 @@ const Product = () => {
 
         const { product } = responseData;
         setProduct(product);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching product:", error);
+        setIsLoading(false);
       }
     };
     fetchProduct();
@@ -76,7 +82,7 @@ const Product = () => {
       <Container size="xl">
         <Stack gap="lg">
           <Breadcrumbs className={styles.breadcrumbs} separatorMargin="0.5rem">
-            {product ? (
+            {product && !isLoading ? (
               breadcrumbItems
             ) : (
               <Text fz={{ base: "xs", lg: "sm" }} c="gray">
@@ -84,7 +90,7 @@ const Product = () => {
               </Text>
             )}
           </Breadcrumbs>
-          {product ? (
+          {product && !isLoading ? (
             <>
               <ProductDisplay product={product} />
               <SimilarProducts product={product} />
