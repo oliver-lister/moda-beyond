@@ -40,46 +40,43 @@ const theme = createTheme({
   },
 });
 
-const router = createHashRouter(
-  [
-    {
-      path: "/",
-      element: <Layout />,
-      errorElement: <ErrorPage />,
-      children: [
-        { index: true, element: <Home /> },
-        { path: "shop", element: <Shop /> },
-        {
-          path: "product/:productId",
-          element: <Product />,
-        },
-        {
-          path: "/user",
-          children: [
-            {
-              path: "account",
-              element: <AccountLayout />,
-              children: [
-                { path: "profile", element: <Profile /> },
-                { path: "login-and-security", element: <LoginAndSecurity /> },
-                { path: "delete-account", element: <DeleteAccount /> },
-              ],
-            },
-            {
-              path: "cart",
-              element: <Cart />,
-            },
-            {
-              path: "login",
-              element: <LoginSignup />,
-            },
-          ],
-        },
-      ],
-    },
-  ],
-  { basename: "/moda-beyond/" }
-);
+const router = createHashRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "shop", element: <Shop /> },
+      {
+        path: "product/:productId",
+        element: <Product />,
+      },
+      {
+        path: "/user",
+        children: [
+          {
+            path: "account",
+            element: <AccountLayout />,
+            children: [
+              { path: "profile", element: <Profile /> },
+              { path: "login-and-security", element: <LoginAndSecurity /> },
+              { path: "delete-account", element: <DeleteAccount /> },
+            ],
+          },
+          {
+            path: "cart",
+            element: <Cart />,
+          },
+          {
+            path: "login",
+            element: <LoginSignup />,
+          },
+        ],
+      },
+    ],
+  },
+]);
 
 const rootContainer = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootContainer);
