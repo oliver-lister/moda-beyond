@@ -36,6 +36,7 @@ jobs:
           node-version: 20
           cache: "npm"
       - name: Install dependencies
+        working-directory: ./frontend # Change directory to your frontend folder
         run: npm ci
       - name: Build
         working-directory: ./frontend # Change directory to your frontend folder
