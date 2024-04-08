@@ -9,8 +9,10 @@ const InitialsAvatar = ({
   lastNameLetter: string;
 }) => {
   return (
-    <Box className={styles.initials}>
-      <Text fw={600}>{firstNameLetter + lastNameLetter}</Text>
+    <Box className={styles.wrapper}>
+      <Box className={styles.initials}>
+        <Text fw={600}>{firstNameLetter + lastNameLetter}</Text>
+      </Box>
     </Box>
   );
 };

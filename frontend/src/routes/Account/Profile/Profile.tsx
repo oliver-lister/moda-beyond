@@ -1,8 +1,9 @@
-import { Box, Text, Button } from "@mantine/core";
+import { Box, Text, Button, Stack } from "@mantine/core";
 import { useUser } from "../AccountLayout";
 import InfoCard from "../../../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
+import InitialsAvatar from "../../../components/InitialsAvatar/InitialsAvatar";
 
 const Profile = () => {
   const { user } = useUser();
@@ -20,22 +21,34 @@ const Profile = () => {
   return (
     <AccountPage title="Profile">
       <InfoCard>
-        <Box>
-          <Text fz="lg" fw={700}>
-            {fullName}
-          </Text>
-          <Text fz="md">{user.email}</Text>
-          <Text fz="md">0410042611</Text>
-        </Box>
-        <Box>
-          <Text fw={600}>Birthday</Text>
-          <Text>{user.dob}</Text>
-        </Box>
-        <Box>
-          <Text fw={600}>Shopping Preference</Text>
-          <Text>{user.shoppingPreference}</Text>
-        </Box>
-        <Button leftSection={<IconEdit size={20} />}>EDIT</Button>
+        <InitialsAvatar
+          firstNameLetter={user.firstName[0]}
+          lastNameLetter={user.lastName[0]}
+        />
+        <Stack>
+          <Box>
+            <Text fz="lg" fw={700}>
+              {fullName}
+            </Text>
+            <Text fz="md">{user.email}</Text>
+            <Text fz="md">0410042611</Text>
+          </Box>
+          <Box>
+            <Text fw={600}>Birthday</Text>
+            <Text>{user.dob}</Text>
+          </Box>
+          <Box>
+            <Text fw={600}>Shopping Preference</Text>
+            <Text>{user.shoppingPreference}</Text>
+          </Box>
+          <Button
+            variant="gradient"
+            gradient={{ from: "grape", to: "violet", deg: 90 }}
+            leftSection={<IconEdit size={20} />}
+          >
+            EDIT
+          </Button>
+        </Stack>
       </InfoCard>
     </AccountPage>
   );

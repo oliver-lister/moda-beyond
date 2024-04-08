@@ -1,3 +1,9 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .initials {
   color: var(--mantine-color-white);
   background: linear-gradient(
@@ -6,15 +12,14 @@
     var(--mantine-color-violet-5)
   );
   padding: 0.35rem 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 50%;
   text-align: center;
   vertical-align: middle;
   text-transform: uppercase;
+  z-index: 2;
 }
 
 .initials:hover {
-  background-color: var(--mantine-color-dark-1);
+  opacity: 0.7;
+  cursor: pointer;
 }

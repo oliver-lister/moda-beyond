@@ -1,6 +1,7 @@
 import { Stack, Title, Group, Box, UnstyledButton } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
 import styles from "./accountPage.module.css";
+import { Link } from "react-router-dom";
 
 const AccountPage = ({
   children,
@@ -17,12 +18,21 @@ const AccountPage = ({
             {title}
           </Title>
         </Box>
-        <Box hiddenFrom="md" bg="var(--mantine-color-gray-3)" p="xs">
-          <Group align="center" justify="space-between">
-            <UnstyledButton>
+        <Box
+          hiddenFrom="md"
+          bg="var(--mantine-color-grape-1)"
+          p="xs"
+          className={styles.mobile_header}
+        >
+          <Group align="center">
+            <UnstyledButton
+              component={Link}
+              to="/user/account"
+              className={styles.chevron}
+            >
               <IconChevronLeft size={20} />
             </UnstyledButton>
-            <Title order={2} fz="md" fw={600} mr="50%">
+            <Title order={2} fz="md" fw={600}>
               {title}
             </Title>
           </Group>

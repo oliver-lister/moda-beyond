@@ -1,4 +1,13 @@
-import { Container, Grid, GridCol, NavLink, Stack, Title } from "@mantine/core";
+import {
+  Center,
+  Container,
+  Grid,
+  GridCol,
+  Loader,
+  NavLink,
+  Stack,
+  Title,
+} from "@mantine/core";
 import styles from "./AccountLayout.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
@@ -26,6 +35,7 @@ type ContextType = { user: UserProps | null };
 
 const AccountLayout = () => {
   const user = useSelector((state: RootState) => state.auth.user);
+  const { isLoading } = useSelector((state: RootState) => state.auth);
   const { pathname } = useLocation();
 
   // Need to add logic to redirect if user is not logged in
@@ -64,7 +74,13 @@ const AccountLayout = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, md: 9 }}>
-            <Outlet context={{ user }} />
+            {!isLoading ? (
+              <Outlet context={{ user }} />
+            ) : (
+              <Center mih="60vh">
+                <Loader />
+              </Center>
+            )}
           </GridCol>
         </Grid>
       </Container>

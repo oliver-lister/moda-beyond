@@ -1,10 +1,22 @@
 .wrapper {
   display: grid;
-  justify-content: center;
+  justify-content: stretch;
   align-items: center;
 }
 
-@media (min-width: $mantine-breakpoint-sm) {
+.mobile_header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.chevron {
+  position: absolute;
+  left: 1rem;
+}
+
+
+@media (min-width: $mantine-breakpoint-md) {
   .wrapper {
     justify-content: center;
   }

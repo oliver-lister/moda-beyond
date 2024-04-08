@@ -1,11 +1,5 @@
 .account {
-  background-color: var(--mantine-color-white);
-}
-
-@media (min-width: $mantine-breakpoint-sm) {
-  .account {
-    background-color: var(--mantine-color-gray-1);
-  }
+  background-color: var(--mantine-color-gray-1);
 }
 
 .navlink {
