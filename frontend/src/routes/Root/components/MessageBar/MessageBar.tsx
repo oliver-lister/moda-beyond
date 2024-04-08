@@ -5,9 +5,9 @@ import Autoplay from "embla-carousel-autoplay";
 import { Carousel } from "@mantine/carousel";
 
 const messageBarItems = [
-  "Limited Time Offer: Free Shipping on Orders Over $100!",
+  "Free Shipping on Orders Over $100!",
   "Exclusive Discounts for VIP Members! 🌟🛍️",
-  " New Arrivals Alert: Discover Fresh Fashion Picks! 👗🆕",
+  "New Arrivals Alert: Discover Fresh Fashion Picks! 👗🆕",
 ];
 
 const MessageBar = () => {
