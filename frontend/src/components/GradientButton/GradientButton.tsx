@@ -6,6 +6,7 @@ const GradientButton = ({
   children,
   onClick,
   type,
+  ...rest
 }: {
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -18,6 +19,7 @@ const GradientButton = ({
       className={styles.button}
       onClick={onClick ? onClick : undefined}
       type={type || "button"}
+      {...rest}
     >
       {children}
     </Button>

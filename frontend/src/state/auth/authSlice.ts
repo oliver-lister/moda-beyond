@@ -7,6 +7,8 @@ import {
 import UserProps from "../../types/UserProps";
 import { RootState } from "../store";
 import { CartItemProps } from "../../types/UserProps";
+import { SignupValues } from "../../routes/LoginSignup/components/Signup";
+import { LoginValues } from "../../routes/LoginSignup/components/Login";
 
 // Types
 
@@ -15,11 +17,6 @@ interface AuthState {
   refreshToken: string;
   user: UserProps | null;
   isLoading: boolean;
-}
-
-interface LoginValues {
-  email: string;
-  password: string;
 }
 
 interface LoginPayload {
@@ -32,16 +29,6 @@ interface SignupPayload {
   newUser: UserProps;
   accessToken: string;
   refreshToken: string;
-}
-
-interface SignupValues {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  dob: string;
-  newsletter: boolean;
-  shoppingPreference: string;
 }
 
 // AUTHENTICATION REDUCERS

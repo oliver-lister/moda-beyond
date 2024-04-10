@@ -4,6 +4,7 @@ import InfoCard from "../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
 import InitialsAvatar from "../../../components/InitialsAvatar/InitialsAvatar";
+import { format } from "date-fns";
 
 const Profile = () => {
   const { user } = useUser();
@@ -33,7 +34,7 @@ const Profile = () => {
           </Box>
           <Box>
             <Text fw={600}>Birthday</Text>
-            <Text>{user.dob}</Text>
+            <Text>{user.dob && format(user.dob, "dd/MM/yyyy")}</Text>
           </Box>
           <Box>
             <Text fw={600}>Shopping Preference</Text>

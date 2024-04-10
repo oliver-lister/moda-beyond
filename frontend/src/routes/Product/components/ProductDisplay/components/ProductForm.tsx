@@ -130,7 +130,7 @@ const ProductForm = ({ product }: { product: ProductProps }) => {
                     root: {
                       outline:
                         selectedColor === color.label
-                          ? "2px solid var(--mantine-color-blue-4)"
+                          ? "2px solid var(--mantine-color-violet-5)"
                           : "",
                     },
                   }}

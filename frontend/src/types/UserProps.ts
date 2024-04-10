@@ -19,7 +19,7 @@ export default interface UserProps {
   password: string;
   firstName: string;
   lastName: string;
-  dob?: string;
+  dob?: Date;
   address?: Address;
   shoppingPreference: string;
   newsletter: boolean;

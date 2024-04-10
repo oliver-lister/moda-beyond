@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  dob: Date,
+  dob: { type: Date },
   address: { street: String, city: String, zipCode: String },
   shoppingPreference: { type: String, required: true },
   newsletter: { type: Boolean, required: true, default: true },

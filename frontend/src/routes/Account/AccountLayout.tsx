@@ -44,7 +44,7 @@ const AccountLayout = () => {
   const { pathname } = useLocation();
 
   if (!isLoading && !user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   return (

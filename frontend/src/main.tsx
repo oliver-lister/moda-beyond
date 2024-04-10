@@ -9,7 +9,7 @@ import Home from "./routes/Home/Home.tsx";
 import Shop from "./routes/Shop/Shop.tsx";
 import Product from "./routes/Product/Product.tsx";
 import Cart from "./routes/Cart/Cart.tsx";
-import LoginSignup from "./routes/Login/LoginSignup.tsx";
+import LoginSignup from "./routes/LoginSignup/LoginSignup.tsx";
 import AccountLayout from "./routes/Account/AccountLayout.tsx";
 import LoginAndSecurity from "./routes/Account/LoginAndSecurity/LoginAndSecurity.tsx";
 import DeleteAccount from "./routes/Account/DeleteAccount/DeleteAccount.tsx";
@@ -59,7 +59,11 @@ const router = createHashRouter([
       },
       {
         path: "login",
-        element: <LoginSignup />,
+        element: <LoginSignup type="login" />,
+      },
+      {
+        path: "signup",
+        element: <LoginSignup type="signup" />,
       },
       {
         path: "account",
