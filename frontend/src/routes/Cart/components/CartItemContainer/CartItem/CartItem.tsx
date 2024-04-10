@@ -15,23 +15,24 @@ import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../../../types/UserProps";
 import { useState, useEffect } from "react";
 import ProductProps from "../../../../../types/ProductProps";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../state/store.ts";
+import {
+  removeItemFromCart,
+  updateQuantity,
+  updateSize,
+} from "../../../../../state/cart/cartSlice";
 
 const CartItem = ({
-  _id,
+  cartItemId,
   productId,
   color,
   size,
   quantity,
-  handleRemoveFromCart,
-  handleUpdateSize,
-  handleUpdateQuantity,
-}: CartItemProps & {
-  handleRemoveFromCart: (cartItemId: string) => void;
-  handleUpdateSize: (cartItemId: string, newSize: string) => void;
-  handleUpdateQuantity: (cartItemId: string, newQuantity: string) => void;
-}) => {
+}: CartItemProps) => {
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -102,7 +103,7 @@ const CartItem = ({
           <Stack align="flex-end">
             <UnstyledButton
               className={styles.remove}
-              onClick={() => _id && handleRemoveFromCart(_id)}
+              onClick={() => dispatch(removeItemFromCart(cartItemId))}
             >
               <IconTrash />
             </UnstyledButton>
@@ -139,7 +140,12 @@ const CartItem = ({
               label="Size"
               value={size}
               data={product.availableSizes}
-              onChange={(value) => value && _id && handleUpdateSize(_id, value)}
+              onChange={(value) => {
+                value &&
+                  dispatch(
+                    updateSize({ cartItemId: cartItemId, newSize: value })
+                  );
+              }}
             />
             <Select
               className={styles.select}
@@ -147,7 +153,13 @@ const CartItem = ({
               value={`${quantity}`}
               data={["1", "2", "3", "4", "5"]}
               onChange={(value) =>
-                value && _id && handleUpdateQuantity(_id, value)
+                value &&
+                dispatch(
+                  updateQuantity({
+                    cartItemId: cartItemId,
+                    newQuantity: Number(value),
+                  })
+                )
               }
             />
           </Group>
@@ -157,7 +169,7 @@ const CartItem = ({
             <Text className={styles.price}>${product.price * quantity}</Text>
             <UnstyledButton
               className={styles.remove}
-              onClick={() => _id && handleRemoveFromCart(_id)}
+              onClick={() => dispatch(removeItemFromCart(cartItemId))}
             >
               <IconTrash />
             </UnstyledButton>

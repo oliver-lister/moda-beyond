@@ -275,73 +275,73 @@ const fetchUserDataReducerBuilder = (
 
 // CART REDUCERS
 
-// Add to Cart
+// // Add to Cart
 
-export const addToCartAsync = createAsyncThunk(
-  "auth/addToCartAsync",
-  async (
-    { productId, color, quantity, size, price }: CartItemProps,
-    thunkAPI
-  ) => {
-    try {
-      const { auth } = thunkAPI.getState() as RootState;
-      if (!auth.user) {
-        throw new Error(`User not logged in`);
-      }
-      const accessToken = auth.accessToken;
+// export const addToCartAsync = createAsyncThunk(
+//   "auth/addToCartAsync",
+//   async (
+//     { productId, color, quantity, size, price }: CartItemProps,
+//     thunkAPI
+//   ) => {
+//     try {
+//       const { auth } = thunkAPI.getState() as RootState;
+//       if (!auth.user) {
+//         throw new Error(`User not logged in`);
+//       }
+//       const accessToken = auth.accessToken;
 
-      if (!accessToken) {
-        throw new Error("No access token.");
-      }
-      const userId = auth.user._id.toString();
+//       if (!accessToken) {
+//         throw new Error("No access token.");
+//       }
+//       const userId = auth.user._id.toString();
 
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/add`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: accessToken,
-          },
-          body: JSON.stringify({
-            productId: productId,
-            color: color,
-            quantity: quantity,
-            size: size,
-            price: price,
-          }),
-        }
-      );
+//       const response = await fetch(
+//         `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/add`,
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: accessToken,
+//           },
+//           body: JSON.stringify({
+//             productId: productId,
+//             color: color,
+//             quantity: quantity,
+//             size: size,
+//             price: price,
+//           }),
+//         }
+//       );
 
-      if (!response.ok) {
-        const responseData = await response.json();
-        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-      }
+//       if (!response.ok) {
+//         const responseData = await response.json();
+//         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+//       }
 
-      thunkAPI.dispatch(fetchUserDataAsync());
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("Error: " + err.message);
-        throw err;
-      }
-    }
-  }
-);
+//       thunkAPI.dispatch(fetchUserDataAsync());
+//     } catch (err) {
+//       if (err instanceof Error) {
+//         console.log("Error: " + err.message);
+//         throw err;
+//       }
+//     }
+//   }
+// );
 
-const addtoCartReducerBuilder = (
-  builder: ActionReducerMapBuilder<AuthState>
-) => {
-  builder
-    .addCase(addToCartAsync.pending, (state) => {
-      state.isLoading = true;
-    })
-    .addCase(addToCartAsync.fulfilled, (state) => {
-      state.isLoading = false;
-    })
-    .addCase(addToCartAsync.rejected, (state) => {
-      state.isLoading = false;
-    });
-};
+// const addtoCartReducerBuilder = (
+//   builder: ActionReducerMapBuilder<AuthState>
+// ) => {
+//   builder
+//     .addCase(addToCartAsync.pending, (state) => {
+//       state.isLoading = true;
+//     })
+//     .addCase(addToCartAsync.fulfilled, (state) => {
+//       state.isLoading = false;
+//     })
+//     .addCase(addToCartAsync.rejected, (state) => {
+//       state.isLoading = false;
+//     });
+// };
 
 // Update Cart
 
@@ -429,7 +429,6 @@ const authSlice = createSlice({
     signupReducerBuilder(builder);
     refreshAccessTokenReducerBuilder(builder);
     fetchUserDataReducerBuilder(builder);
-    addtoCartReducerBuilder(builder);
     updateCartReducerBuilder(builder);
   },
 });

@@ -5,19 +5,14 @@ import { useForm } from "@mantine/form";
 import ProductProps from "../../../../../types/ProductProps.ts";
 import { useState } from "react";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SerializedError } from "@reduxjs/toolkit";
-import { RootState, AppDispatch } from "../../../../../state/store.ts";
-import {
-  addToCartAsync,
-  updateCartAsync,
-} from "../../../../../state/auth/authSlice.ts";
-import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../../../../../state/store.ts";
+import { addItemToCart } from "../../../../../state/cart/cartSlice.ts";
+import { v4 as uuidv4 } from "uuid";
 
 const ProductForm = ({ product }: { product: ProductProps }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const auth = useSelector((state: RootState) => state.auth);
-  const navigate = useNavigate();
 
   // ADD TO CART FORM
   const [selectedColor, setSelectedColor] = useState<string | null>(
@@ -44,66 +39,35 @@ const ProductForm = ({ product }: { product: ProductProps }) => {
 
   const handleSubmit = async () => {
     try {
-      if (!auth.user) throw new Error("No user signed in.");
-      // See if the same item exists in the users cart
-      const sameItemIndex = auth.user.cart.findIndex(
-        (item) =>
-          item.productId === product._id &&
-          item.color === selectedColor &&
-          item.size === form.values.size
+      dispatch(
+        addItemToCart({
+          cartItemId: uuidv4(),
+          productId: product._id,
+          color: selectedColor,
+          quantity: form.values.quantity,
+          size: form.values.size,
+          price: product.price,
+        })
       );
-      // If it doesn't exist, dispatch the new item to be added
-      if (sameItemIndex === -1) {
-        await dispatch(
-          addToCartAsync({
-            productId: product._id,
-            color: selectedColor,
-            quantity: form.values.quantity,
-            size: form.values.size,
-            price: product.price,
-          })
-        ).unwrap();
-
-        notifications.show({
-          title: "Success! You've added an item to your cart.",
-          message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
-          icon: <IconShoppingCart />,
-        });
-      }
-      // If it does exist, add to its quantity.
-      if (sameItemIndex >= 0) {
-        const newCart = auth.user.cart.map((item, index) => {
-          if (index === sameItemIndex) {
-            const updatedQuantity = Number(item.quantity) + 1;
-            return { ...item, quantity: updatedQuantity };
-          }
-          return item;
-        });
-
-        await dispatch(updateCartAsync(newCart)).unwrap();
-
-        notifications.show({
-          title: "Success! You've added an item to your cart.",
-          message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
-          icon: <IconShoppingCart />,
-        });
-      }
+      notifications.show({
+        title: "Success! You've added an item to your cart.",
+        message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,
+        icon: <IconShoppingCart />,
+      });
     } catch (err) {
       console.log(
         "Error adding product to cart:",
         (err as SerializedError).message
       );
-
       notifications.show({
         title: "Error! Something went wrong.",
-        message: "Please login and try again.",
+        message: "Please try again.",
         icon: <IconX />,
         color: "red",
       });
-
-      navigate("/login");
     }
   };
+
   return (
     <form
       onSubmit={form.onSubmit(() => handleSubmit())}

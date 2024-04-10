@@ -21,6 +21,7 @@ import { AppDispatch } from "../../../state/store.ts";
 import { signupAsync } from "../../../state/auth/authSlice.ts";
 import { useNavigate } from "react-router-dom";
 import { object, string, boolean } from "yup";
+import { CartItemProps } from "../../../types/UserProps.ts";
 
 const signupSchema = object().shape({
   email: string()
@@ -50,6 +51,7 @@ export interface SignupValues {
   newsletter: boolean;
   shoppingPreference: string;
   honeypot?: string;
+  cart?: CartItemProps[] | null;
 }
 
 const Signup = () => {
