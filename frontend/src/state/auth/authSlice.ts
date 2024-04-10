@@ -52,13 +52,16 @@ export const loginAsync = createAsyncThunk(
   "auth/loginAsync",
   async (values: LoginValues) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
       const responseData = await response.json();
 
@@ -112,13 +115,16 @@ export const signupAsync = createAsyncThunk(
   "auth/signupAsync",
   async (values: SignupValues) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
       const responseData = await response.json();
 
@@ -172,13 +178,16 @@ export const refreshAccessTokenAsync = createAsyncThunk(
   "auth/refreshAccessToken",
   async (refreshToken: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/auth/refreshtoken`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refreshToken }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/auth/refreshtoken`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refreshToken }),
+        }
+      );
 
       const responseData = await response.json();
 
@@ -411,7 +420,7 @@ const initialState: AuthState = {
   accessToken: localStorage.getItem("accessToken") || "",
   refreshToken: localStorage.getItem("refreshToken") || "",
   user: null,
-  isLoading: false,
+  isLoading: true,
 };
 
 const authSlice = createSlice({

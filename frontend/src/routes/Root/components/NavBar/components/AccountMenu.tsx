@@ -1,64 +1,80 @@
 import { Menu, UnstyledButton, Group, rem } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { IconUserCircle, IconLogout, IconLogin } from "@tabler/icons-react";
-import styles from "../NavBar.module.css";
+import {
+  IconUserCircle,
+  IconLogout,
+  IconLogin,
+  IconKey,
+  IconShoppingCart,
+} from "@tabler/icons-react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../state/store.ts";
 import { signOut } from "../../../../../state/auth/authSlice.ts";
 import UserProps from "../../../../../types/UserProps.ts";
-import { useDisclosure } from "@mantine/hooks";
 import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
 
-const AccountMenu = ({ user }: { user: UserProps | null }) => {
+const accountMenuLinks = [
+  {
+    label: "Profile",
+    icon: <IconUserCircle style={{ width: rem(16), height: rem(16) }} />,
+    path: "/account/profile",
+  },
+  {
+    label: "Login & Security",
+    icon: <IconKey style={{ width: rem(16), height: rem(16) }} />,
+    path: "/account/login-and-security",
+  },
+  {
+    label: "Cart",
+    icon: <IconShoppingCart style={{ width: rem(16), height: rem(16) }} />,
+    path: "/cart",
+  },
+];
+
+const AccountMenu = ({ user }: { user: UserProps }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [opened, { toggle }] = useDisclosure();
 
   return (
     <Menu>
       <Menu.Target>
-        <UnstyledButton className={styles.profile}>
-          {user ? (
-            <InitialsAvatar
-              firstNameLetter={user.firstName[0]}
-              lastNameLetter={user.lastName[0]}
-            />
-          ) : (
-            <IconUserCircle style={{ width: rem(32), height: rem(32) }} />
-          )}
+        <UnstyledButton>
+          <InitialsAvatar
+            firstNameLetter={user.firstName[0]}
+            lastNameLetter={user.lastName[0]}
+          />
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
         {user ? (
           <>
-            <Menu.Item className={styles.profile_menu_item}>
-              <Link
-                to="/user/account/profile"
-                onClick={() => opened && toggle()}
-                style={{ textDecoration: "none" }}
+            {accountMenuLinks.map((link, index) => (
+              <Menu.Item
+                key={index}
+                component={Link}
+                to={link.path}
+                leftSection={link.icon}
               >
-                <Group>
-                  <IconUserCircle style={{ width: rem(16), height: rem(16) }} />
-                  Profile
-                </Group>
-              </Link>
-            </Menu.Item>
-            <Menu.Item className={styles.profile_menu_item}>
-              <Link
-                to="/"
-                onClick={() => {
-                  dispatch(signOut());
-                }}
-              >
-                <Group>
-                  <IconLogout style={{ width: rem(16), height: rem(16) }} />
-                  Logout
-                </Group>
-              </Link>
+                {link.label}
+              </Menu.Item>
+            ))}
+            <Menu.Divider />
+            <Menu.Item
+              component={Link}
+              to="/"
+              leftSection={
+                <IconLogout style={{ width: rem(16), height: rem(16) }} />
+              }
+              onClick={() => {
+                dispatch(signOut());
+              }}
+              c="red"
+            >
+              Logout
             </Menu.Item>
           </>
         ) : (
-          <Menu.Item className={styles.profile_menu_item}>
-            <Link to="/user/login">
+          <Menu.Item>
+            <Link to="/login">
               <Group>
                 <IconLogin style={{ width: rem(16), height: rem(16) }} />
                 Login

@@ -1,4 +1,4 @@
-import { Container, Flex, Group, Burger, Box, Stack } from "@mantine/core";
+import { Container, Flex, Group, Burger, Box, Stack, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -6,10 +6,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../state/store.ts";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import ProfileMenu from "./components/AccountMenu.tsx";
+import AccountMenu from "./components/AccountMenu.tsx";
 import SearchBox from "./components/SearchBox.tsx";
 import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
 import MobileNav from "./components/MobileNav/MobileNav.tsx";
+import { IconUserCircle } from "@tabler/icons-react";
 
 const navMenu = [
   {
@@ -116,9 +117,19 @@ const NavBar = () => {
                   handleSearchValueChange={handleSearchValueChange}
                 />
               </Box>
-              <ProfileMenu user={user} />
+              {user ? (
+                <AccountMenu user={user} />
+              ) : (
+                <Box className={styles.profile}>
+                  <Link to="/login">
+                    <IconUserCircle
+                      style={{ width: rem(32), height: rem(32) }}
+                    />
+                  </Link>
+                </Box>
+              )}
               <Link
-                to="/user/cart"
+                to="/cart"
                 className={styles.cart}
                 onClick={() => opened && toggle()}
               >

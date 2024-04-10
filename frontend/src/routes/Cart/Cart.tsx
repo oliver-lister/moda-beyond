@@ -17,10 +17,10 @@ import Delivery from "./components/Delivery/Delivery.tsx";
 import OrderSummary from "./components/OrderSummary/OrderSummary.tsx";
 import CartItemContainer from "./components/CartItemContainer/CartItemContainer.tsx";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../../state/store.ts";
+import { RootState, AppDispatch } from "../../state/store.ts";
 import { useState } from "react";
-import { updateCartAsync } from "../../../state/auth/authSlice.ts";
-import { CartItemProps } from "../../../types/UserProps.ts";
+import { updateCartAsync } from "../../state/auth/authSlice.ts";
+import { CartItemProps } from "../../types/UserProps.ts";
 
 export type DeliveryData = {
   standard: { fee: number; due: string };

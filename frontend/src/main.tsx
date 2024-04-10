@@ -8,11 +8,11 @@ import ErrorPage from "./routes/Root/error-page.tsx";
 import Home from "./routes/Home/Home.tsx";
 import Shop from "./routes/Shop/Shop.tsx";
 import Product from "./routes/Product/Product.tsx";
-import Cart from "./routes/User/Cart/Cart.tsx";
+import Cart from "./routes/Cart/Cart.tsx";
 import LoginSignup from "./routes/Login/LoginSignup.tsx";
-import AccountLayout from "./routes/User/Account/AccountLayout.tsx";
-import LoginAndSecurity from "./routes/User/Account/LoginAndSecurity/LoginAndSecurity.tsx";
-import DeleteAccount from "./routes/User/Account/DeleteAccount/DeleteAccount.tsx";
+import AccountLayout from "./routes/Account/AccountLayout.tsx";
+import LoginAndSecurity from "./routes/Account/LoginAndSecurity/LoginAndSecurity.tsx";
+import DeleteAccount from "./routes/Account/DeleteAccount/DeleteAccount.tsx";
 
 // Mantine
 import "@mantine/core/styles.css";
@@ -26,8 +26,7 @@ import "./index.css";
 // Redux
 import { Provider } from "react-redux";
 import { store } from "./state/store.ts";
-import Profile from "./routes/User/Account/Profile/Profile.tsx";
-import UserDashboard from "./routes/User/UserDashboard.tsx";
+import Profile from "./routes/Account/Profile/Profile.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
@@ -47,33 +46,27 @@ const router = createHashRouter([
     element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Home /> },
+      { path: "/", element: <Home />, index: true },
       { path: "shop", element: <Shop /> },
       {
         path: "product/:productId",
         element: <Product />,
       },
       {
-        path: "user",
+        path: "cart",
+        element: <Cart />,
+      },
+      {
+        path: "login",
+        element: <LoginSignup />,
+      },
+      {
+        path: "account",
+        element: <AccountLayout />,
         children: [
-          { index: true, element: <UserDashboard /> },
-          {
-            path: "account",
-            element: <AccountLayout />,
-            children: [
-              { path: "profile", element: <Profile /> },
-              { path: "login-and-security", element: <LoginAndSecurity /> },
-              { path: "delete-account", element: <DeleteAccount /> },
-            ],
-          },
-          {
-            path: "cart",
-            element: <Cart />,
-          },
-          {
-            path: "login",
-            element: <LoginSignup />,
-          },
+          { path: "profile", element: <Profile />, index: true },
+          { path: "login-and-security", element: <LoginAndSecurity /> },
+          { path: "delete-account", element: <DeleteAccount /> },
         ],
       },
     ],

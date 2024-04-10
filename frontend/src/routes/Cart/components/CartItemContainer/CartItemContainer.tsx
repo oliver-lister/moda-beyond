@@ -1,4 +1,4 @@
-import { CartItemProps } from "../../../../../types/UserProps.ts";
+import { CartItemProps } from "../../../../types/UserProps.ts";
 import CartItem from "./CartItem/CartItem.tsx";
 
 const CartItemContainer = ({

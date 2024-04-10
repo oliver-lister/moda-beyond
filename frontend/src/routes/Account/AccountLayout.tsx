@@ -10,24 +10,29 @@ import {
 } from "@mantine/core";
 import styles from "./AccountLayout.module.css";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../state/store.ts";
-import { Link, useLocation, useOutletContext } from "react-router-dom";
+import { RootState } from "../../state/store.ts";
+import {
+  Link,
+  Navigate,
+  useLocation,
+  useOutletContext,
+} from "react-router-dom";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Outlet } from "react-router-dom";
-import UserProps from "../../../types/UserProps.ts";
+import UserProps from "../../types/UserProps.ts";
 
 const navLinks = [
   {
     label: "Profile",
-    to: "/user/account/profile",
+    to: "/account/profile",
   },
   {
     label: "Login & Security",
-    to: "/user/account/login-and-security",
+    to: "/account/login-and-security",
   },
   {
     label: "Delete Account",
-    to: "/user/account/delete-account",
+    to: "/account/delete-account",
   },
 ];
 
@@ -38,7 +43,9 @@ const AccountLayout = () => {
   const { isLoading } = useSelector((state: RootState) => state.auth);
   const { pathname } = useLocation();
 
-  // Need to add logic to redirect if user is not logged in
+  if (!isLoading && !user) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <section className={styles.account}>
