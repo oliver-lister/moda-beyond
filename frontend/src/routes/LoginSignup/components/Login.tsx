@@ -29,11 +29,13 @@ const loginSchema = object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
       "Please enter a valid password"
     ),
+  honeypot: string(),
 });
 
 export interface LoginValues {
   email: string;
   password: string;
+  honeypot?: string;
 }
 
 const Login = () => {
@@ -44,6 +46,7 @@ const Login = () => {
 
   const form = useForm({
     initialValues: {
+      honeypot: "",
       email: "",
       password: "",
     },
@@ -55,6 +58,9 @@ const Login = () => {
     try {
       setIsLoading(true);
       setIsError(false);
+      if (form.values.honeypot) {
+        throw new Error("Bot detected");
+      }
       await dispatch(loginAsync(values)).unwrap();
       form.reset();
       setIsLoading(false);
@@ -78,6 +84,13 @@ const Login = () => {
             Your username or password was incorrect, please try again.
           </Alert>
         ) : null}
+        {/* Honeypot below */}
+        <input
+          name="honeypot"
+          placeholder="do not fill this"
+          type="hidden"
+          {...form.getInputProps("honeypot")}
+        />
         <TextInput
           label="Email"
           placeholder="your@email.com"

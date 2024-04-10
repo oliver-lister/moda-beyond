@@ -38,6 +38,7 @@ const signupSchema = object().shape({
   dob: string(),
   newsletter: boolean(),
   shoppingPreference: string(),
+  honeypot: string(),
 });
 
 export interface SignupValues {
@@ -48,6 +49,7 @@ export interface SignupValues {
   dob: Date;
   newsletter: boolean;
   shoppingPreference: string;
+  honeypot?: string;
 }
 
 const Signup = () => {
@@ -65,6 +67,7 @@ const Signup = () => {
       dob: new Date(),
       shoppingPreference: "Womenswear",
       newsletter: true,
+      honeypot: "",
     },
 
     validate: yupResolver(signupSchema),
@@ -74,6 +77,10 @@ const Signup = () => {
     try {
       setIsLoading(true);
       setIsError(false);
+      if (form.values.honeypot) {
+        throw new Error("Bot detected");
+      }
+      delete values.honeypot;
       await dispatch(signupAsync(values)).unwrap();
       form.reset();
       setIsLoading(false);
@@ -100,6 +107,13 @@ const Signup = () => {
             Please try again.
           </Alert>
         ) : null}
+        {/* Honeypot below */}
+        <input
+          name="honeypot"
+          placeholder="do not fill this"
+          type="hidden"
+          {...form.getInputProps("honeypot")}
+        />
         <TextInput
           withAsterisk
           label="Email"
