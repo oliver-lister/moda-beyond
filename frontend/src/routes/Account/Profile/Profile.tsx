@@ -1,6 +1,6 @@
 import { Box, Text, Button, Stack } from "@mantine/core";
 import { useUser } from "../AccountLayout";
-import InfoCard from "../../../components/InfoCard/InfoCard";
+import InfoCard from "../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
 import InitialsAvatar from "../../../components/InitialsAvatar/InitialsAvatar";

@@ -1,5 +1,5 @@
 import { SimpleGrid, Stack, Title } from "@mantine/core";
-import BrandCard from "../../../components/BrandCard/BrandCard";
+import BrandCard from "./BrandCard/BrandCard";
 import adidas_hover from "../../../assets/images/brandCards/adidas_hover.webp";
 import adidas_logo from "../../../assets/images/brandCards/adidas_logo.webp";
 import academybrand_hover from "../../../assets/images/brandCards/academybrand_hover.webp";

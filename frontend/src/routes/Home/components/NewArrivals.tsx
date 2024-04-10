@@ -1,5 +1,5 @@
 import { Stack, Title } from "@mantine/core";
-import ProductCollectionTeaser from "../../../components/ProductCollectionTeaser/ProductCollectionTeaser.tsx";
+import ProductCollectionTeaser from "./ProductCollectionTeaser/ProductCollectionTeaser.tsx";
 
 const NewArrivals = () => {
   return (

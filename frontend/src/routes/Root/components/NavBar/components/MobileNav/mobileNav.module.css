@@ -1,5 +1,5 @@
 .wrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: -100%;
   width: 100%;
@@ -8,7 +8,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--mantine-color-black);
-  z-index: 2;
+  z-index: 10;
   transition: transform 0.3s ease-in-out;
 }
 

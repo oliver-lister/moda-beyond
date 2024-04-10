@@ -18,6 +18,7 @@ const ShoppingCartButton = ({ user }: { user: UserProps | null }) => {
           label={totalProductsInCart}
           size={16}
           color="violet.5"
+          zIndex={2}
         >
           <IconShoppingCart style={{ width: rem(32), height: rem(32) }} />
         </Indicator>

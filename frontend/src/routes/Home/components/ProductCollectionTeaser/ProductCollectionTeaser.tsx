@@ -1,7 +1,7 @@
 import { Skeleton, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
-import Item from "../Item/Item.tsx";
-import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
+import Item from "../../../../components/Item/Item.tsx";
+import { useFetchProducts } from "../../../../hooks/useFetchProducts.tsx";
 
 const ProductCollectionTeaser = ({
   query,
