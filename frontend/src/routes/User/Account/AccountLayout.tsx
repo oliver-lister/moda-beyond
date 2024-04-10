@@ -10,11 +10,11 @@ import {
 } from "@mantine/core";
 import styles from "./AccountLayout.module.css";
 import { useSelector } from "react-redux";
-import { RootState } from "../../state/store.ts";
+import { RootState } from "../../../state/store.ts";
 import { Link, useLocation, useOutletContext } from "react-router-dom";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Outlet } from "react-router-dom";
-import UserProps from "../../types/UserProps.ts";
+import UserProps from "../../../types/UserProps.ts";
 
 const navLinks = [
   {

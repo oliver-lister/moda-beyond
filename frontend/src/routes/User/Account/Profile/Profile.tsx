@@ -1,9 +1,9 @@
 import { Box, Text, Button, Stack } from "@mantine/core";
 import { useUser } from "../AccountLayout";
-import InfoCard from "../../../components/InfoCard/InfoCard";
+import InfoCard from "../../../../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
-import InitialsAvatar from "../../../components/InitialsAvatar/InitialsAvatar";
+import InitialsAvatar from "../../../../components/InitialsAvatar/InitialsAvatar";
 
 const Profile = () => {
   const { user } = useUser();
@@ -15,8 +15,6 @@ const Profile = () => {
   const fullName = `${
     user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
   } ${user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1)}`;
-
-  // Make into reusable page component
 
   return (
     <AccountPage title="Profile">

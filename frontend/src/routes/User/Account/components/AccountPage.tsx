@@ -20,14 +20,15 @@ const AccountPage = ({
         </Box>
         <Box
           hiddenFrom="md"
-          bg="var(--mantine-color-grape-1)"
+          bg="var(--mantine-color-violet-5)"
+          c="var(--mantine-color-white)"
           p="xs"
           className={styles.mobile_header}
         >
           <Group align="center">
             <UnstyledButton
               component={Link}
-              to="/user/account"
+              to="/user"
               className={styles.chevron}
             >
               <IconChevronLeft size={20} />

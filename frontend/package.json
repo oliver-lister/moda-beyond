@@ -21,6 +21,7 @@
     "@mantine/notifications": "^7.5.0",
     "@reduxjs/toolkit": "^2.1.0",
     "@tabler/icons-react": "^2.46.0",
+    "@types/moment": "^2.13.0",
     "dayjs": "^1.11.10",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",

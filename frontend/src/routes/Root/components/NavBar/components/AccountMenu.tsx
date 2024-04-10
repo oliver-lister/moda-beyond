@@ -9,7 +9,7 @@ import UserProps from "../../../../../types/UserProps.ts";
 import { useDisclosure } from "@mantine/hooks";
 import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
 
-const ProfileMenu = ({ user }: { user: UserProps | null }) => {
+const AccountMenu = ({ user }: { user: UserProps | null }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [opened, { toggle }] = useDisclosure();
 
@@ -71,4 +71,4 @@ const ProfileMenu = ({ user }: { user: UserProps | null }) => {
   );
 };
 
-export default ProfileMenu;
+export default AccountMenu;

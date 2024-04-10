@@ -12,9 +12,9 @@ import {
 import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
-import { CartItemProps } from "../../../../../types/UserProps";
+import { CartItemProps } from "../../../../../../types/UserProps";
 import { useState, useEffect } from "react";
-import ProductProps from "../../../../../types/ProductProps";
+import ProductProps from "../../../../../../types/ProductProps";
 
 const CartItem = ({
   _id,

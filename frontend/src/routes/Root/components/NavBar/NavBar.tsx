@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../state/store.ts";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import ProfileMenu from "./components/ProfileMenu.tsx";
+import ProfileMenu from "./components/AccountMenu.tsx";
 import SearchBox from "./components/SearchBox.tsx";
 import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
 import MobileNav from "./components/MobileNav/MobileNav.tsx";
