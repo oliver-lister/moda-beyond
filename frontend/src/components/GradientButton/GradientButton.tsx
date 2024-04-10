@@ -1,7 +1,27 @@
-const GradientButton = () => {
-  return (
-    <div>GradientButton</div>
-  )
-}
+import { Button } from "@mantine/core";
+import styles from "./gradientButton.module.css";
+import React from "react";
 
-export default GradientButton
+const GradientButton = ({
+  children,
+  onClick,
+  type,
+}: {
+  children: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  type?: "button" | "submit" | "reset";
+}) => {
+  return (
+    <Button
+      variant="gradient"
+      gradient={{ from: "grape", to: "violet", deg: 90 }}
+      className={styles.button}
+      onClick={onClick ? onClick : undefined}
+      type={type || "button"}
+    >
+      {children}
+    </Button>
+  );
+};
+
+export default GradientButton;

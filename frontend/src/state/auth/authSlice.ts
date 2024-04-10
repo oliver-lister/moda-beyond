@@ -176,7 +176,8 @@ const signupReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
 
 export const refreshAccessTokenAsync = createAsyncThunk(
   "auth/refreshAccessToken",
-  async (refreshToken: string) => {
+  async (refreshToken: string | null) => {
+    if (!refreshToken) throw new Error("No refresh token supplied.");
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_HOST}/auth/refreshtoken`,

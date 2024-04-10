@@ -1,6 +1,7 @@
-import { Button, Stack, Group, Center, Loader } from "@mantine/core";
+import { Stack, Group, Center, Loader } from "@mantine/core";
 import styles from "./ordersummary.module.css";
 import { CartItemProps } from "../../../../types/UserProps";
+import GradientButton from "../../../../components/GradientButton/GradientButton";
 
 const OrderSummary = ({
   cart,
@@ -42,7 +43,7 @@ const OrderSummary = ({
               <p>Total</p>
               <p>${cartSum() + deliveryFee}</p>
             </Group>
-            <Button>Checkout</Button>
+            <GradientButton>Checkout</GradientButton>
           </>
         )}
         <p className={styles.terms}>

@@ -30,6 +30,7 @@ import Profile from "./routes/Account/Profile/Profile.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
+  primaryColor: "violet",
   fontFamily: "Figtree, sans-serif",
   breakpoints: {
     xs: "28em",

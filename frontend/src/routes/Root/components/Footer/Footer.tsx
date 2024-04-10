@@ -4,7 +4,6 @@ import {
   Stack,
   Container,
   TextInput,
-  Button,
   GridCol,
   Text,
   Box,
@@ -21,6 +20,7 @@ import {
   IconBrandYoutube,
   IconMail,
 } from "@tabler/icons-react";
+import GradientButton from "../../../../components/GradientButton/GradientButton";
 
 const navMenu = [
   {
@@ -144,13 +144,7 @@ const Footer = () => {
                     className={styles.newsletter_input}
                   />
                   <Group justify="flex-end" mt="md">
-                    <Button
-                      type="submit"
-                      variant="gradient"
-                      gradient={{ from: "grape", to: "violet", deg: 90 }}
-                    >
-                      Submit
-                    </Button>
+                    <GradientButton type="submit">Submit</GradientButton>
                   </Group>
                 </form>
               </Stack>

@@ -103,7 +103,7 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
     if (!session) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid refresh token: missing session information',
+        error: 'Invalid refresh token: missing session information',
         errorCode: 'MISSING_SESSION_INFORMATION',
       });
     }
