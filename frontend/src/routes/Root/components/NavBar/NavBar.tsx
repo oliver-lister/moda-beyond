@@ -27,6 +27,7 @@ const navMenu = [
 const NavBar = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
+  const cart = useSelector((state: RootState) => state.cart);
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -133,7 +134,7 @@ const NavBar = () => {
                 className={styles.cart}
                 onClick={() => opened && toggle()}
               >
-                <ShoppingCartButton user={user} />
+                <ShoppingCartButton cartTotal={cart.totalItems} />
               </Link>
             </Group>
           </Flex>

@@ -15,14 +15,13 @@ import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../../../types/UserProps";
 import { useState, useEffect } from "react";
 import ProductProps from "../../../../../types/ProductProps";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../../../../state/store.ts";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../../state/store.ts";
 import {
   removeItemFromCart,
   updateQuantity,
   updateSize,
 } from "../../../../../state/cart/cartSlice";
-import { updateDBCartAsync } from "../../../../../state/auth/authSlice.ts";
 
 const CartItem = ({
   cartItemId,
@@ -34,24 +33,14 @@ const CartItem = ({
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector((state: RootState) => state.auth.user);
-  const cart = useSelector((state: RootState) => state.cart.items);
-
-  console.log("CartId: " + cartItemId);
 
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(cartItemId));
-    if (user) {
-      dispatch(updateDBCartAsync(cart));
-    }
   };
 
   const handleUpdateSize = (value: string | null) => {
     if (!value) return;
     dispatch(updateSize({ cartItemId: cartItemId, newSize: value }));
-    if (user) {
-      dispatch(updateDBCartAsync(cart));
-    }
   };
 
   const handleUpdateQuantity = (value: string | null) => {
@@ -62,9 +51,6 @@ const CartItem = ({
         newQuantity: Number(value),
       })
     );
-    if (user) {
-      dispatch(updateDBCartAsync(cart));
-    }
   };
 
   useEffect(() => {

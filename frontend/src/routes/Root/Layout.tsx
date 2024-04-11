@@ -2,7 +2,10 @@ import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../state/store.ts";
-import { refreshAccessTokenAsync } from "../../state/auth/authSlice.ts";
+import {
+  refreshAccessTokenAsync,
+  updateDBCartAsync,
+} from "../../state/auth/authSlice.ts";
 
 import NavBar from "./components/NavBar/NavBar.tsx";
 import MessageBar from "./components/MessageBar/MessageBar.tsx";
@@ -26,8 +29,17 @@ const Layout = () => {
     }
   }, [dispatch]);
 
+  const cart = useSelector((state: RootState) => state.cart.items);
+
   useEffect(() => {
-    console.log("I got called!");
+    // if user is logged in, and there's a change to the cart - update the database
+    console.log("called");
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  }, [cart, dispatch, user]);
+
+  useEffect(() => {
     const localCart = localStorage.getItem("cart");
     if (!user && !localCart) {
       return;
