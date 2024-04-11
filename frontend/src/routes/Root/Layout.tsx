@@ -20,20 +20,22 @@ const Layout = () => {
   useEffect(() => {
     const storedRefreshToken = localStorage.getItem("refreshToken");
     // Refresh the access token upon refresh
+    const refreshAccessToken = async () => {
+      await dispatch(refreshAccessTokenAsync(storedRefreshToken));
+    };
     try {
-      dispatch(refreshAccessTokenAsync(storedRefreshToken));
+      if (!user) refreshAccessToken();
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);
       }
     }
-  }, [dispatch]);
+  });
 
   const cart = useSelector((state: RootState) => state.cart.items);
 
   useEffect(() => {
     // if user is logged in, and there's a change to the cart - update the database
-    console.log("called");
     if (user) {
       dispatch(updateDBCartAsync(cart));
     }
