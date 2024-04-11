@@ -27,6 +27,7 @@ const Layout = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    console.log("I got called!");
     const localCart = localStorage.getItem("cart");
     if (!user && !localCart) {
       return;

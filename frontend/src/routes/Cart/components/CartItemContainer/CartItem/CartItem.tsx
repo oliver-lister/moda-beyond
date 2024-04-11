@@ -37,6 +37,8 @@ const CartItem = ({
   const user = useSelector((state: RootState) => state.auth.user);
   const cart = useSelector((state: RootState) => state.cart.items);
 
+  console.log("CartId: " + cartItemId);
+
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(cartItemId));
     if (user) {
@@ -145,56 +147,56 @@ const CartItem = ({
   }
 
   return (
-    <li>
-      <Grid align="center" className={styles.grid_row}>
-        <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
-          <Link to={`/product/${product._id}`} className={styles.link}>
-            <Group wrap="nowrap">
-              <Image
-                src={import.meta.env.VITE_BACKEND_HOST + product.images[0]}
-                height={100}
-                className={styles.image}
-              />
-              <Stack gap="sm">
-                <Text className={styles.title}>
-                  {product.brand} {product.name}
-                </Text>
-                <Text className={styles.color}>Colour: {color}</Text>
-              </Stack>
-            </Group>
-          </Link>
-        </GridCol>
-        <GridCol span={{ base: 12, md: 4 }} order={{ base: 3, md: 2 }}>
-          <Group>
-            <Select
-              className={styles.select}
-              label="Size"
-              value={size}
-              data={product.availableSizes}
-              onChange={handleUpdateSize}
+    <Grid align="center" className={styles.grid_row}>
+      <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
+        <Link to={`/product/${product._id}`} className={styles.link}>
+          <Group wrap="nowrap">
+            <Image
+              src={import.meta.env.VITE_BACKEND_HOST + product.images[0]}
+              height={100}
+              className={styles.image}
             />
-            <Select
-              className={styles.select}
-              label="Quantity"
-              value={`${quantity}`}
-              data={["1", "2", "3", "4", "5"]}
-              onChange={handleUpdateQuantity}
-            />
+            <Stack gap="sm">
+              <Text className={styles.title}>
+                {product.brand} {product.name}
+              </Text>
+              <Text className={styles.color}>Colour: {color}</Text>
+            </Stack>
           </Group>
-        </GridCol>
-        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
-          <Stack align="flex-end">
-            <Text className={styles.price}>${product.price * quantity}</Text>
-            <UnstyledButton
-              className={styles.remove}
-              onClick={handleRemoveFromCart}
-            >
-              <IconTrash />
-            </UnstyledButton>
-          </Stack>
-        </GridCol>
-      </Grid>
-    </li>
+        </Link>
+      </GridCol>
+      <GridCol span={{ base: 12, md: 4 }} order={{ base: 3, md: 2 }}>
+        <Group>
+          <Select
+            className={styles.select}
+            label="Size"
+            value={size}
+            data={product.availableSizes}
+            onChange={handleUpdateSize}
+          />
+          <Select
+            className={styles.select}
+            label="Quantity"
+            value={quantity.toString()}
+            data={["1", "2", "3", "4", "5"]}
+            onChange={handleUpdateQuantity}
+          />
+        </Group>
+      </GridCol>
+      <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
+        <Stack align="flex-end">
+          <Text className={styles.price}>
+            ${Math.round(product.price * quantity * 100) / 100}
+          </Text>
+          <UnstyledButton
+            className={styles.remove}
+            onClick={handleRemoveFromCart}
+          >
+            <IconTrash />
+          </UnstyledButton>
+        </Stack>
+      </GridCol>
+    </Grid>
   );
 };
 

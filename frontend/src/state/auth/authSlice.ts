@@ -324,16 +324,6 @@ export const updateDBCartAsync = createAsyncThunk(
   }
 );
 
-const updateCartReducerBuilder = (
-  builder: ActionReducerMapBuilder<AuthState>
-) => {
-  builder.addCase(updateDBCartAsync.fulfilled, (state, action) => {
-    if (state.user) {
-      state.user.cart = action.payload;
-    }
-  });
-};
-
 // REDUX TK INIT
 
 const initialState: AuthState = {
@@ -361,7 +351,6 @@ const authSlice = createSlice({
     signupReducerBuilder(builder);
     refreshAccessTokenReducerBuilder(builder);
     fetchUserDataReducerBuilder(builder);
-    updateCartReducerBuilder(builder);
   },
 });
 
