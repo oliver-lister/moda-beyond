@@ -275,78 +275,10 @@ const fetchUserDataReducerBuilder = (
 
 // CART REDUCERS
 
-// // Add to Cart
+// Update DB Cart
 
-// export const addToCartAsync = createAsyncThunk(
-//   "auth/addToCartAsync",
-//   async (
-//     { productId, color, quantity, size, price }: CartItemProps,
-//     thunkAPI
-//   ) => {
-//     try {
-//       const { auth } = thunkAPI.getState() as RootState;
-//       if (!auth.user) {
-//         throw new Error(`User not logged in`);
-//       }
-//       const accessToken = auth.accessToken;
-
-//       if (!accessToken) {
-//         throw new Error("No access token.");
-//       }
-//       const userId = auth.user._id.toString();
-
-//       const response = await fetch(
-//         `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/add`,
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: accessToken,
-//           },
-//           body: JSON.stringify({
-//             productId: productId,
-//             color: color,
-//             quantity: quantity,
-//             size: size,
-//             price: price,
-//           }),
-//         }
-//       );
-
-//       if (!response.ok) {
-//         const responseData = await response.json();
-//         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-//       }
-
-//       thunkAPI.dispatch(fetchUserDataAsync());
-//     } catch (err) {
-//       if (err instanceof Error) {
-//         console.log("Error: " + err.message);
-//         throw err;
-//       }
-//     }
-//   }
-// );
-
-// const addtoCartReducerBuilder = (
-//   builder: ActionReducerMapBuilder<AuthState>
-// ) => {
-//   builder
-//     .addCase(addToCartAsync.pending, (state) => {
-//       state.isLoading = true;
-//     })
-//     .addCase(addToCartAsync.fulfilled, (state) => {
-//       state.isLoading = false;
-//     })
-//     .addCase(addToCartAsync.rejected, (state) => {
-//       state.isLoading = false;
-//     });
-// };
-
-// Update Cart
-
-export const updateCartAsync = createAsyncThunk(
-  "auth/updateCartAsync",
+export const updateDBCartAsync = createAsyncThunk(
+  "auth/updateDBCartAsync",
   async (newCart: CartItemProps[], thunkAPI) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
@@ -381,7 +313,7 @@ export const updateCartAsync = createAsyncThunk(
       }
 
       const { cart } = responseData;
-      thunkAPI.dispatch(fetchUserDataAsync());
+      // thunkAPI.dispatch(fetchUserDataAsync());
       return cart;
     } catch (err) {
       if (err instanceof Error) {
@@ -395,7 +327,7 @@ export const updateCartAsync = createAsyncThunk(
 const updateCartReducerBuilder = (
   builder: ActionReducerMapBuilder<AuthState>
 ) => {
-  builder.addCase(updateCartAsync.fulfilled, (state, action) => {
+  builder.addCase(updateDBCartAsync.fulfilled, (state, action) => {
     if (state.user) {
       state.user.cart = action.payload;
     }

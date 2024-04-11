@@ -5,13 +5,16 @@ import { useForm } from "@mantine/form";
 import ProductProps from "../../../../../types/ProductProps.ts";
 import { useState } from "react";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
 import { SerializedError } from "@reduxjs/toolkit";
-import { AppDispatch } from "../../../../../state/store.ts";
 import { addItemToCart } from "../../../../../state/cart/cartSlice.ts";
 import { v4 as uuidv4 } from "uuid";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../../../../state/store.ts";
+import { updateDBCartAsync } from "../../../../../state/auth/authSlice.ts";
 
 const ProductForm = ({ product }: { product: ProductProps }) => {
+  const cart = useSelector((state: RootState) => state.cart.items);
+  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
 
   // ADD TO CART FORM
@@ -49,6 +52,9 @@ const ProductForm = ({ product }: { product: ProductProps }) => {
           price: product.price,
         })
       );
+      if (user) {
+        dispatch(updateDBCartAsync(cart));
+      }
       notifications.show({
         title: "Success! You've added an item to your cart.",
         message: `${form.values.size} ${product.brand} ${selectedColor} ${product.name}`,

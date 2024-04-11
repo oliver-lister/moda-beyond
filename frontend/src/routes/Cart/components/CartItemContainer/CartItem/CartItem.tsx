@@ -15,13 +15,14 @@ import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../../../types/UserProps";
 import { useState, useEffect } from "react";
 import ProductProps from "../../../../../types/ProductProps";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../state/store.ts";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../../../../state/store.ts";
 import {
   removeItemFromCart,
   updateQuantity,
   updateSize,
 } from "../../../../../state/cart/cartSlice";
+import { updateDBCartAsync } from "../../../../../state/auth/authSlice.ts";
 
 const CartItem = ({
   cartItemId,
@@ -33,6 +34,36 @@ const CartItem = ({
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const cart = useSelector((state: RootState) => state.cart.items);
+
+  const handleRemoveFromCart = () => {
+    dispatch(removeItemFromCart(cartItemId));
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  };
+
+  const handleUpdateSize = (value: string | null) => {
+    if (!value) return;
+    dispatch(updateSize({ cartItemId: cartItemId, newSize: value }));
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  };
+
+  const handleUpdateQuantity = (value: string | null) => {
+    if (!value) return;
+    dispatch(
+      updateQuantity({
+        cartItemId: cartItemId,
+        newQuantity: Number(value),
+      })
+    );
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -103,7 +134,7 @@ const CartItem = ({
           <Stack align="flex-end">
             <UnstyledButton
               className={styles.remove}
-              onClick={() => dispatch(removeItemFromCart(cartItemId))}
+              onClick={handleRemoveFromCart}
             >
               <IconTrash />
             </UnstyledButton>
@@ -140,27 +171,14 @@ const CartItem = ({
               label="Size"
               value={size}
               data={product.availableSizes}
-              onChange={(value) => {
-                value &&
-                  dispatch(
-                    updateSize({ cartItemId: cartItemId, newSize: value })
-                  );
-              }}
+              onChange={handleUpdateSize}
             />
             <Select
               className={styles.select}
               label="Quantity"
               value={`${quantity}`}
               data={["1", "2", "3", "4", "5"]}
-              onChange={(value) =>
-                value &&
-                dispatch(
-                  updateQuantity({
-                    cartItemId: cartItemId,
-                    newQuantity: Number(value),
-                  })
-                )
-              }
+              onChange={handleUpdateQuantity}
             />
           </Group>
         </GridCol>
@@ -169,7 +187,7 @@ const CartItem = ({
             <Text className={styles.price}>${product.price * quantity}</Text>
             <UnstyledButton
               className={styles.remove}
-              onClick={() => dispatch(removeItemFromCart(cartItemId))}
+              onClick={handleRemoveFromCart}
             >
               <IconTrash />
             </UnstyledButton>
