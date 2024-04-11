@@ -15,13 +15,14 @@ import styles from "./cartitem.module.css";
 import { CartItemProps } from "../../../../../types/UserProps";
 import { useState, useEffect } from "react";
 import ProductProps from "../../../../../types/ProductProps";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../state/store.ts";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../../../../state/store.ts";
 import {
   removeItemFromCart,
   updateQuantity,
   updateSize,
 } from "../../../../../state/cart/cartSlice";
+import { updateDBCartAsync } from "../../../../../state/auth/authSlice.ts";
 
 const CartItem = ({
   cartItemId,
@@ -33,6 +34,38 @@ const CartItem = ({
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const cart = useSelector((state: RootState) => state.cart.items);
+
+  console.log("CartId: " + cartItemId);
+
+  const handleRemoveFromCart = () => {
+    dispatch(removeItemFromCart(cartItemId));
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  };
+
+  const handleUpdateSize = (value: string | null) => {
+    if (!value) return;
+    dispatch(updateSize({ cartItemId: cartItemId, newSize: value }));
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  };
+
+  const handleUpdateQuantity = (value: string | null) => {
+    if (!value) return;
+    dispatch(
+      updateQuantity({
+        cartItemId: cartItemId,
+        newQuantity: Number(value),
+      })
+    );
+    if (user) {
+      dispatch(updateDBCartAsync(cart));
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -103,7 +136,7 @@ const CartItem = ({
           <Stack align="flex-end">
             <UnstyledButton
               className={styles.remove}
-              onClick={() => dispatch(removeItemFromCart(cartItemId))}
+              onClick={handleRemoveFromCart}
             >
               <IconTrash />
             </UnstyledButton>
@@ -114,69 +147,56 @@ const CartItem = ({
   }
 
   return (
-    <li>
-      <Grid align="center" className={styles.grid_row}>
-        <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
-          <Link to={`/product/${product._id}`} className={styles.link}>
-            <Group wrap="nowrap">
-              <Image
-                src={import.meta.env.VITE_BACKEND_HOST + product.images[0]}
-                height={100}
-                className={styles.image}
-              />
-              <Stack gap="sm">
-                <Text className={styles.title}>
-                  {product.brand} {product.name}
-                </Text>
-                <Text className={styles.color}>Colour: {color}</Text>
-              </Stack>
-            </Group>
-          </Link>
-        </GridCol>
-        <GridCol span={{ base: 12, md: 4 }} order={{ base: 3, md: 2 }}>
-          <Group>
-            <Select
-              className={styles.select}
-              label="Size"
-              value={size}
-              data={product.availableSizes}
-              onChange={(value) => {
-                value &&
-                  dispatch(
-                    updateSize({ cartItemId: cartItemId, newSize: value })
-                  );
-              }}
+    <Grid align="center" className={styles.grid_row}>
+      <GridCol span={{ base: 10, md: 7 }} order={{ base: 1 }}>
+        <Link to={`/product/${product._id}`} className={styles.link}>
+          <Group wrap="nowrap">
+            <Image
+              src={import.meta.env.VITE_BACKEND_HOST + product.images[0]}
+              height={100}
+              className={styles.image}
             />
-            <Select
-              className={styles.select}
-              label="Quantity"
-              value={`${quantity}`}
-              data={["1", "2", "3", "4", "5"]}
-              onChange={(value) =>
-                value &&
-                dispatch(
-                  updateQuantity({
-                    cartItemId: cartItemId,
-                    newQuantity: Number(value),
-                  })
-                )
-              }
-            />
+            <Stack gap="sm">
+              <Text className={styles.title}>
+                {product.brand} {product.name}
+              </Text>
+              <Text className={styles.color}>Colour: {color}</Text>
+            </Stack>
           </Group>
-        </GridCol>
-        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
-          <Stack align="flex-end">
-            <Text className={styles.price}>${product.price * quantity}</Text>
-            <UnstyledButton
-              className={styles.remove}
-              onClick={() => dispatch(removeItemFromCart(cartItemId))}
-            >
-              <IconTrash />
-            </UnstyledButton>
-          </Stack>
-        </GridCol>
-      </Grid>
-    </li>
+        </Link>
+      </GridCol>
+      <GridCol span={{ base: 12, md: 4 }} order={{ base: 3, md: 2 }}>
+        <Group>
+          <Select
+            className={styles.select}
+            label="Size"
+            value={size}
+            data={product.availableSizes}
+            onChange={handleUpdateSize}
+          />
+          <Select
+            className={styles.select}
+            label="Quantity"
+            value={quantity.toString()}
+            data={["1", "2", "3", "4", "5"]}
+            onChange={handleUpdateQuantity}
+          />
+        </Group>
+      </GridCol>
+      <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
+        <Stack align="flex-end">
+          <Text className={styles.price}>
+            ${Math.round(product.price * quantity * 100) / 100}
+          </Text>
+          <UnstyledButton
+            className={styles.remove}
+            onClick={handleRemoveFromCart}
+          >
+            <IconTrash />
+          </UnstyledButton>
+        </Stack>
+      </GridCol>
+    </Grid>
   );
 };
 

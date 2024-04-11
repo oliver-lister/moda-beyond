@@ -3,7 +3,14 @@ import CartItem from "./CartItem/CartItem.tsx";
 
 const CartItemContainer = ({ cart }: { cart: CartItemProps[] | null }) => {
   return (
-    <ul>{cart && cart.map((item) => <CartItem key={item._id} {...item} />)}</ul>
+    <ul>
+      {cart &&
+        cart.map((item) => (
+          <li key={item.cartItemId}>
+            <CartItem {...item} />
+          </li>
+        ))}
+    </ul>
   );
 };
 

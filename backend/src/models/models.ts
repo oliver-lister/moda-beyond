@@ -23,6 +23,7 @@ productSchema.index({ name: 'text', brand: 'text' });
 const Product = mongoose.model('Product', productSchema);
 
 const cartItemSchema = new mongoose.Schema({
+  cartItemId: { type: String, required: true },
   productId: { type: String, required: true },
   size: { type: String, required: true },
   price: { type: Number, required: true },
@@ -54,6 +55,7 @@ const Session = mongoose.model('Session', sessionSchema);
 // Define the CartItem interface
 interface CartItem {
   _id?: string;
+  cartItemId: string;
   productId: string;
   price: number;
   size?: string;
