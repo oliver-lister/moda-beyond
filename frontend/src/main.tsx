@@ -27,6 +27,7 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./state/store.ts";
 import Profile from "./routes/Account/Profile/Profile.tsx";
+import AccountDashboard from "./routes/Account/AccountDashboard/AccountDashboard.tsx";
 
 // Overriding orignal Mantine theme
 const theme = createTheme({
@@ -48,28 +49,29 @@ const router = createHashRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "/", element: <Home />, index: true },
-      { path: "shop", element: <Shop /> },
+      { path: "/shop", element: <Shop /> },
       {
-        path: "product/:productId",
+        path: "/product/:productId",
         element: <Product />,
       },
       {
-        path: "cart",
+        path: "/cart",
         element: <Cart />,
       },
       {
-        path: "login",
+        path: "/login",
         element: <LoginSignup type="login" />,
       },
       {
-        path: "signup",
+        path: "/signup",
         element: <LoginSignup type="signup" />,
       },
       {
-        path: "account",
+        path: "/account",
         element: <AccountLayout />,
         children: [
-          { path: "profile", element: <Profile />, index: true },
+          { path: "/account", element: <AccountDashboard />, index: true },
+          { path: "profile", element: <Profile /> },
           { path: "login-and-security", element: <LoginAndSecurity /> },
           { path: "delete-account", element: <DeleteAccount /> },
         ],

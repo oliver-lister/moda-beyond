@@ -28,7 +28,7 @@ const AccountPage = ({
           <Group align="center">
             <UnstyledButton
               component={Link}
-              to="/user"
+              to="/account"
               className={styles.chevron}
             >
               <IconChevronLeft size={20} />

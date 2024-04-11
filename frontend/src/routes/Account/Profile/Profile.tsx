@@ -1,5 +1,5 @@
 import { Box, Text, Button, Stack } from "@mantine/core";
-import { useUser } from "../AccountLayout";
+import { useUser } from "../hooks/useUser";
 import InfoCard from "../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
@@ -19,7 +19,7 @@ const Profile = () => {
 
   return (
     <AccountPage title="Profile">
-      <InfoCard>
+      <InfoCard bg_circle={true}>
         <InitialsAvatar
           firstNameLetter={user.firstName[0]}
           lastNameLetter={user.lastName[0]}
@@ -30,7 +30,11 @@ const Profile = () => {
               {fullName}
             </Text>
             <Text fz="md">{user.email}</Text>
-            <Text fz="md">0410042611</Text>
+            <Text fz="md">
+              {user.address
+                ? `${user.address.street}, ${user.address.city}, ${user.address.zipCode}`
+                : null}
+            </Text>
           </Box>
           <Box>
             <Text fw={600}>Birthday</Text>
@@ -40,13 +44,7 @@ const Profile = () => {
             <Text fw={600}>Shopping Preference</Text>
             <Text>{user.shoppingPreference}</Text>
           </Box>
-          <Button
-            variant="gradient"
-            gradient={{ from: "grape", to: "violet", deg: 90 }}
-            leftSection={<IconEdit size={20} />}
-          >
-            EDIT
-          </Button>
+          <Button leftSection={<IconEdit size={20} />}>EDIT</Button>
         </Stack>
       </InfoCard>
     </AccountPage>

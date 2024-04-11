@@ -1,0 +1,10 @@
+.card {
+  background-color: var(--mantine-color-violet-5);
+  transition: border-radius 0.2s ease-in-out;
+}
+
+.card:hover,
+.card:active {
+  background-color: var(--mantine-color-violet-9);
+  border-radius: 1rem;
+}

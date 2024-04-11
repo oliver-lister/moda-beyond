@@ -11,32 +11,10 @@ import {
 import styles from "./AccountLayout.module.css";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
-import {
-  Link,
-  Navigate,
-  useLocation,
-  useOutletContext,
-} from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Outlet } from "react-router-dom";
-import UserProps from "../../types/UserProps.ts";
-
-const navLinks = [
-  {
-    label: "Profile",
-    to: "/account/profile",
-  },
-  {
-    label: "Login & Security",
-    to: "/account/login-and-security",
-  },
-  {
-    label: "Delete Account",
-    to: "/account/delete-account",
-  },
-];
-
-type ContextType = { user: UserProps | null };
+import { accountNavLinks } from "./data/accountNavLinks.ts";
 
 const AccountLayout = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -62,7 +40,7 @@ const AccountLayout = () => {
                 Account
               </Title>
               <Stack gap="xs">
-                {navLinks.map((link, index) => (
+                {accountNavLinks.map((link, index) => (
                   <NavLink
                     key={index}
                     className={
@@ -96,7 +74,3 @@ const AccountLayout = () => {
 };
 
 export default AccountLayout;
-
-export function useUser() {
-  return useOutletContext<ContextType>();
-}
