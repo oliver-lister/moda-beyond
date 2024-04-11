@@ -1,4 +1,5 @@
 import mongoose, { Document } from 'mongoose';
+import crypto from 'crypto';
 
 const productSchema = new mongoose.Schema(
   {
@@ -33,7 +34,8 @@ const cartItemSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
+  hash: String,
+  salt: String,
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   dob: { type: Date },
@@ -42,6 +44,20 @@ const userSchema = new mongoose.Schema({
   newsletter: { type: Boolean, required: true, default: true },
   cart: { type: [cartItemSchema], required: true, default: [] },
 });
+
+userSchema.methods.setPassword = function (password: string) {
+  // Creating a unique salt for a particular user
+  this.salt = crypto.randomBytes(16).toString('hex');
+
+  // Hashing user's salt and password with 1000 iterations,
+  // 64 length and sha512 digest
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
+};
+
+userSchema.methods.validPassword = function (password: string) {
+  const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
+  return this.hash === hash;
+};
 
 const sessionSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, required: true },
@@ -64,9 +80,10 @@ interface CartItem {
 }
 
 // Define the UserDocument interface
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
   email: string;
-  password: string;
+  hash: string;
+  salt: string;
   firstName: string;
   lastName: string;
   dob?: Date;
@@ -74,6 +91,8 @@ interface UserDocument extends Document {
   shoppingPreference: string;
   newsletter: boolean;
   cart: CartItem[];
+  setPassword(password: string): void;
+  validPassword(password: string): boolean;
 }
 
 const User = mongoose.model<UserDocument>('Users', userSchema);

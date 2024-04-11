@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { User, Session } from '../../models/models';
+import { User, Session, UserDocument } from '../../models/models';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
@@ -41,6 +41,8 @@ router.post('/signup', async (req: Request, res: Response) => {
     const newUserData = req.body;
     const newUser = new User(newUserData);
 
+    newUser.setPassword(req.body.password);
+
     // Save the new user to the database
     await newUser.save();
 
@@ -68,7 +70,7 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(404).json({ success: false, error: 'User not found', errorCode: 'USER_NOT_FOUND' });
     }
 
-    const isPasswordValid = req.body.password === user.password;
+    const isPasswordValid = user.validPassword(req.body.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, error: 'Password provided was incorrect', errorCode: 'INVALID_PASSWORD' });
