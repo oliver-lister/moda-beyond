@@ -1,14 +1,16 @@
-import { Stack, Group, Radio } from "@mantine/core";
+import { Stack, Group, Radio, Text } from "@mantine/core";
 import styles from "./delivery.module.css";
 import { DeliveryData } from "../../Cart";
 
 const Delivery = ({
   delivery,
-  deliveryData,
   handleDeliveryChange,
+  getDateInFuture,
+  deliveryData,
 }: {
   delivery: string;
   deliveryData: DeliveryData;
+  getDateInFuture: (estDays: number) => string;
   handleDeliveryChange: (value: string) => void;
 }) => {
   return (
@@ -25,11 +27,14 @@ const Delivery = ({
             <Stack gap={0}>
               <label htmlFor="standard_delivery">Standard Delivery</label>
               <p className={styles.delivery_estimate}>
-                Estimated: {deliveryData["standard"].due}
+                Estimated:{" "}
+                {getDateInFuture(
+                  deliveryData["standard" as keyof DeliveryData].estDays
+                )}
               </p>
             </Stack>
           </Group>
-          <p>$16</p>
+          <Text>${deliveryData["standard" as keyof DeliveryData].fee}</Text>
         </Group>
         <Group
           justify="space-between"
@@ -41,11 +46,14 @@ const Delivery = ({
             <Stack gap={0}>
               <label htmlFor="express_delivery">Express Delivery</label>
               <p className={styles.delivery_estimate}>
-                Estimated: {deliveryData["standard"].due}
+                Estimated:{" "}
+                {getDateInFuture(
+                  deliveryData["express" as keyof DeliveryData].estDays
+                )}
               </p>
             </Stack>
           </Group>
-          <p>$22</p>
+          <Text>${deliveryData["express" as keyof DeliveryData].fee}</Text>
         </Group>
         <Group
           justify="space-between"
@@ -61,7 +69,7 @@ const Delivery = ({
               </p>
             </Stack>
           </Group>
-          <p>$6</p>
+          <Text>FREE</Text>
         </Group>
       </Radio.Group>
     </Stack>

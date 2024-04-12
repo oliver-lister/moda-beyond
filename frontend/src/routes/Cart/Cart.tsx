@@ -10,7 +10,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconTruck } from "@tabler/icons-react";
+import { IconShoppingBag, IconTruck } from "@tabler/icons-react";
 import styles from "./cart.module.css";
 import { Link } from "react-router-dom";
 import Delivery from "./components/Delivery/Delivery.tsx";
@@ -19,17 +19,35 @@ import CartItemContainer from "./components/CartItemContainer/CartItemContainer.
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
 import { useState } from "react";
+import { format, addDays } from "date-fns";
 
 export type DeliveryData = {
-  standard: { fee: number; due: string };
-  express: { fee: number; due: string };
-  pickup: { fee: number; due: string };
+  standard: {
+    label: string;
+    isDelivery: boolean;
+    fee: number;
+    estDays: number;
+  };
+  express: { label: string; isDelivery: boolean; fee: number; estDays: number };
+  pickup: { label: string; isDelivery: boolean; fee: number; estDays: number };
 };
 
 const deliveryData: DeliveryData = {
-  standard: { fee: 16, due: "16th May 2024" },
-  express: { fee: 22, due: "16th May 2024" },
-  pickup: { fee: 6, due: "16th May 2024" },
+  standard: {
+    label: "Standard Delivery",
+    isDelivery: true,
+    fee: 16,
+    estDays: 7,
+  },
+  express: { label: "Express Delivery", isDelivery: true, fee: 22, estDays: 4 },
+  pickup: { label: "Pick Up In-store", isDelivery: false, fee: 0, estDays: 0 },
+};
+
+const getDateInFuture = (estDays: number) => {
+  const currentDate = new Date();
+  const futureDate = addDays(currentDate, estDays);
+  const formattedDate = format(futureDate, "EEEE do MMMM yyyy");
+  return formattedDate;
 };
 
 const Cart = () => {
@@ -69,16 +87,28 @@ const Cart = () => {
                     </p>
                     <Alert
                       title={
-                        "Estimated delivery: " +
-                        deliveryData[delivery as keyof DeliveryData].due
+                        delivery !== "pickup"
+                          ? "Estimated delivery: " +
+                            getDateInFuture(
+                              deliveryData[delivery as keyof DeliveryData]
+                                .estDays
+                            )
+                          : "Pickup instore"
                       }
-                      icon={<IconTruck />}
+                      icon={
+                        delivery !== "pickup" ? (
+                          <IconTruck />
+                        ) : (
+                          <IconShoppingBag />
+                        )
+                      }
                       className={styles.alert}
                     />
                     <CartItemContainer cart={cart.items} />
                     <Delivery
                       delivery={delivery}
                       deliveryData={deliveryData}
+                      getDateInFuture={getDateInFuture}
                       handleDeliveryChange={handleDeliveryChange}
                     />
                   </>
