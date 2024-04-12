@@ -1,30 +1,27 @@
-import { Stack, Group, Center, Loader } from "@mantine/core";
+import { Stack, Group, Center, Loader, Title, Text } from "@mantine/core";
 import styles from "./ordersummary.module.css";
-import { CartItemProps } from "../../../../types/UserProps";
 import GradientButton from "../../../../components/GradientButton/GradientButton";
 
 const OrderSummary = ({
-  cart,
+  cartSumWithDelivery,
+  cartTotalQuantity,
+  cartSum,
   deliveryFee,
   isLoading,
 }: {
-  cart: CartItemProps[];
+  cartSumWithDelivery: number;
+  cartTotalQuantity: number;
+  cartSum: number;
   deliveryFee: number;
   isLoading: boolean;
 }) => {
-  const cartSum = () =>
-    cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-  const cartTotalQuantity = () =>
-    cart.reduce((acc, item) => acc + item.quantity, 0);
-
   return (
     <Stack className={styles.container}>
-      <p className={styles.coupon}>
+      <Text fw={600} ta="center">
         Do you have a coupon, gift card or MØDA-BEYOND reward?
-      </p>
+      </Text>
       <Stack className={styles.summary}>
-        <h3>Order Summary</h3>
+        <Title order={2}>Order Summary</Title>
         {isLoading ? (
           <Center>
             <Loader />
@@ -32,27 +29,27 @@ const OrderSummary = ({
         ) : (
           <>
             <Group justify="space-between">
-              <p>{`Product Total (${cartTotalQuantity()})`}</p>
-              <p>${cartSum()}</p>
+              <Text>{`Product Total (${cartTotalQuantity})`}</Text>
+              <Text>${cartSum}</Text>
             </Group>
             <Group justify="space-between">
-              <p>Delivery</p>
-              <p>${deliveryFee}</p>
+              <Text>Delivery</Text>
+              <Text>${deliveryFee}</Text>
             </Group>
             <Group justify="space-between" className={styles.total}>
-              <p>Total</p>
-              <p>${cartSum() + deliveryFee}</p>
+              <Text>Total</Text>
+              <Text>${cartSumWithDelivery}</Text>
             </Group>
             <GradientButton>Checkout</GradientButton>
           </>
         )}
-        <p className={styles.terms}>
+        <Text fz="0.7rem" fw={400}>
           By checking out, you are agreeing to our Terms and Conditions and to
           receive marketing communications from us that you can unsubscribe from
           by the functionality provided for in those communications. To see how
           we manage your personal information and other details, please see our
           Privacy Policy and Collection Statement
-        </p>
+        </Text>
       </Stack>
     </Stack>
   );

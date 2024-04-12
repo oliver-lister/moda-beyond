@@ -18,7 +18,7 @@ import OrderSummary from "./components/OrderSummary/OrderSummary.tsx";
 import CartItemContainer from "./components/CartItemContainer/CartItemContainer.tsx";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { format, addDays } from "date-fns";
 
 export type DeliveryData = {
@@ -50,6 +50,10 @@ const getDateInFuture = (estDays: number) => {
   return formattedDate;
 };
 
+const roundToTwoDec = (num: number) => {
+  return Math.round(num * 100) / 100;
+};
+
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart);
   const auth = useSelector((state: RootState) => state.auth);
@@ -58,6 +62,29 @@ const Cart = () => {
   const handleDeliveryChange = (value: string) => {
     setDelivery(value);
   };
+
+  // Cart Totalling Functions
+
+  const cartTotalQuantity = useMemo(() => {
+    const totalQuantity = cart.items.reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
+    return totalQuantity;
+  }, [cart]);
+
+  const cartSum = useMemo(() => {
+    const cartSumTotal = cart.items.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    return roundToTwoDec(cartSumTotal);
+  }, [cart]);
+
+  const cartSumWithDelivery = useMemo(() => {
+    const deliveryFee = deliveryData[delivery as keyof DeliveryData].fee;
+    return cartSum + deliveryFee;
+  }, [cartSum, delivery]);
 
   return (
     <section className={styles.container}>
@@ -119,7 +146,9 @@ const Cart = () => {
           <GridCol span={{ base: 12, lg: 4 }}>
             {cart.totalItems === 0 ? null : (
               <OrderSummary
-                cart={cart.items}
+                cartSum={cartSum}
+                cartSumWithDelivery={cartSumWithDelivery}
+                cartTotalQuantity={cartTotalQuantity}
                 isLoading={auth.isLoading}
                 deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
               />

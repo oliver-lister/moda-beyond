@@ -7,31 +7,22 @@
   }
 }
 
-.coupon {
-  text-align: center;
-}
-
 .summary {
   border: 1px solid var(--mantine-color-gray-3);
   padding: 1rem;
 }
 
-.summary h3 {
+.summary h2 {
   text-transform: uppercase;
   font-size: 1.5rem;
 }
 
 .summary .total {
-  font-size: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--mantine-color-gray-2);
 }
 
-button {
-  text-transform: uppercase;
-}
-
-.terms {
-  font-weight: 400;
-  font-size: 0.7rem;
+.summary .total p {
+  font-size: 1.5rem;
+  font-weight: 600;
 }
