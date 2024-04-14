@@ -14,9 +14,7 @@ const AccountPage = ({
     <section>
       <Stack pt={{ base: 0, md: "2rem" }}>
         <Box visibleFrom="md" className={styles.wrapper}>
-          <Title order={2} miw="400px">
-            {title}
-          </Title>
+          <Title order={2}>{title}</Title>
         </Box>
         <Box
           hiddenFrom="md"

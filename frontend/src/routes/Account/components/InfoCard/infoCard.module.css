@@ -4,18 +4,9 @@
   position: relative;
 }
 
-.bg_circle {
-  background-color: var(--mantine-color-violet-2);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3rem;
-  border-radius: 0 0 50% 50%;
-}
-
 @media (min-width: $mantine-breakpoint-md) {
   .card {
     min-width: 400px;
+    max-width: 650px;
   }
 }

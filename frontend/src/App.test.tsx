@@ -9,7 +9,7 @@ describe("Renders main page correctly", async () => {
   it("Should render the page correctly", async () => {
     // Setup
     render(<App />);
-    const h3 = await screen.queryByText("One Sale");
+    const h3 = screen.queryByText("New Arrivals");
 
     // Expectations
     expect(h3).toBeInTheDocument();

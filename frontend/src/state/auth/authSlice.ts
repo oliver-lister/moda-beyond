@@ -55,7 +55,6 @@ export const loginAsync = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
-
       return responseData;
     } catch (err) {
       if (err instanceof Error) {

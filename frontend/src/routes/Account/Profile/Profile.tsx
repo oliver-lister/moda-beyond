@@ -3,11 +3,17 @@ import { useUser } from "../hooks/useUser";
 import InfoCard from "../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
-import InitialsAvatar from "../../../components/InitialsAvatar/InitialsAvatar";
 import { format } from "date-fns";
+import { useState } from "react";
+import EditProfileForm from "./EditProfileForm";
 
 const Profile = () => {
   const { user } = useUser();
+  const [isFormOpen, SetFormOpen] = useState<boolean>(false);
+
+  const toggleFormOpen = () => {
+    SetFormOpen((prev) => !prev);
+  };
 
   if (!user) {
     return;
@@ -19,33 +25,48 @@ const Profile = () => {
 
   return (
     <AccountPage title="Profile">
-      <InfoCard bg_circle={true}>
-        <InitialsAvatar
-          firstNameLetter={user.firstName[0]}
-          lastNameLetter={user.lastName[0]}
-        />
-        <Stack>
-          <Box>
-            <Text fz="lg" fw={700}>
-              {fullName}
-            </Text>
-            <Text fz="md">{user.email}</Text>
-            <Text fz="md">
-              {user.address
-                ? `${user.address.street}, ${user.address.city}, ${user.address.zipCode}`
-                : null}
-            </Text>
-          </Box>
-          <Box>
-            <Text fw={600}>Birthday</Text>
-            <Text>{user.dob && format(user.dob, "dd/MM/yyyy")}</Text>
-          </Box>
-          <Box>
-            <Text fw={600}>Shopping Preference</Text>
-            <Text>{user.shoppingPreference}</Text>
-          </Box>
-          <Button leftSection={<IconEdit size={20} />}>EDIT</Button>
-        </Stack>
+      <InfoCard>
+        {isFormOpen ? (
+          <EditProfileForm toggleFormOpen={toggleFormOpen} />
+        ) : (
+          <Stack>
+            <Box>
+              <Text fz="lg" fw={900} c="violet.9">
+                {fullName}
+              </Text>
+            </Box>
+            {user.address ? (
+              <Box>
+                <Text size="lg" fw={600} c="violet">
+                  Address:
+                </Text>
+                <Text size="md">
+                  {`${user.address.street}, ${user.address.city}, ${user.address.zipCode}`}
+                </Text>
+              </Box>
+            ) : null}
+            <Box>
+              <Text size="lg" fw={600} c="violet">
+                Birthday:
+              </Text>
+              <Text size="md">
+                {user.dob && format(user.dob, "dd/MM/yyyy")}
+              </Text>
+            </Box>
+            <Box>
+              <Text size="lg" fw={600} c="violet">
+                Shopping Preference:
+              </Text>
+              <Text size="md">{user.shoppingPreference}</Text>
+            </Box>
+            <Button
+              leftSection={<IconEdit size={20} />}
+              onClick={toggleFormOpen}
+            >
+              Edit
+            </Button>
+          </Stack>
+        )}
       </InfoCard>
     </AccountPage>
   );

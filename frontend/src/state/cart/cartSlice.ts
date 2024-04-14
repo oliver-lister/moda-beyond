@@ -66,6 +66,10 @@ const cartSlice = createSlice({
         0
       );
       localStorage.setItem("cart", JSON.stringify(state.items));
+      state.totalItems = state.items.reduce(
+        (accumulator, item) => accumulator + item.quantity,
+        0
+      );
       state.isLoading = false;
     },
     removeItemFromCart(state, action: PayloadAction<string>) {
@@ -79,9 +83,14 @@ const cartSlice = createSlice({
         0
       );
       localStorage.setItem("cart", JSON.stringify(state.items));
+      state.totalItems = state.items.reduce(
+        (accumulator, item) => accumulator + item.quantity,
+        0
+      );
       state.isLoading = false;
     },
     updateSize(state, action: PayloadAction<UpdateSizePayload>) {
+      state.isLoading = true;
       const { cartItemId, newSize } = action.payload;
       const itemToUpdateIndex = state.items.findIndex((item: CartItemProps) => {
         return item.cartItemId === cartItemId;
@@ -129,8 +138,14 @@ const cartSlice = createSlice({
 
       state.items = newCart;
       localStorage.setItem("cart", JSON.stringify(state.items));
+      state.totalItems = state.items.reduce(
+        (accumulator, item) => accumulator + item.quantity,
+        0
+      );
+      state.isLoading = false;
     },
     updateQuantity(state, action: PayloadAction<UpdateQuantityPayload>) {
+      state.isLoading = true;
       const { cartItemId, newQuantity } = action.payload;
 
       state.items = state.items.map((item) => {
@@ -140,6 +155,11 @@ const cartSlice = createSlice({
         return item;
       });
       localStorage.setItem("cart", JSON.stringify(state.items));
+      state.totalItems = state.items.reduce(
+        (accumulator, item) => accumulator + item.quantity,
+        0
+      );
+      state.isLoading = false;
     },
     clearCart(state) {
       state.isLoading = true;

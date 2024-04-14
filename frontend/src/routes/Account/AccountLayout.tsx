@@ -30,7 +30,7 @@ const AccountLayout = () => {
       <Container
         size="xl"
         py={{ base: 0, md: "1rem" }}
-        mih="70vh"
+        mih="60vh"
         styles={{ root: { paddingInline: 0 } }}
       >
         <Grid>
