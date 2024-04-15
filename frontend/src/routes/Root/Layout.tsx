@@ -3,10 +3,8 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../state/store.ts";
 import { refreshAccessTokenAsync } from "../../state/auth/authSlice.ts";
-import {
-  fetchUserDataAsync,
-  updateDBCartAsync,
-} from "../../state/user/userSlice.ts";
+import { fetchUserDataAsync } from "../../state/user/userSlice.ts";
+import { updateDBCartAsync } from "../../state/cart/cartSlice.ts";
 import NavBar from "./components/NavBar/NavBar.tsx";
 import MessageBar from "./components/MessageBar/MessageBar.tsx";
 import Footer from "./components/Footer/Footer.tsx";
@@ -19,37 +17,43 @@ const Layout = () => {
   const auth = useSelector((state: RootState) => state.auth);
   const cart = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.user);
+  const storedRefreshToken = localStorage.getItem("refreshToken");
 
   useEffect(() => {
-    const storedRefreshToken = localStorage.getItem("refreshToken");
     // Refresh the access token upon refresh
-    const refreshAccessToken = async () => {
-      await dispatch(refreshAccessTokenAsync(storedRefreshToken));
+    const refreshAccessToken = async (refreshToken: string) => {
+      if (!refreshToken) return;
+      await dispatch(refreshAccessTokenAsync(refreshToken));
     };
     try {
-      if (!auth.isAuthenticated) refreshAccessToken();
+      if (!storedRefreshToken || auth.isAuthenticated || auth.isLoading) return;
+
+      refreshAccessToken(storedRefreshToken);
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);
         dispatch(clearUser());
       }
     }
-  }, [auth.isAuthenticated, dispatch]);
+  }, [auth.isAuthenticated, storedRefreshToken, auth.isLoading, dispatch]);
 
   useEffect(() => {
     // Fetch user data if they're logged in, to store in Redux state
     if (!auth.userId) return;
+
     dispatch(fetchUserDataAsync());
   }, [auth.userId, dispatch]);
 
   useEffect(() => {
     const localCart = localStorage.getItem("cart");
-    if (!auth.isAuthenticated && !localCart) {
+
+    // If no user is logged in and localStorage is empty, rely on default cart [].
+    if (!user.data && !localCart) {
       return;
     }
 
     // If user is logged in, access cart in database
-    if (auth.isAuthenticated && user.data) {
+    if (user.data) {
       dispatch(setCart(user.data.cart));
       return;
     }
@@ -59,7 +63,7 @@ const Layout = () => {
       dispatch(setCart(JSON.parse(localCart)));
       return;
     }
-  }, [user, auth.isAuthenticated, dispatch]);
+  }, [user.data, auth.isLoading, dispatch]);
 
   useEffect(() => {
     // if user is logged in, and there's a change to the cart - update the database

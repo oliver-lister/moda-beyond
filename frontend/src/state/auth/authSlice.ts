@@ -189,7 +189,6 @@ export const refreshAccessTokenAsync = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
-      console.log(responseData);
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
@@ -239,7 +238,7 @@ const initialState: AuthState = {
   accessToken: localStorage.getItem("accessToken") || "",
   refreshToken: localStorage.getItem("refreshToken") || "",
   userId: null,
-  isLoading: true,
+  isLoading: false,
   isAuthenticated: false,
 };
 

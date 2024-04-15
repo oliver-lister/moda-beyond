@@ -1,4 +1,4 @@
-import UserProps, { CartItemProps } from "../../types/UserProps";
+import UserProps from "../../types/UserProps";
 import {
   createSlice,
   createAsyncThunk,
@@ -76,59 +76,10 @@ const fetchUserDataReducerBuilder = (
     });
 };
 
-// Update DB Cart
-
-export const updateDBCartAsync = createAsyncThunk(
-  "auth/updateDBCartAsync",
-  async (newCart: CartItemProps[], thunkAPI) => {
-    try {
-      const { auth } = thunkAPI.getState() as RootState;
-      if (!auth.userId) {
-        throw new Error(`User not logged in`);
-      }
-
-      const accessToken = auth.accessToken;
-
-      if (!accessToken) {
-        throw new Error("No access token.");
-      }
-      const userId = auth.userId;
-
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: accessToken,
-          },
-          body: JSON.stringify({
-            newCart: newCart,
-          }),
-        }
-      );
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-      }
-
-      const { cart } = responseData;
-      // thunkAPI.dispatch(fetchUserDataAsync());
-      return cart;
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("Error: " + err.message);
-        throw err;
-      }
-    }
-  }
-);
-
 // REDUX TK INIT
 
 const initialState: UserState = {
-  isLoading: true,
+  isLoading: false,
   data: null,
 };
 

@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 import { CartItemProps } from "../../types/UserProps";
 
 // Types
@@ -24,6 +25,54 @@ const initialCartState: CartState = {
   totalItems: 0,
   isLoading: false,
 };
+
+// Update DB Cart
+
+export const updateDBCartAsync = createAsyncThunk(
+  "auth/updateDBCartAsync",
+  async (newCart: CartItemProps[], thunkAPI) => {
+    try {
+      const { auth } = thunkAPI.getState() as RootState;
+      if (!auth.userId) {
+        throw new Error(`User not logged in`);
+      }
+
+      const accessToken = auth.accessToken;
+
+      if (!accessToken) {
+        throw new Error("No access token.");
+      }
+      const userId = auth.userId;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/update`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: accessToken,
+          },
+          body: JSON.stringify({
+            newCart: newCart,
+          }),
+        }
+      );
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
+
+      const { cart } = responseData;
+      return cart;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("Error: " + err.message);
+        throw err;
+      }
+    }
+  }
+);
 
 // Reducers
 const cartSlice = createSlice({
@@ -162,7 +211,7 @@ const cartSlice = createSlice({
       state.isLoading = false;
     },
     clearCart(state) {
-      state.isLoading = true;
+      state.isLoading = false;
       state.items = [];
       state.totalItems = 0;
       localStorage.setItem("cart", JSON.stringify([]));

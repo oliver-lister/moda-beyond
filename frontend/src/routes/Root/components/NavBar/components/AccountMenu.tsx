@@ -12,6 +12,7 @@ import { AppDispatch } from "../../../../../state/store.ts";
 import { AuthState, signOut } from "../../../../../state/auth/authSlice.ts";
 import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
 import UserProps from "../../../../../types/UserProps.ts";
+import { clearUser } from "../../../../../state/user/userSlice.ts";
 
 const accountMenuLinks = [
   {
@@ -66,6 +67,7 @@ const AccountMenu = ({ auth, user }: { auth: AuthState; user: UserProps }) => {
               }
               onClick={() => {
                 dispatch(signOut());
+                dispatch(clearUser());
               }}
               c="red"
             >
