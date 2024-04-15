@@ -4,31 +4,35 @@ import {
   createSlice,
   ActionReducerMapBuilder,
 } from "@reduxjs/toolkit";
-import UserProps from "../../types/UserProps";
-import { RootState } from "../store";
-import { CartItemProps } from "../../types/UserProps";
 import { SignupValues } from "../../routes/LoginSignup/components/Signup";
 import { LoginValues } from "../../routes/LoginSignup/components/Login";
 
 // Types
 
-interface AuthState {
-  accessToken: string;
-  refreshToken: string;
-  user: UserProps | null;
+export interface AuthState {
   isLoading: boolean;
+  isAuthenticated: boolean;
+  accessToken: string | null;
+  refreshToken: string | null;
+  userId: string | null;
 }
 
 interface LoginPayload {
-  user: UserProps;
+  userId: string;
   accessToken: string;
   refreshToken: string;
 }
 
 interface SignupPayload {
-  newUser: UserProps;
+  userId: string;
   accessToken: string;
   refreshToken: string;
+}
+
+interface RefreshPayload {
+  userId: string;
+  newAccessToken: string;
+  newRefreshToken: string;
 }
 
 // AUTHENTICATION REDUCERS
@@ -69,20 +73,16 @@ const loginReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
   builder
     .addCase(loginAsync.pending, (state) => {
       state.isLoading = true;
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      state.accessToken = "";
-      state.refreshToken = "";
-      state.user = null;
     })
     .addCase(
       loginAsync.fulfilled,
       (state, action: PayloadAction<LoginPayload>) => {
-        const { user, accessToken, refreshToken } = action.payload;
+        const { userId, accessToken, refreshToken } = action.payload;
 
-        state.user = user;
+        state.userId = userId;
         state.accessToken = accessToken;
         state.refreshToken = refreshToken;
+        state.isAuthenticated = true;
 
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
@@ -92,6 +92,12 @@ const loginReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
     )
     .addCase(loginAsync.rejected, (state) => {
       state.isLoading = false;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false;
+      state.userId = null;
     });
 };
 
@@ -132,20 +138,16 @@ const signupReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
   builder
     .addCase(signupAsync.pending, (state) => {
       state.isLoading = true;
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      state.accessToken = "";
-      state.refreshToken = "";
-      state.user = null;
     })
     .addCase(
       signupAsync.fulfilled,
       (state, action: PayloadAction<SignupPayload>) => {
-        const { newUser, accessToken, refreshToken } = action.payload;
+        const { userId, accessToken, refreshToken } = action.payload;
 
-        state.user = newUser;
+        state.userId = userId;
         state.accessToken = accessToken;
         state.refreshToken = refreshToken;
+        state.isAuthenticated = true;
 
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
@@ -155,6 +157,12 @@ const signupReducerBuilder = (builder: ActionReducerMapBuilder<AuthState>) => {
     )
     .addCase(signupAsync.rejected, (state) => {
       state.isLoading = false;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false;
+      state.userId = null;
     });
 };
 
@@ -181,7 +189,7 @@ export const refreshAccessTokenAsync = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
-
+      console.log(responseData);
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
@@ -199,137 +207,40 @@ const refreshAccessTokenReducerBuilder = (
     .addCase(refreshAccessTokenAsync.pending, (state) => {
       state.isLoading = true;
     })
-    .addCase(refreshAccessTokenAsync.fulfilled, (state, action) => {
-      const { newAccessToken, newRefreshToken, user } = action.payload;
+    .addCase(
+      refreshAccessTokenAsync.fulfilled,
+      (state, action: PayloadAction<RefreshPayload>) => {
+        const { newAccessToken, newRefreshToken, userId } = action.payload;
 
-      state.accessToken = newAccessToken;
-      state.refreshToken = newRefreshToken;
-      localStorage.setItem("accessToken", newAccessToken);
-      localStorage.setItem("refreshToken", newRefreshToken);
-      state.isLoading = false;
-      state.user = user;
-    })
+        state.accessToken = newAccessToken;
+        state.refreshToken = newRefreshToken;
+        state.userId = userId;
+        state.isAuthenticated = true;
+
+        localStorage.setItem("accessToken", newAccessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
+        state.isLoading = false;
+      }
+    )
     .addCase(refreshAccessTokenAsync.rejected, (state) => {
       state.accessToken = "";
       state.refreshToken = "";
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      state.user = null;
+      state.userId = null;
+      state.isAuthenticated = false;
       state.isLoading = false;
     });
 };
-
-// Fetch user data
-
-export const fetchUserDataAsync = createAsyncThunk(
-  "auth/fetchUserDataAsync",
-  async (_, thunkAPI) => {
-    try {
-      const { auth } = thunkAPI.getState() as RootState;
-      if (!auth.user) throw new Error("No user logged in.");
-      const userId = auth.user._id.toString();
-      const accessToken = auth.accessToken;
-
-      if (!accessToken) {
-        throw new Error("No access token.");
-      }
-
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/fetchdata`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: accessToken,
-          },
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-      }
-
-      return responseData;
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("Error fetching user data:", err.message);
-        throw err;
-      }
-    }
-  }
-);
-
-const fetchUserDataReducerBuilder = (
-  builder: ActionReducerMapBuilder<AuthState>
-) => {
-  builder.addCase(
-    fetchUserDataAsync.fulfilled,
-    (state, action: PayloadAction<AuthState>) => {
-      const { user } = action.payload;
-      state.user = user;
-    }
-  );
-};
-
-// CART REDUCERS
-
-// Update DB Cart
-
-export const updateDBCartAsync = createAsyncThunk(
-  "auth/updateDBCartAsync",
-  async (newCart: CartItemProps[], thunkAPI) => {
-    try {
-      const { auth } = thunkAPI.getState() as RootState;
-      if (!auth.user) {
-        throw new Error(`User not logged in`);
-      }
-
-      const accessToken = auth.accessToken;
-
-      if (!accessToken) {
-        throw new Error("No access token.");
-      }
-      const userId = auth.user._id.toString();
-
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/cart/update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: accessToken,
-          },
-          body: JSON.stringify({
-            newCart: newCart,
-          }),
-        }
-      );
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-      }
-
-      const { cart } = responseData;
-      // thunkAPI.dispatch(fetchUserDataAsync());
-      return cart;
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("Error: " + err.message);
-        throw err;
-      }
-    }
-  }
-);
 
 // REDUX TK INIT
 
 const initialState: AuthState = {
   accessToken: localStorage.getItem("accessToken") || "",
   refreshToken: localStorage.getItem("refreshToken") || "",
-  user: null,
+  userId: null,
   isLoading: true,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -341,15 +252,15 @@ const authSlice = createSlice({
       localStorage.removeItem("refreshToken");
       state.accessToken = "";
       state.refreshToken = "";
-      state.user = null;
+      state.userId = null;
       state.isLoading = false;
+      state.isAuthenticated = false;
     },
   },
   extraReducers: (builder) => {
     loginReducerBuilder(builder);
     signupReducerBuilder(builder);
     refreshAccessTokenReducerBuilder(builder);
-    fetchUserDataReducerBuilder(builder);
   },
 });
 

@@ -14,8 +14,8 @@ import { object, string, date, boolean } from "yup";
 import { useState } from "react";
 import { useForm, yupResolver } from "@mantine/form";
 import { SerializedError } from "@reduxjs/toolkit";
-import { useUser } from "../hooks/useUser";
 import { DateInput } from "@mantine/dates";
+import UserProps from "../../../types/UserProps";
 
 const editProfileSchema = object({
   honeypot: string(),
@@ -47,26 +47,41 @@ interface EditProfileValues {
 }
 
 const EditProfileForm = ({
+  user,
   toggleFormOpen,
 }: {
+  user: UserProps;
   toggleFormOpen: () => void;
 }) => {
-  const { user } = useUser();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const formInitialValues = user
+    ? {
+        honeypot: "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dob: user.dob ? new Date(user.dob) : new Date(),
+        street: user.address ? user.address.street : "",
+        city: user.address ? user.address.city : "",
+        zipCode: user.address ? user.address.zipCode : "",
+        shoppingPreference: user.shoppingPreference,
+        newsletter: user.newsletter,
+      }
+    : {
+        honeypot: "",
+        firstName: "",
+        lastName: "",
+        dob: new Date(),
+        street: "",
+        city: "",
+        zipCode: "",
+        shoppingPreference: "Womenswear",
+        newsletter: false,
+      };
+
   const form = useForm({
-    initialValues: {
-      honeypot: "",
-      firstName: user ? user.firstName : "",
-      lastName: user ? user.lastName : "",
-      dob: user ? (user.dob ? new Date(user.dob) : new Date()) : new Date(),
-      street: user && user.address ? user.address.street : "",
-      city: user && user.address ? user.address.city : "",
-      zipCode: user && user.address ? user.address.zipCode : "",
-      shoppingPreference: user ? user.shoppingPreference : "Womenswear",
-      newsletter: user ? user.newsletter : true,
-    },
+    initialValues: formInitialValues,
     validate: yupResolver(editProfileSchema),
   });
 

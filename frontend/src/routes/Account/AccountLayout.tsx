@@ -17,11 +17,11 @@ import { Outlet } from "react-router-dom";
 import { accountNavLinks } from "./data/accountNavLinks.ts";
 
 const AccountLayout = () => {
-  const user = useSelector((state: RootState) => state.auth.user);
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.user.data);
   const { pathname } = useLocation();
 
-  if (!isLoading && !user) {
+  if (!auth.isLoading && !auth.userId) {
     return <Navigate to="/login" />;
   }
 
@@ -59,7 +59,7 @@ const AccountLayout = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, md: 9 }}>
-            {!isLoading ? (
+            {!auth.isLoading ? (
               <Outlet context={{ user }} />
             ) : (
               <Center mih="60vh">

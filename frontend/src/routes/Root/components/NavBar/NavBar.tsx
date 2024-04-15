@@ -26,7 +26,8 @@ const navMenu = [
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.auth.user);
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.user);
   const cart = useSelector((state: RootState) => state.cart);
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
@@ -118,8 +119,8 @@ const NavBar = () => {
                   handleSearchValueChange={handleSearchValueChange}
                 />
               </Box>
-              {user ? (
-                <AccountMenu user={user} />
+              {auth.userId && user.data ? (
+                <AccountMenu auth={auth} user={user.data} />
               ) : (
                 <Box className={styles.profile}>
                   <Link to="/login">

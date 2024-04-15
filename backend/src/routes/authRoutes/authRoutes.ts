@@ -54,7 +54,9 @@ router.post('/signup', async (req: Request, res: Response) => {
     const newSession = new Session({ userId: newUser._id, refreshToken: refreshToken });
     newSession.save();
 
-    return res.status(200).json({ success: true, message: 'User registered successfully.', accessToken, refreshToken, newUser });
+    const userId = newUser._id.toString();
+
+    return res.status(200).json({ success: true, message: 'User registered successfully.', accessToken, refreshToken, userId });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
@@ -84,7 +86,9 @@ router.post('/login', async (req: Request, res: Response) => {
 
     newSession.save();
 
-    return res.status(200).json({ success: true, message: 'Login successful', accessToken, refreshToken, user });
+    const userId = user._id.toString();
+
+    return res.status(200).json({ success: true, message: 'Login successful', accessToken, refreshToken, userId });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
@@ -110,7 +114,7 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
       });
     }
 
-    const userId = session.userId;
+    const userId = session.userId.toString();
 
     const user = await User.findById(userId);
 
@@ -127,7 +131,7 @@ router.post('/refreshtoken', async (req: Request, res: Response) => {
     session.refreshToken = newRefreshToken;
     await session.save();
 
-    return res.status(200).json({ success: true, message: 'Access token successfully refreshed', newAccessToken, newRefreshToken, user });
+    return res.status(200).json({ success: true, message: 'Access token successfully refreshed', newAccessToken, newRefreshToken, userId });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

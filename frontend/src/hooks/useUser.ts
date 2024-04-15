@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import UserProps from "../../../types/UserProps";
+import UserProps from "../types/UserProps";
 
 type ContextType = { user: UserProps | null };
 

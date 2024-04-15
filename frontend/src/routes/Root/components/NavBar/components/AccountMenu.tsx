@@ -9,9 +9,9 @@ import {
 } from "@tabler/icons-react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../state/store.ts";
-import { signOut } from "../../../../../state/auth/authSlice.ts";
-import UserProps from "../../../../../types/UserProps.ts";
+import { AuthState, signOut } from "../../../../../state/auth/authSlice.ts";
 import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
+import UserProps from "../../../../../types/UserProps.ts";
 
 const accountMenuLinks = [
   {
@@ -31,7 +31,7 @@ const accountMenuLinks = [
   },
 ];
 
-const AccountMenu = ({ user }: { user: UserProps }) => {
+const AccountMenu = ({ auth, user }: { auth: AuthState; user: UserProps }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
@@ -45,7 +45,7 @@ const AccountMenu = ({ user }: { user: UserProps }) => {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        {user ? (
+        {auth.isAuthenticated ? (
           <>
             {accountMenuLinks.map((link, index) => (
               <Menu.Item

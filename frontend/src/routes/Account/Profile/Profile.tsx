@@ -1,11 +1,11 @@
 import { Box, Text, Button, Stack } from "@mantine/core";
-import { useUser } from "../hooks/useUser";
 import InfoCard from "../components/InfoCard/InfoCard";
 import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
 import { format } from "date-fns";
 import { useState } from "react";
 import EditProfileForm from "./EditProfileForm";
+import { useUser } from "../../../hooks/useUser";
 
 const Profile = () => {
   const { user } = useUser();
@@ -27,7 +27,7 @@ const Profile = () => {
     <AccountPage title="Profile">
       <InfoCard>
         {isFormOpen ? (
-          <EditProfileForm toggleFormOpen={toggleFormOpen} />
+          <EditProfileForm toggleFormOpen={toggleFormOpen} user={user} />
         ) : (
           <Stack>
             <Box>

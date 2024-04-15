@@ -1,7 +1,7 @@
 import { Stack, Text, Button, Box } from "@mantine/core";
 import AccountPage from "../components/AccountPage";
 import InfoCard from "../components/InfoCard/InfoCard";
-import { useUser } from "../hooks/useUser";
+import { useUser } from "../../../hooks/useUser";
 import { IconEdit } from "@tabler/icons-react";
 
 const LoginAndSecurity = () => {
