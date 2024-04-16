@@ -25,6 +25,7 @@ router.get('/:userId/fetchdata', authorizeJWT, async (req: AuthorizedRequest, re
     if (userId !== tokenUserId) {
       return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
     }
+
     console.log(userId);
     const user = await User.findById(userId);
 
@@ -41,18 +42,28 @@ router.get('/:userId/fetchdata', authorizeJWT, async (req: AuthorizedRequest, re
 // API for updating a user's account details
 router.patch('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
-    const { newUserDetails } = req.body;
+    const newUserDetails = req.body;
     const userId = req.params.userId;
 
-    const user = await User.findOneAndUpdate(
-      { _id: userId },
+    if (!req.user || typeof req.user === 'string') {
+      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    }
+
+    const tokenUserId = req.user.userId;
+
+    if (userId !== tokenUserId) {
+      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
       { ...newUserDetails },
       {
         new: true,
       },
     );
 
-    return res.status(201).json({ success: true, message: 'Cart updated successfully', user });
+    return res.status(201).json({ success: true, message: 'User updated successfully', user });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

@@ -96,9 +96,7 @@ const EditProfileForm = ({
       if (form.values.honeypot) {
         throw new Error("Bot detected");
       }
-      delete values.honeypot;
-
-      dispatch(updateUserAsync(values));
+      await dispatch(updateUserAsync(values));
       form.reset();
       setIsLoading(false);
     } catch (err) {

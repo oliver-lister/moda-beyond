@@ -22,7 +22,7 @@ interface UpdateUserPayload {
 }
 
 export const fetchUserDataAsync = createAsyncThunk(
-  "auth/fetchUserDataAsync",
+  "user/fetchUserDataAsync",
   async (_, thunkAPI) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
@@ -82,7 +82,7 @@ const fetchUserDataReducerBuilder = (
 };
 
 export const updateUserAsync = createAsyncThunk(
-  "auth/fetchUserDataAsync",
+  "user/updateUserAsync",
   async (newUserDetails: EditProfileValues, thunkAPI) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
@@ -93,6 +93,8 @@ export const updateUserAsync = createAsyncThunk(
       if (!accessToken) {
         throw new Error("No access token.");
       }
+
+      delete newUserDetails.honeypot;
 
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,
