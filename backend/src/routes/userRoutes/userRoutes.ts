@@ -43,6 +43,8 @@ router.patch('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res
       return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
     }
 
+    console.log(userId, newUserDetails);
+
     const updatedUser = await User.findByIdAndUpdate(userId, { $set: newUserDetails }, { new: true });
 
     return res.status(201).json({ success: true, message: 'User updated successfully', user: updatedUser });
