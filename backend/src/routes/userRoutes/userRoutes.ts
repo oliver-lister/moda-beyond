@@ -16,13 +16,7 @@ router.get('/:userId/fetchdata', authorizeJWT, async (req: AuthorizedRequest, re
   try {
     const userId = req.params.userId;
 
-    if (!req.user || typeof req.user === 'string') {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
-
-    const tokenUserId = req.user.userId;
-
-    if (userId !== tokenUserId) {
+    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
       return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
     }
 
@@ -45,25 +39,13 @@ router.patch('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res
     const newUserDetails = req.body;
     const userId = req.params.userId;
 
-    if (!req.user || typeof req.user === 'string') {
+    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
       return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
     }
 
-    const tokenUserId = req.user.userId;
+    const updatedUser = await User.findByIdAndUpdate(userId, { $set: newUserDetails }, { new: true });
 
-    if (userId !== tokenUserId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { ...newUserDetails },
-      {
-        new: true,
-      },
-    );
-
-    return res.status(201).json({ success: true, message: 'User updated successfully', user });
+    return res.status(201).json({ success: true, message: 'User updated successfully', user: updatedUser });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
@@ -74,6 +56,10 @@ router.put('/:userId/cart/update', authorizeJWT, async (req: AuthorizedRequest, 
   try {
     const { newCart } = req.body;
     const userId = req.params.userId;
+
+    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
+      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    }
 
     const user = await User.findById(userId);
 

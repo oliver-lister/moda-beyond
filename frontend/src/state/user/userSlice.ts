@@ -83,7 +83,7 @@ const fetchUserDataReducerBuilder = (
 
 export const updateUserAsync = createAsyncThunk(
   "user/updateUserAsync",
-  async (newUserDetails: EditProfileValues, thunkAPI) => {
+  async (values: EditProfileValues, thunkAPI) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
       if (!auth.userId) throw new Error("No user logged in.");
@@ -94,7 +94,19 @@ export const updateUserAsync = createAsyncThunk(
         throw new Error("No access token.");
       }
 
+      const newUserDetails = {
+        ...values,
+        address: {
+          street: values.street,
+          city: values.city,
+          zipCode: values.zipCode,
+        },
+      };
+
       delete newUserDetails.honeypot;
+      delete newUserDetails.city;
+      delete newUserDetails.street;
+      delete newUserDetails.zipCode;
 
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,
@@ -112,6 +124,8 @@ export const updateUserAsync = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
+
+      console.log(responseData);
 
       return responseData;
     } catch (err) {

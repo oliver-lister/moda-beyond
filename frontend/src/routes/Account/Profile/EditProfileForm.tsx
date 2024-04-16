@@ -42,9 +42,9 @@ export interface EditProfileValues {
   firstName: string;
   lastName: string;
   dob: Date;
-  street: string;
-  city: string;
-  zipCode: string;
+  street?: string;
+  city?: string;
+  zipCode?: string;
   shoppingPreference: string;
   newsletter: boolean;
 }
@@ -60,7 +60,7 @@ const EditProfileForm = ({
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const formInitialValues = user
+  const formInitialValues: EditProfileValues = user
     ? {
         honeypot: "",
         firstName: user.firstName,
