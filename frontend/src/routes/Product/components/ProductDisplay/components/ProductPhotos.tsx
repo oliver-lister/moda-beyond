@@ -6,7 +6,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useState, useCallback, useRef, useEffect } from "react";
 
 const ProductPhotos = ({ images }: { images: string[] }) => {
-  const mobile = useMediaQuery("max-width: 768px");
+  const mobile = useMediaQuery("(max-width: 768px)");
   const { width } = useViewportSize();
   const [colHeight, setColHeight] = useState<number | null>(null);
   const [embla, setEmbla] = useState<Embla | null>(null);

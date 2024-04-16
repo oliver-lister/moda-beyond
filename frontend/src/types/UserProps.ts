@@ -15,12 +15,12 @@ export interface CartItemProps {
 }
 
 export default interface UserProps {
-  _id: number;
+  _id: string;
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  dob?: Date;
+  dob?: Date | number | undefined;
   address?: Address;
   shoppingPreference: string;
   newsletter: boolean;

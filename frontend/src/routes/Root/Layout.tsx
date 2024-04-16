@@ -35,7 +35,7 @@ const Layout = () => {
         dispatch(clearUser());
       }
     }
-  }, [auth.isAuthenticated, storedRefreshToken, auth.isLoading, dispatch]);
+  });
 
   useEffect(() => {
     // Fetch user data if they're logged in, to store in Redux state
@@ -63,7 +63,7 @@ const Layout = () => {
       dispatch(setCart(JSON.parse(localCart)));
       return;
     }
-  }, [user.data, auth.isLoading, dispatch]);
+  }, [user.data, dispatch]);
 
   useEffect(() => {
     // if user is logged in, and there's a change to the cart - update the database

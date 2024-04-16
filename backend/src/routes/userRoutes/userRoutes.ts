@@ -38,6 +38,26 @@ router.get('/:userId/fetchdata', authorizeJWT, async (req: AuthorizedRequest, re
   }
 });
 
+// API for updating a user's account details
+router.patch('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
+  try {
+    const { newUserDetails } = req.body;
+    const userId = req.params.userId;
+
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { ...newUserDetails },
+      {
+        new: true,
+      },
+    );
+
+    return res.status(201).json({ success: true, message: 'Cart updated successfully', user });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
 // API for updating a user's cart
 router.put('/:userId/cart/update', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
