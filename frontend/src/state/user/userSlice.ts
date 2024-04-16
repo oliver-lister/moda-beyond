@@ -111,7 +111,7 @@ export const updateUserAsync = createAsyncThunk(
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,
         {
-          method: "PATCH",
+          method: "PUT",
           headers: {
             Authorization: accessToken,
           },

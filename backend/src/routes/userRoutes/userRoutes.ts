@@ -34,7 +34,7 @@ router.get('/:userId/fetchdata', authorizeJWT, async (req: AuthorizedRequest, re
 });
 
 // API for updating a user's account details
-router.patch('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
+router.put('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
     const newUserDetails = req.body;
     const userId = req.params.userId;
