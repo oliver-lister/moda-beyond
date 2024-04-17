@@ -58,6 +58,24 @@ router.put('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: 
   }
 });
 
+// API for updating a user's account details
+router.delete('/:userId/delete', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
+  try {
+    const newUserDetails = req.body;
+    const userId = req.params.userId;
+
+    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
+      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    }
+
+    User.deleteOne({ id: userId });
+
+    return res.status(201).json({ success: true, message: 'User deleted successfully' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
 // API for updating a user's cart
 router.put('/:userId/cart/update', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {

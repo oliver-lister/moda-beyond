@@ -127,11 +127,10 @@ export const updateUserAsync = createAsyncThunk(
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
-      console.log(responseData);
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.log("Error fetching user data:", err.message);
+        console.log("Error updating user data:", err.message);
         throw err;
       }
     }
@@ -190,11 +189,10 @@ export const updateUserSecurityAsync = createAsyncThunk(
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
 
-      console.log(responseData);
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.log("Error fetching user data:", err.message);
+        console.log("Error updating user data:", err.message);
         throw err;
       }
     }
@@ -222,6 +220,62 @@ const updateUserSecurityReducerBuilder = (
     });
 };
 
+export const deleteUserAsync = createAsyncThunk(
+  "user/deleteUserAsync",
+  async (_, thunkAPI) => {
+    try {
+      const { auth } = thunkAPI.getState() as RootState;
+      if (!auth.userId) throw new Error("No user logged in.");
+      const userId = auth.userId;
+      const accessToken = auth.accessToken;
+
+      if (!accessToken) {
+        throw new Error("No access token.");
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: accessToken,
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
+
+      return responseData;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("Error deleting user data:", err.message);
+        throw err;
+      }
+    }
+  }
+);
+
+const deleteUserReducerBuilder = (
+  builder: ActionReducerMapBuilder<UserState>
+) => {
+  builder
+    .addCase(deleteUserAsync.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(deleteUserAsync.fulfilled, (state) => {
+      state.data = null;
+      state.isLoading = false;
+    })
+    .addCase(deleteUserAsync.rejected, (state) => {
+      state.data = null;
+      state.isLoading = false;
+    });
+};
+
 // REDUX TK INIT
 
 const initialState: UserState = {
@@ -243,6 +297,7 @@ const userSlice = createSlice({
     fetchUserDataReducerBuilder(builder);
     updateUserReducerBuilder(builder);
     updateUserSecurityReducerBuilder(builder);
+    deleteUserReducerBuilder(builder);
   },
 });
 
