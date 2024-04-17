@@ -288,7 +288,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     clearUser: (state: UserState) => {
-      state.isLoading = true;
+      state.isLoading = false;
       state.data = null;
       state.isLoading = false;
     },

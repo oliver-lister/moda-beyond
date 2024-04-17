@@ -1,4 +1,13 @@
-import { Container, Flex, Group, Burger, Box, Stack, rem } from "@mantine/core";
+import {
+  Container,
+  Flex,
+  Group,
+  Burger,
+  Box,
+  Stack,
+  rem,
+  Loader,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -119,16 +128,20 @@ const NavBar = () => {
                   handleSearchValueChange={handleSearchValueChange}
                 />
               </Box>
-              {auth.userId && user.data ? (
-                <AccountMenu auth={auth} user={user.data} />
+              {!auth.isLoading ? (
+                auth.userId && user.data ? (
+                  <AccountMenu auth={auth} user={user.data} />
+                ) : (
+                  <Box className={styles.profile}>
+                    <Link to="/login">
+                      <IconUserCircle
+                        style={{ width: rem(32), height: rem(32) }}
+                      />
+                    </Link>
+                  </Box>
+                )
               ) : (
-                <Box className={styles.profile}>
-                  <Link to="/login">
-                    <IconUserCircle
-                      style={{ width: rem(32), height: rem(32) }}
-                    />
-                  </Link>
-                </Box>
+                <Loader />
               )}
               <Link
                 to="/cart"
