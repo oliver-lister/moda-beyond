@@ -47,9 +47,10 @@ router.put('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: 
 
     if (!updatedUser) return res.status(404).json({ success: false, error: 'User not be found in database', errorCode: 'USER_NOT_FOUND' });
 
-    updatedUser.setPassword(req.body.password);
-
-    await updatedUser.save();
+    if (req.body.password) {
+      updatedUser.setPassword(req.body.password);
+      await updatedUser.save();
+    }
 
     return res.status(201).json({ success: true, message: 'User updated successfully', user: updatedUser });
   } catch (err: any) {

@@ -19,6 +19,8 @@ import UserProps from "../../../../types/UserProps.ts";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../state/store.ts";
 import { updateUserAsync } from "../../../../state/user/userSlice.ts";
+import { notifications } from "@mantine/notifications";
+import { IconUser } from "@tabler/icons-react";
 
 const editProfileSchema = object({
   honeypot: string(),
@@ -100,6 +102,11 @@ const EditProfileForm = ({
       form.reset();
       setIsLoading(false);
       toggleFormOpen();
+      notifications.show({
+        title: "Success!",
+        message: "You've updated your details.",
+        icon: <IconUser />,
+      });
     } catch (err) {
       console.log("Error submitting form:", (err as SerializedError).message);
       setIsError(true);
