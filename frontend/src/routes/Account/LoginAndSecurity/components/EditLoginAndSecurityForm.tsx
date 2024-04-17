@@ -1,0 +1,121 @@
+import {
+  Box,
+  Stack,
+  TextInput,
+  Button,
+  Alert,
+  Group,
+  Title,
+  PasswordInput,
+} from "@mantine/core";
+import { object, string } from "yup";
+import { useState } from "react";
+import { useForm, yupResolver } from "@mantine/form";
+import { SerializedError } from "@reduxjs/toolkit";
+import UserProps from "../../../../types/UserProps.ts";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../state/store.ts";
+import { updateUserSecurityAsync } from "../../../../state/user/userSlice.ts";
+
+const EditLoginAndSecuritySchema = object({
+  email: string()
+    .email("Please enter a valid email address")
+    .required("Email is required"),
+  password: string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+      "Please enter a valid password"
+    ),
+  honeypot: string(),
+});
+export interface EditLoginAndSecurityValues {
+  honeypot?: string;
+  email: string;
+  password: string;
+}
+
+const EditLoginAndSecurityForm = ({
+  user,
+  toggleFormOpen,
+}: {
+  user: UserProps;
+  toggleFormOpen: () => void;
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const formInitialValues: EditLoginAndSecurityValues = {
+    honeypot: "",
+    email: user.email,
+    password: "",
+  };
+
+  const form = useForm({
+    initialValues: formInitialValues,
+    validate: yupResolver(EditLoginAndSecuritySchema),
+  });
+
+  const handleSubmit = async (values: EditLoginAndSecurityValues) => {
+    try {
+      setIsLoading(true);
+      setIsError(false);
+      if (form.values.honeypot) {
+        throw new Error("Bot detected");
+      }
+      await dispatch(updateUserSecurityAsync(values));
+      form.reset();
+      setIsLoading(false);
+      toggleFormOpen();
+    } catch (err) {
+      console.log("Error submitting form:", (err as SerializedError).message);
+      setIsError(true);
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Stack>
+      <Box>
+        <Group justify="space-between">
+          <Title order={3}>Edit Login & Security</Title>
+          <Button onClick={toggleFormOpen} bg="gray.9">
+            Back
+          </Button>
+        </Group>
+      </Box>
+      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+        <Stack>
+          {isError ? (
+            <Alert variant="light" color="red" title="Incorrect Details">
+              We could not update your details, please try again.
+            </Alert>
+          ) : null}
+          {/* Honeypot below */}
+          <input
+            name="honeypot"
+            placeholder="do not fill this"
+            type="hidden"
+            {...form.getInputProps("honeypot")}
+          />
+
+          <TextInput
+            type="email"
+            label="Email Address"
+            {...form.getInputProps("email")}
+          />
+          <PasswordInput
+            label="New Password"
+            {...form.getInputProps("password")}
+          />
+          <Button type="submit" loading={isLoading}>
+            Submit
+          </Button>
+        </Stack>
+      </form>
+    </Stack>
+  );
+};
+
+export default EditLoginAndSecurityForm;

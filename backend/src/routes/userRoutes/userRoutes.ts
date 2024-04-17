@@ -43,9 +43,13 @@ router.put('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: 
       return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
     }
 
-    console.log(userId, newUserDetails);
-
     const updatedUser = await User.findByIdAndUpdate(userId, { $set: newUserDetails }, { new: true });
+
+    if (!updatedUser) return res.status(404).json({ success: false, error: 'User not be found in database', errorCode: 'USER_NOT_FOUND' });
+
+    updatedUser.setPassword(req.body.password);
+
+    await updatedUser.save();
 
     return res.status(201).json({ success: true, message: 'User updated successfully', user: updatedUser });
   } catch (err: any) {

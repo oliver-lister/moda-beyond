@@ -15,10 +15,10 @@ import { useState } from "react";
 import { useForm, yupResolver } from "@mantine/form";
 import { SerializedError } from "@reduxjs/toolkit";
 import { DateInput } from "@mantine/dates";
-import UserProps from "../../../types/UserProps";
+import UserProps from "../../../../types/UserProps.ts";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../state/store.ts";
-import { updateUserAsync } from "../../../state/user/userSlice";
+import { AppDispatch } from "../../../../state/store.ts";
+import { updateUserAsync } from "../../../../state/user/userSlice.ts";
 
 const editProfileSchema = object({
   honeypot: string(),
@@ -99,6 +99,7 @@ const EditProfileForm = ({
       await dispatch(updateUserAsync(values));
       form.reset();
       setIsLoading(false);
+      toggleFormOpen();
     } catch (err) {
       console.log("Error submitting form:", (err as SerializedError).message);
       setIsError(true);
@@ -112,7 +113,7 @@ const EditProfileForm = ({
         <Group justify="space-between">
           <Title order={3}>Edit Profile</Title>
           <Button onClick={toggleFormOpen} bg="gray.9">
-            Return to Profile
+            Back
           </Button>
         </Group>
       </Box>

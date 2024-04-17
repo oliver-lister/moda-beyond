@@ -18,7 +18,7 @@ import { accountNavLinks } from "./data/accountNavLinks.ts";
 
 const AccountLayout = () => {
   const auth = useSelector((state: RootState) => state.auth);
-  const user = useSelector((state: RootState) => state.user.data);
+  const user = useSelector((state: RootState) => state.user);
   const { pathname } = useLocation();
 
   if (!auth.isLoading && !auth.userId) {
@@ -59,8 +59,8 @@ const AccountLayout = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, md: 9 }}>
-            {!auth.isLoading ? (
-              <Outlet context={{ user }} />
+            {!auth.isLoading || user.isLoading ? (
+              <Outlet context={user} />
             ) : (
               <Center mih="60vh">
                 <Loader />

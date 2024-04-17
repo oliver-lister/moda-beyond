@@ -4,30 +4,38 @@ import { IconEdit } from "@tabler/icons-react";
 import AccountPage from "../components/AccountPage";
 import { format } from "date-fns";
 import { useState } from "react";
-import EditProfileForm from "./EditProfileForm";
+import EditProfileForm from "./components/EditProfileForm";
 import { useUser } from "../../../hooks/useUser";
 
 const Profile = () => {
-  const { user } = useUser();
+  const user = useUser();
   const [isFormOpen, SetFormOpen] = useState<boolean>(false);
 
   const toggleFormOpen = () => {
     SetFormOpen((prev) => !prev);
   };
 
-  if (!user) {
+  if (!user.data) {
     return;
   }
 
   const fullName = `${
-    user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
-  } ${user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1)}`;
+    user.data.firstName.charAt(0).toUpperCase() + user.data.firstName.slice(1)
+  } ${
+    user.data.lastName.charAt(0).toUpperCase() + user.data.lastName.slice(1)
+  }`;
+
+  const isAddressValid =
+    user.data.address &&
+    user.data.address.street &&
+    user.data.address.city &&
+    user.data.address.zipCode;
 
   return (
     <AccountPage title="Profile">
       <InfoCard>
         {isFormOpen ? (
-          <EditProfileForm toggleFormOpen={toggleFormOpen} user={user} />
+          <EditProfileForm toggleFormOpen={toggleFormOpen} user={user.data} />
         ) : (
           <Stack>
             <Box>
@@ -35,13 +43,13 @@ const Profile = () => {
                 {fullName}
               </Text>
             </Box>
-            {user.address ? (
+            {user.data.address && isAddressValid ? (
               <Box>
                 <Text size="lg" fw={600} c="violet">
                   Address:
                 </Text>
                 <Text size="md">
-                  {`${user.address.street}, ${user.address.city}, ${user.address.zipCode}`}
+                  {`${user.data.address.street}, ${user.data.address.city}, ${user.data.address.zipCode}`}
                 </Text>
               </Box>
             ) : null}
@@ -50,14 +58,14 @@ const Profile = () => {
                 Birthday:
               </Text>
               <Text size="md">
-                {user.dob && format(user.dob, "dd/MM/yyyy")}
+                {user.data.dob && format(user.data.dob, "dd/MM/yyyy")}
               </Text>
             </Box>
             <Box>
               <Text size="lg" fw={600} c="violet">
                 Shopping Preference:
               </Text>
-              <Text size="md">{user.shoppingPreference}</Text>
+              <Text size="md">{user.data.shoppingPreference}</Text>
             </Box>
             <Button
               leftSection={<IconEdit size={20} />}

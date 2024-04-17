@@ -3,32 +3,51 @@ import AccountPage from "../components/AccountPage";
 import InfoCard from "../components/InfoCard/InfoCard";
 import { useUser } from "../../../hooks/useUser";
 import { IconEdit } from "@tabler/icons-react";
+import { useState } from "react";
+import EditLoginAndSecurityForm from "./components/EditLoginAndSecurityForm";
 
 const LoginAndSecurity = () => {
-  const { user } = useUser();
+  const user = useUser();
+  const [isFormOpen, SetFormOpen] = useState<boolean>(false);
 
-  if (!user) {
+  const toggleFormOpen = () => {
+    SetFormOpen((prev) => !prev);
+  };
+
+  if (!user.data) {
     return;
   }
 
   return (
     <AccountPage title="Login & Security">
       <InfoCard>
-        <Stack>
-          <Box>
-            <Text fz="lg" fw={600} c="violet">
-              Email:
-            </Text>
-            <Text fz="md">{user.email}</Text>
-          </Box>
-          <Box>
-            <Text fz="lg" fw={600} c="violet">
-              Password:
-            </Text>
-            <Text fz="md">••••••••</Text>
-          </Box>
-          <Button leftSection={<IconEdit size={20} />}>Edit</Button>
-        </Stack>
+        {isFormOpen ? (
+          <EditLoginAndSecurityForm
+            toggleFormOpen={toggleFormOpen}
+            user={user.data}
+          />
+        ) : (
+          <Stack>
+            <Box>
+              <Text fz="lg" fw={600} c="violet">
+                Email:
+              </Text>
+              <Text fz="md">{user.data.email}</Text>
+            </Box>
+            <Box>
+              <Text fz="lg" fw={600} c="violet">
+                Password:
+              </Text>
+              <Text fz="md">••••••••</Text>
+            </Box>
+            <Button
+              onClick={toggleFormOpen}
+              leftSection={<IconEdit size={20} />}
+            >
+              Edit
+            </Button>
+          </Stack>
+        )}
       </InfoCard>
     </AccountPage>
   );

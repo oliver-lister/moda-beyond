@@ -6,7 +6,8 @@ import {
   ActionReducerMapBuilder,
 } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { EditProfileValues } from "../../routes/Account/Profile/EditProfileForm";
+import { EditProfileValues } from "../../routes/Account/Profile/components/EditProfileForm";
+import { EditLoginAndSecurityValues } from "../../routes/Account/LoginAndSecurity/components/EditLoginAndSecurityForm";
 
 export interface UserState {
   isLoading: boolean;
@@ -114,6 +115,7 @@ export const updateUserAsync = createAsyncThunk(
           method: "PUT",
           headers: {
             Authorization: accessToken,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(newUserDetails),
         }
@@ -126,7 +128,6 @@ export const updateUserAsync = createAsyncThunk(
       }
 
       console.log(responseData);
-
       return responseData;
     } catch (err) {
       if (err instanceof Error) {
@@ -158,6 +159,69 @@ const updateUserReducerBuilder = (
     });
 };
 
+export const updateUserSecurityAsync = createAsyncThunk(
+  "user/updateUserSecurityAsync",
+  async (values: EditLoginAndSecurityValues, thunkAPI) => {
+    try {
+      const { auth } = thunkAPI.getState() as RootState;
+      if (!auth.userId) throw new Error("No user logged in.");
+      const userId = auth.userId;
+      const accessToken = auth.accessToken;
+
+      if (!accessToken) {
+        throw new Error("No access token.");
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: accessToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
+
+      console.log(responseData);
+      return responseData;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("Error fetching user data:", err.message);
+        throw err;
+      }
+    }
+  }
+);
+
+const updateUserSecurityReducerBuilder = (
+  builder: ActionReducerMapBuilder<UserState>
+) => {
+  builder
+    .addCase(updateUserSecurityAsync.pending, (state) => {
+      state.isLoading = true;
+    })
+    .addCase(
+      updateUserSecurityAsync.fulfilled,
+      (state, action: PayloadAction<UpdateUserPayload>) => {
+        const { user } = action.payload;
+        state.data = user;
+        state.isLoading = false;
+      }
+    )
+    .addCase(updateUserSecurityAsync.rejected, (state) => {
+      state.data = null;
+      state.isLoading = false;
+    });
+};
+
 // REDUX TK INIT
 
 const initialState: UserState = {
@@ -178,6 +242,7 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     fetchUserDataReducerBuilder(builder);
     updateUserReducerBuilder(builder);
+    updateUserSecurityReducerBuilder(builder);
   },
 });
 
