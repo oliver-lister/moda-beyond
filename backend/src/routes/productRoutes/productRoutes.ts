@@ -110,10 +110,20 @@ router.get('/fetch', async (req: Request, res: Response) => {
     delete query.page;
 
     const sort = { [sortBy as string]: sortOrder as 1 | -1 };
-    const searchQuery = search ? { $text: { $search: search, $caseSensitive: false } } : {};
 
     const pipeline = [
-      { $match: { ...searchQuery, ...query } },
+      { $match: query },
+      {
+        $search: {
+          index: 'SearchProducts',
+          text: {
+            query: search,
+            path: {
+              wildcard: '*',
+            },
+          },
+        },
+      },
       {
         $facet: {
           products: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
