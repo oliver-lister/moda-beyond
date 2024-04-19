@@ -1,24 +1,19 @@
 import { describe, expect, it } from "vitest";
 import Item from "./Item";
-import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { MantineProvider } from "@mantine/core";
+import { screen } from "@testing-library/react";
+import { renderWithProviders } from "../../testing-utils/render";
 
 describe("Item", () => {
   const renderItem = () =>
-    render(
-      <MemoryRouter>
-        <MantineProvider>
-          <Item
-            _id={"2a"}
-            name="Turtleneck"
-            brand="Nike"
-            price={20}
-            lastPrice={35}
-            images={["", ""]}
-          />
-        </MantineProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <Item
+        _id={"2a"}
+        name="Turtleneck"
+        brand="Nike"
+        price={20}
+        lastPrice={35}
+        images={["", ""]}
+      />
     );
 
   it("renders correct text based on props", () => {
@@ -41,19 +36,15 @@ describe("Item", () => {
   });
 
   it("doesn't render sale badge if it has a lower lastPrice prop", () => {
-    render(
-      <MemoryRouter>
-        <MantineProvider>
-          <Item
-            _id={"2a"}
-            name="Turtleneck"
-            brand="Nike"
-            price={20}
-            lastPrice={15}
-            images={["", ""]}
-          />
-        </MantineProvider>
-      </MemoryRouter>
+    renderWithProviders(
+      <Item
+        _id={"2a"}
+        name="Turtleneck"
+        brand="Nike"
+        price={20}
+        lastPrice={15}
+        images={["", ""]}
+      />
     );
     expect(screen.getByTestId("item-container")).not.toHaveTextContent("Sale");
   });

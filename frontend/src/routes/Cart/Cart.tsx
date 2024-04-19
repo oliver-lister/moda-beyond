@@ -18,8 +18,8 @@ import OrderSummary from "./components/OrderSummary/OrderSummary.tsx";
 import CartItemContainer from "./components/CartItemContainer/CartItemContainer.tsx";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store.ts";
-import { useState, useMemo } from "react";
-import { format, addDays } from "date-fns";
+import { useState } from "react";
+import { getDateInFuture, useCartTotalQuantity, useCartSum } from "./cartUtils";
 
 export type DeliveryData = {
   standard: {
@@ -43,17 +43,6 @@ const deliveryData: DeliveryData = {
   pickup: { label: "Pick Up In-store", isDelivery: false, fee: 0, estDays: 0 },
 };
 
-const getDateInFuture = (estDays: number) => {
-  const currentDate = new Date();
-  const futureDate = addDays(currentDate, estDays);
-  const formattedDate = format(futureDate, "EEEE do MMMM yyyy");
-  return formattedDate;
-};
-
-const roundToTwoDec = (num: number) => {
-  return Math.round(num * 100) / 100;
-};
-
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart);
   const auth = useSelector((state: RootState) => state.auth);
@@ -65,26 +54,10 @@ const Cart = () => {
 
   // Cart Totalling Functions
 
-  const cartTotalQuantity = useMemo(() => {
-    const totalQuantity = cart.items.reduce(
-      (acc, item) => acc + item.quantity,
-      0
-    );
-    return totalQuantity;
-  }, [cart]);
-
-  const cartSum = useMemo(() => {
-    const cartSumTotal = cart.items.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-    return roundToTwoDec(cartSumTotal);
-  }, [cart]);
-
-  const cartSumWithDelivery = useMemo(() => {
-    const deliveryFee = deliveryData[delivery as keyof DeliveryData].fee;
-    return cartSum + deliveryFee;
-  }, [cartSum, delivery]);
+  const cartTotalQuantity = useCartTotalQuantity(cart.items);
+  const cartSum = useCartSum(cart.items);
+  const deliveryFee = deliveryData[delivery as keyof DeliveryData].fee;
+  const cartSumWithDelivery = cartSum + deliveryFee;
 
   return (
     <section className={styles.container}>

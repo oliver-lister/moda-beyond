@@ -16,7 +16,13 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
     return (
       <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
         {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} width="100%" height={400} animate />
+          <Skeleton
+            key={i}
+            width="100%"
+            height={400}
+            animate
+            data-testid="skeleton"
+          />
         ))}
       </SimpleGrid>
     );

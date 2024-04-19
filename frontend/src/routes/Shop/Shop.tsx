@@ -96,7 +96,7 @@ const Shop = () => {
 
   const ProductCounter = ({ products }: { products: ProductProps[] }) => {
     return (
-      <Text>
+      <Text data-testid="productcounter-text">
         <span style={{ fontWeight: "600" }}>
           Showing{" "}
           {products.length > 0
@@ -122,7 +122,10 @@ const Shop = () => {
             <Title order={1} size="1rem" ta={{ base: "center", md: "left" }}>
               {searchingFor}
             </Title>
-            <Box style={{ textAlign: "center" }}>
+            <Box
+              style={{ textAlign: "center" }}
+              data-testid="productcounter-container"
+            >
               {!isLoading && data ? (
                 <ProductCounter products={data} />
               ) : (
