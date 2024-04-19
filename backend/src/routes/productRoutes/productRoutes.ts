@@ -112,26 +112,40 @@ router.get('/fetch', async (req: Request, res: Response) => {
 
     const sort = { [sortBy as string]: sortOrder as 1 | -1 };
 
-    const pipeline = [
-      {
-        $search: {
-          index: 'SearchProducts',
-          text: {
-            query: search,
-            path: {
-              wildcard: '*',
+    let pipeline = [];
+
+    if (search) {
+      pipeline = [
+        {
+          $search: {
+            index: 'SearchProducts',
+            text: {
+              query: search,
+              path: {
+                wildcard: '*',
+              },
             },
           },
         },
-      },
-      { $match: query },
-      {
-        $facet: {
-          data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-          metadata: [{ $count: 'totalCount' }],
+        { $match: query },
+        {
+          $facet: {
+            data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+            metadata: [{ $count: 'totalCount' }],
+          },
         },
-      },
-    ];
+      ];
+    } else {
+      pipeline = [
+        { $match: query },
+        {
+          $facet: {
+            data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+            metadata: [{ $count: 'totalCount' }],
+          },
+        },
+      ];
+    }
 
     const [{ products, metadata }] = await Product.aggregate(pipeline);
 
