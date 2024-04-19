@@ -112,32 +112,30 @@ router.get('/fetch', async (req: Request, res: Response) => {
 
     const sort = { [sortBy as string]: sortOrder as 1 | -1 };
 
-    let pipeline = [];
-
-    if (search) {
-      pipeline = [
-        {
-          $search: {
-            index: 'SearchProducts',
-            text: {
-              query: search,
-              path: {
-                wildcard: '*',
-              },
+    const pipeline = [
+      {
+        $search: {
+          index: 'SearchProducts',
+          text: {
+            query: search,
+            path: {
+              wildcard: '*',
             },
           },
         },
-        { $match: query },
-        { $sort: sort },
-        { $skip: (page - 1) * pageSize },
-        { $limit: pageSize },
-        { $count: 'totalCount' },
-      ];
-    } else {
-      pipeline = [{ $match: query }, { $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }, { $count: 'totalCount' }];
-    }
+      },
+      { $match: query },
+      {
+        $facet: {
+          data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+          metadata: [{ $count: 'totalCount' }],
+        },
+      },
+    ];
 
-    const [{ products, totalCount }] = await Product.aggregate(pipeline);
+    const [{ products, metadata }] = await Product.aggregate(pipeline);
+
+    const totalCount = metadata[0].totalCount || 0;
 
     return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
   } catch (err: any) {
