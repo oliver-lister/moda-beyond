@@ -101,7 +101,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
     const sortOrder = parseInt(req.query.sortOrder as string) || 1;
     const page = req.query.page !== undefined ? parseInt(req.query.page as string) : 1;
     const pageSize = 12;
-    const search = req.query.search as string | undefined;
+    const search = req.query.search;
 
     const query = req.query ? { ...req.query } : {};
 
@@ -128,23 +128,13 @@ router.get('/fetch', async (req: Request, res: Response) => {
           },
         },
         { $match: query },
-        {
-          $facet: {
-            products: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            totalCount: [{ $count: 'value' }],
-          },
-        },
+        { $sort: sort },
+        { $skip: (page - 1) * pageSize },
+        { $limit: pageSize },
+        { $count: 'totalCount' },
       ];
     } else {
-      pipeline = [
-        { $match: query },
-        {
-          $facet: {
-            products: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            totalCount: [{ $count: 'value' }],
-          },
-        },
-      ];
+      pipeline = [{ $match: query }, { $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }, { $count: 'totalCount' }];
     }
 
     const [{ products, totalCount }] = await Product.aggregate(pipeline);
