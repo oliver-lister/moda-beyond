@@ -99,7 +99,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
   try {
     const sortBy = req.query.sortBy as string | undefined;
     const sortOrder = parseInt(req.query.sortOrder as string) || 1;
-    const page = req.query.page !== undefined ? parseInt(req.query.page as string) : 1;
+    const page = parseInt(req.query.page as string);
     const pageSize = 12;
     const search = req.query.search;
 
