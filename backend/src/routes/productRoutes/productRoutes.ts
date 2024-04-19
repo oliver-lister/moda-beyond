@@ -124,18 +124,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
 
     const [{ products, totalCount }] = await Product.aggregate(pipeline);
 
-    // const products = await Product.find(
-    //   { ...searchQuery, ...query },
-    //   {
-    //     score: { $meta: 'textScore' },
-    //   },
-    // )
-    //   .sort({ score: { $meta: 'textScore' }, ...sort })
-    //   .limit(pageSize)
-    //   .skip((page - 1) * pageSize);
-    // const totalCount = await Product.countDocuments({ ...searchQuery, ...query });
-
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
+    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount: totalCount[0].value });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
