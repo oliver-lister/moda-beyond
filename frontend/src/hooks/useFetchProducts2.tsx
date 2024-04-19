@@ -8,7 +8,7 @@ export const useFetchProducts = () => {
     error: "",
   });
 
-  const fetchProducts = async (queryString) => {
+  const fetchProducts = async (queryString: string) => {
     try {
       setProducts({ ...products, isLoading: true });
 
