@@ -141,16 +141,13 @@ router.get('/fetch', async (req: Request, res: Response) => {
         {
           $facet: {
             products: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            count: [{ $count: 'value' }],
+            totalCount: [{ $count: 'value' }],
           },
         },
       ];
     }
 
-    const [{ products, count }] = await Product.aggregate(pipeline);
-    let totalCount = count[0].value;
-
-    if (totalCount === undefined) totalCount = 0;
+    const [{ products, totalCount }] = await Product.aggregate(pipeline);
 
     return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
   } catch (err: any) {
