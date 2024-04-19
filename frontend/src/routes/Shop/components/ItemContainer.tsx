@@ -4,11 +4,13 @@ import { SimpleGrid, Center, Text, Skeleton } from "@mantine/core";
 interface ItemContainerProps {
   products: ProductProps[] | null;
   isLoading: boolean;
+  error: string;
 }
 
 const ItemContainer: React.FC<ItemContainerProps> = ({
   products,
   isLoading,
+  error,
 }) => {
   if (isLoading) {
     return (
@@ -20,10 +22,10 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
     );
   }
 
-  if (!isLoading && !products) {
+  if (!isLoading && !products && error) {
     return (
       <Center h="60vh">
-        <Text fw={600}>Cannot connect to database.</Text>
+        <Text fw={600}>{error}</Text>
       </Center>
     );
   }

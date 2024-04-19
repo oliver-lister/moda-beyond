@@ -1,64 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductProps from "../types/ProductProps";
-import { useSearchParams } from "react-router-dom";
 
-interface FetchProductsResult {
-  products: ProductProps[] | null;
+type FetchProducts = {
+  data: ProductProps[];
   totalCount: number;
-  error: string | null;
-}
+  isLoading: boolean;
+  error: string;
+};
 
-export const useFetchProducts = (queryString?: string | undefined) => {
-  const [products, setProducts] = useState<FetchProductsResult>({
-    products: null,
+export const useFetchProducts = () => {
+  const [products, setProducts] = useState<FetchProducts>({
+    data: [],
     totalCount: 0,
-    error: null,
+    isLoading: false,
+    error: "",
   });
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const fetchProducts = async (query: string) => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/fetch${
-            query ? "?" + query : ""
-          }`,
-          {
-            method: "GET",
-          }
-        );
-        const responseData = await response.json();
+  const fetchProducts = async (queryString: string): Promise<void> => {
+    try {
+      setProducts({ ...products, isLoading: true });
 
-        if (!response.ok) {
-          setProducts({
-            products: null,
-            totalCount: 0,
-            error: `${responseData.error}, ${responseData.errorCode}`,
-          });
-          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/products/fetch?${queryString}`,
+        {
+          method: "GET",
         }
+      );
+      const responseData = await response.json();
 
-        const { products, totalCount } = responseData;
-        setProducts({
-          products: products,
-          totalCount: totalCount,
-          error: null,
-        });
-      } catch (err) {
-        if (err instanceof Error)
-          console.error("Error fetching products:", err.message);
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
-    };
-    if (searchParams.toString() !== "") {
-      fetchProducts(searchParams.toString());
-    } else if (queryString) {
-      fetchProducts(queryString);
-    }
-  }, [searchParams, queryString]);
 
-  return { ...products, isLoading };
+      setProducts({
+        data: responseData.data,
+        totalCount: responseData.totalCount,
+        isLoading: false,
+        error: "",
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        setProducts({
+          data: [],
+          isLoading: false,
+          totalCount: 0,
+          error: err.message,
+        });
+        console.error("Error fetching products:", err.message);
+      }
+    }
+  };
+
+  return [products, fetchProducts] as const;
 };

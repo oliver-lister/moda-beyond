@@ -2,6 +2,7 @@ import { Skeleton, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import Item from "../../../../components/Item/Item.tsx";
 import { useFetchProducts } from "../../../../hooks/useFetchProducts.tsx";
+import { useEffect } from "react";
 
 const ProductCollectionTeaser = ({
   query,
@@ -10,15 +11,20 @@ const ProductCollectionTeaser = ({
   query: string;
   cap: number;
 }) => {
-  const { products, isLoading } = useFetchProducts(query);
+  const [products, fetchProducts] = useFetchProducts();
+  const { data, isLoading, error } = products;
 
-  if (!products && !isLoading) {
-    return <Text>Cannot access database.</Text>;
+  useEffect(() => {
+    fetchProducts(query);
+  }, [query]);
+
+  if (!data && !isLoading) {
+    return <Text>{error}</Text>;
   }
 
   const productSlides = !isLoading
-    ? products &&
-      products.slice(0, cap).map(({ _id, ...rest }) => (
+    ? data &&
+      data.slice(0, cap).map(({ _id, ...rest }) => (
         <Carousel.Slide key={_id}>
           <Item _id={_id} {...rest} />
         </Carousel.Slide>

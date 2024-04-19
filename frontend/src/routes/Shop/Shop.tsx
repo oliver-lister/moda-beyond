@@ -28,7 +28,8 @@ const sortOptions: { [key: string]: SortOption } = {
 };
 
 const Shop = () => {
-  const { products, isLoading, totalCount } = useFetchProducts();
+  const [products, fetchProducts] = useFetchProducts();
+  const { data, totalCount, isLoading, error } = products;
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
@@ -64,6 +65,16 @@ const Shop = () => {
         setSort(newSort);
       }
     }
+    if (searchParams.toString() === "") {
+      searchParams.set("page", "1");
+      searchParams.set("sortBy", "date");
+      searchParams.set("sortOrder", "-1");
+    }
+
+    const fetchProductsfromDB = async () => {
+      await fetchProducts(searchParams.toString());
+    };
+    fetchProductsfromDB();
   }, [searchParams]);
 
   const handleChangeSort = (value: string | null) => {
@@ -112,8 +123,8 @@ const Shop = () => {
               {searchingFor}
             </Title>
             <Box style={{ textAlign: "center" }}>
-              {!isLoading && products ? (
-                <ProductCounter products={products} />
+              {!isLoading && data ? (
+                <ProductCounter products={data} />
               ) : (
                 <Text>Loading...</Text>
               )}
@@ -135,7 +146,7 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          <ItemContainer products={products} isLoading={isLoading} />
+          <ItemContainer products={data} isLoading={isLoading} error={error} />
           <Center>
             <Pagination
               total={Math.ceil(totalCount / 12)}
