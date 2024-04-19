@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
-import { useFetchProducts } from "../../hooks/useFetchProducts.tsx";
+import { useFetchProducts } from "../../hooks/useFetchProducts.ts";
 import ProductProps from "../../types/ProductProps.ts";
 
 type SortOption = {

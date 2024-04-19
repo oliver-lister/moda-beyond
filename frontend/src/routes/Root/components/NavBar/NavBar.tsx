@@ -68,7 +68,7 @@ const NavBar = () => {
       setSearch({ ...search, text: "" });
     } else {
       setSearchParams(
-        { search: search.text, sortBy: "date", sortOrder: "-1" },
+        { search: search.text, page: "1", sortBy: "date", sortOrder: "-1" },
         { replace: true }
       );
       setSearch({ ...search, text: "" });

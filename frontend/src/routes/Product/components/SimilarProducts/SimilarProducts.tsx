@@ -1,7 +1,7 @@
 import styles from "./similarproducts.module.css";
 import { Stack } from "@mantine/core";
 import ProductProps from "../../../../types/ProductProps.ts";
-import ProductCollectionTeaser from "../../../Home/components/ProductCollectionTeaser/ProductCollectionTeaser.tsx";
+import ProductCollectionTeaser from "../../../../components/ProductCollectionTeaser/ProductCollectionTeaser.tsx";
 
 const SimilarProducts = ({ product }: { product: ProductProps }) => {
   return (
