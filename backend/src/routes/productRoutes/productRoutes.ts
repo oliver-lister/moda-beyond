@@ -95,12 +95,13 @@ router.delete('/remove/:productId', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/fetchproducts', async (req: Request, res: Response) => {
+router.get('/fetch', async (req: Request, res: Response) => {
   try {
     const sortBy = req.query.sortBy as string | undefined;
     const sortOrder = parseInt(req.query.sortOrder as string) || 1;
     const page = req.query.page !== undefined ? parseInt(req.query.page as string) : 1;
     const pageSize = 12;
+    const search = req.query.search as string | undefined;
 
     const query = req.query ? { ...req.query } : {};
 
@@ -109,36 +110,10 @@ router.get('/fetchproducts', async (req: Request, res: Response) => {
     delete query.page;
 
     const sort = { [sortBy as string]: sortOrder as SortOrder };
-
-    const products = await Product.find(query)
-      .sort(sort)
-      .limit(pageSize)
-      .skip((page - 1) * pageSize);
-    const totalCount = await Product.countDocuments(query);
-
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
-  }
-});
-
-router.get('/searchproducts', async (req: Request, res: Response) => {
-  try {
-    const sortBy = req.query.sortBy as string | undefined;
-    const search = req.query.search as string | undefined;
-    const sortOrder = parseInt(req.query.sortOrder as string) || 1;
-    const page = req.query.page !== undefined ? parseInt(req.query.page as string) : 1;
-    const pageSize = 12;
-
     const searchQuery = search ? { $text: { $search: search, $caseSensitive: false } } : {};
 
-    const sort = { [sortBy as string]: sortOrder as SortOrder };
-
-    // Uncomment next line to create text indexes on startup
-    // Product.createIndexes();
-
     const products = await Product.find(
-      { ...searchQuery },
+      { ...searchQuery, ...query },
       {
         score: { $meta: 'textScore' },
       },
@@ -146,13 +121,45 @@ router.get('/searchproducts', async (req: Request, res: Response) => {
       .sort({ score: { $meta: 'textScore' }, ...sort })
       .limit(pageSize)
       .skip((page - 1) * pageSize);
-    const totalCount = await Product.countDocuments({ ...searchQuery });
+    const totalCount = await Product.countDocuments({ ...searchQuery, ...query });
 
-    return res.status(200).json({ success: true, message: 'Products searched and fetched successfully', products, totalCount });
+    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
+
+// router.get('/searchproducts', async (req: Request, res: Response) => {
+//   try {
+//     const sortBy = req.query.sortBy as string | undefined;
+//     const search = req.query.search as string | undefined;
+//     const sortOrder = parseInt(req.query.sortOrder as string) || 1;
+//     const page = req.query.page !== undefined ? parseInt(req.query.page as string) : 1;
+//     const pageSize = 12;
+
+//     const searchQuery = search ? { $text: { $search: search, $caseSensitive: false } } : {};
+
+//     const sort = { [sortBy as string]: sortOrder as SortOrder };
+
+//     // Uncomment next line to create text indexes on startup
+//     // Product.createIndexes();
+
+//     const products = await Product.find(
+//       { ...searchQuery },
+//       {
+//         score: { $meta: 'textScore' },
+//       },
+//     )
+//       .sort({ score: { $meta: 'textScore' }, ...sort })
+//       .limit(pageSize)
+//       .skip((page - 1) * pageSize);
+//     const totalCount = await Product.countDocuments({ ...searchQuery });
+
+//     return res.status(200).json({ success: true, message: 'Products searched and fetched successfully', products, totalCount });
+//   } catch (err: any) {
+//     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+//   }
+// });
 
 router.get('/fetchproductbyid/:productId', async (req, res) => {
   try {

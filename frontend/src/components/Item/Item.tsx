@@ -10,6 +10,7 @@ const Item = ({ _id, images, name, brand, price, lastPrice }: ProductProps) => {
       className={styles.link}
       onClick={() => window.scrollTo(0, 0)}
       key={_id}
+      data-testid="item-container"
     >
       <article className={styles.item}>
         <div className={styles.imageBox}>

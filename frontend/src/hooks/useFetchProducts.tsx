@@ -18,11 +18,11 @@ export const useFetchProducts = (queryString?: string | undefined) => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const fetchProducts = async (type: string, query: string) => {
+    const fetchProducts = async (query: string) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/${type}products${
+          `${import.meta.env.VITE_BACKEND_HOST}/products/fetch${
             query ? "?" + query : ""
           }`,
           {
@@ -53,12 +53,10 @@ export const useFetchProducts = (queryString?: string | undefined) => {
         setIsLoading(false);
       }
     };
-    if (searchParams.get("search")) {
-      fetchProducts("search", searchParams.toString());
-    } else if (searchParams.toString() !== "") {
-      fetchProducts("fetch", searchParams.toString());
+    if (searchParams.toString() !== "") {
+      fetchProducts(searchParams.toString());
     } else if (queryString) {
-      fetchProducts("fetch", queryString);
+      fetchProducts(queryString);
     }
   }, [searchParams, queryString]);
 
