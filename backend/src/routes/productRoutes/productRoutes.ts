@@ -108,6 +108,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
     delete query.sortBy;
     delete query.sortOrder;
     delete query.page;
+    delete query.search;
 
     const sort = { [sortBy as string]: sortOrder as 1 | -1 };
 
@@ -140,15 +141,18 @@ router.get('/fetch', async (req: Request, res: Response) => {
         {
           $facet: {
             products: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            totalCount: [{ $count: 'value' }],
+            count: [{ $count: 'value' }],
           },
         },
       ];
     }
 
-    const [{ products, totalCount }] = await Product.aggregate(pipeline);
+    const [{ products, count }] = await Product.aggregate(pipeline);
+    let totalCount = count[0].value;
 
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount: totalCount[0].value });
+    if (totalCount === undefined) totalCount = 0;
+
+    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
