@@ -115,6 +115,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
     let pipeline = [];
 
     if (search) {
+      // if search query exists use it in the pipeline
       pipeline = [
         {
           $search: {
@@ -135,6 +136,17 @@ router.get('/fetch', async (req: Request, res: Response) => {
           },
         },
       ];
+    } else if (!page) {
+      // if there's no page queryParam, don't limit results (pagination)
+      pipeline = [
+        { $match: query },
+        {
+          $facet: {
+            data: [{ $sort: sort }],
+            metadata: [{ $count: 'totalCount' }],
+          },
+        },
+      ];
     } else {
       pipeline = [
         { $match: query },
@@ -151,7 +163,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
 
     const totalCount = metadata[0].totalCount || 0;
 
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', products: data, totalCount });
+    return res.status(200).json({ success: true, message: 'Products fetched successfully', data, totalCount });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
