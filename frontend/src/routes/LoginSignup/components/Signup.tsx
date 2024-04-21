@@ -16,7 +16,7 @@ import { useForm, yupResolver } from "@mantine/form";
 import { IconCake, IconLock } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { object, string, boolean } from "yup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SerializedError } from "@reduxjs/toolkit";
 import { CartItemProps } from "../../../types/UserProps.ts";
 
@@ -47,7 +47,6 @@ export interface SignupValues {
   dob: Date;
   newsletter: boolean;
   shoppingPreference: string;
-  honeypot?: string;
   cart?: CartItemProps[] | null;
 }
 
@@ -59,6 +58,7 @@ const Signup = ({
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const initialFormValues = {
     email: "",
@@ -68,7 +68,6 @@ const Signup = ({
     dob: new Date(),
     shoppingPreference: "Womenswear",
     newsletter: true,
-    honeypot: "",
   };
 
   const form = useForm({
@@ -80,10 +79,9 @@ const Signup = ({
     try {
       setIsLoading(true);
       setIsError(false);
-      if (values.honeypot !== "") {
+      if (honeypotRef.current && honeypotRef.current.value !== "") {
         throw new Error("Bot detected");
       }
-      delete values.honeypot;
       await dispatchValues(values);
       form.reset();
       setIsLoading(false);
@@ -115,7 +113,8 @@ const Signup = ({
           name="honeypot"
           placeholder="do not fill this"
           type="hidden"
-          {...form.getInputProps("honeypot")}
+          data-testid="honeypot"
+          ref={honeypotRef}
         />
         <TextInput
           withAsterisk
@@ -159,7 +158,7 @@ const Signup = ({
           label="Sign up for MØDA-BEYOND news and get a $20 voucher for your next purchase. You'll receive sales alerts, exclusive offers and the latest on styles & trends."
           {...form.getInputProps("newsletter")}
         />
-        <Button type="submit" loading={isLoading}>
+        <Button type="submit" loading={isLoading} data-testid="signup-button">
           Create My Account
         </Button>
         <Anchor onClick={() => navigate("/login")}>

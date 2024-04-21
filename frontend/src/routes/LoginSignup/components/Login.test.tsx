@@ -33,6 +33,8 @@ describe("Login Component", () => {
     });
     fireEvent.click(getByTestId("login-button"));
 
+    expect(getByTestId("login-button")).toBeDisabled();
+
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalledWith({
         email: mockEmail,
@@ -45,7 +47,7 @@ describe("Login Component", () => {
     const store = setupStore();
     const mockDispatch = vi.fn();
 
-    const { getByLabelText, getByTestId } = renderWithProviders(
+    const { getByLabelText, getByTestId, queryByText } = renderWithProviders(
       <Login dispatchValues={mockDispatch} />,
       {
         store,
@@ -73,6 +75,13 @@ describe("Login Component", () => {
 
     await waitFor(() => {
       expect(mockDispatch).not.toHaveBeenCalledWith();
+    });
+    await waitFor(() => {
+      expect(
+        queryByText(
+          "Your username or password was incorrect, please try again."
+        )
+      ).toBeTruthy();
     });
   });
 });

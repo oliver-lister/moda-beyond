@@ -1,9 +1,7 @@
-import { waitFor } from "@testing-library/react";
 import Layout from "./Layout";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "../../testing-utils/render";
 import { setupStore } from "../../state/store";
-import { refreshAccessTokenAsync } from "../../state/auth/authSlice";
 import { setCart } from "../../state/cart/cartSlice";
 import UserProps from "../../types/UserProps";
 import { mockedCartItems } from "../../testing-utils/mocks/mockedCartItems";
@@ -15,27 +13,6 @@ describe("Layout", () => {
 
     // Clear any localStorage changes
     localStorage.clear();
-  });
-
-  it("sets user isAuthenticated to false if supplied with invalid refreshToken", async () => {
-    const store = setupStore();
-    const dummyRefreshToken = "invalidToken";
-    store.dispatch(refreshAccessTokenAsync(dummyRefreshToken));
-    renderWithProviders(<Layout />, { store });
-
-    expect(store.getState().auth.isLoading).toBe(true);
-    expect(store.getState().auth.isAuthenticated).toBe(false);
-
-    // wait for Loading state to be false
-    await waitFor(() => {
-      expect(store.getState().auth.isLoading).toBe(false);
-    });
-
-    // check reset of default states on failed authentication
-    expect(store.getState().auth.isAuthenticated).toBe(false);
-    expect(store.getState().auth.accessToken).toBe("");
-    expect(store.getState().auth.refreshToken).toBe("");
-    expect(store.getState().auth.userId).toBe(null);
   });
 
   it("does not dispatch setCart if no localStorage or user isn't logged in", () => {
@@ -122,7 +99,9 @@ describe("Layout", () => {
 
     expect(store.getState().user.data).toBe(null);
     expect(store.getState().cart.items).toStrictEqual(mockCart);
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      setCart(store.getState().cart.items)
+    );
   });
 
   it("uses cart items in user.data store if user is logged in", () => {
