@@ -13,14 +13,11 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, yupResolver } from "@mantine/form";
-import { useState } from "react";
 import { IconCake, IconLock } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
-import { SerializedError } from "@reduxjs/toolkit";
-import { AppDispatch } from "../../../state/store.ts";
-import { signupAsync } from "../../../state/auth/authSlice.ts";
 import { useNavigate } from "react-router-dom";
 import { object, string, boolean } from "yup";
+import { useState } from "react";
+import { SerializedError } from "@reduxjs/toolkit";
 import { CartItemProps } from "../../../types/UserProps.ts";
 
 const signupSchema = object().shape({
@@ -54,36 +51,40 @@ export interface SignupValues {
   cart?: CartItemProps[] | null;
 }
 
-const Signup = () => {
-  const dispatch = useDispatch<AppDispatch>();
+const Signup = ({
+  dispatchValues,
+}: {
+  dispatchValues: (values: SignupValues) => Promise<void>;
+}) => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const initialFormValues = {
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    dob: new Date(),
+    shoppingPreference: "Womenswear",
+    newsletter: true,
+    honeypot: "",
+  };
 
   const form = useForm({
-    initialValues: {
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-      dob: new Date(),
-      shoppingPreference: "Womenswear",
-      newsletter: true,
-      honeypot: "",
-    },
-
+    initialValues: initialFormValues,
     validate: yupResolver(signupSchema),
   });
 
-  const handleSubmit = async (values: SignupValues) => {
+  const handleSignupSubmit = async (values: SignupValues) => {
     try {
       setIsLoading(true);
       setIsError(false);
-      if (form.values.honeypot) {
+      if (values.honeypot !== "") {
         throw new Error("Bot detected");
       }
       delete values.honeypot;
-      await dispatch(signupAsync(values)).unwrap();
+      await dispatchValues(values);
       form.reset();
       setIsLoading(false);
       navigate("/");
@@ -95,7 +96,7 @@ const Signup = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+    <form onSubmit={form.onSubmit(handleSignupSubmit)}>
       <Stack>
         <Box>
           <Title order={1}>Sign Up</Title>

@@ -37,4 +37,15 @@ export const mockedCartItems: CartItemProps[] = [
     quantity: 1,
     _id: "72e9d1a90151d2b5b96df71f",
   },
+
 ];
+
+export const mockCartItem = {
+  cartItemId: "846b8d42-3d3e-4f1e-a723-50a26fe6549b",
+  productId: "6602931dd64e6c5891d2401c",
+  size: "INTL XL",
+  price: 56.2,
+  color: "Champagne",
+  quantity: 3,
+  _id: "661fa9922ae1dc8f8abec95b",
+};

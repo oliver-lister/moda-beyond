@@ -3,7 +3,7 @@ import { RootState } from "../store";
 import { CartItemProps } from "../../types/UserProps";
 
 // Types
-interface CartState {
+export interface CartState {
   items: CartItemProps[];
   totalItems: number;
   isLoading: boolean;
@@ -20,7 +20,7 @@ interface UpdateSizePayload {
 }
 
 // Initial state
-const initialCartState: CartState = {
+export const initialCartState: CartState = {
   items: [],
   totalItems: 0,
   isLoading: false,
@@ -166,6 +166,7 @@ const cartSlice = createSlice({
           return item;
         });
         localStorage.setItem("cart", JSON.stringify(state.items));
+        state.isLoading = false;
         return;
       }
 

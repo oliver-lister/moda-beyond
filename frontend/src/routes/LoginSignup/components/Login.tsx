@@ -9,14 +9,16 @@ import {
   Anchor,
   Button,
 } from "@mantine/core";
-import { useForm, yupResolver } from "@mantine/form";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { SerializedError } from "@reduxjs/toolkit";
-import { AppDispatch } from "../../../state/store.ts";
-import { loginAsync } from "../../../state/auth/authSlice.ts";
 import { useNavigate } from "react-router-dom";
+import { useForm, yupResolver } from "@mantine/form";
 import { object, string } from "yup";
+import { useRef, useState } from "react";
+import { SerializedError } from "@reduxjs/toolkit";
+
+export interface LoginValues {
+  email: string;
+  password: string;
+}
 
 const loginSchema = object({
   email: string()
@@ -29,39 +31,36 @@ const loginSchema = object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
       "Please enter a valid password"
     ),
-  honeypot: string(),
 });
 
-export interface LoginValues {
-  email: string;
-  password: string;
-  honeypot?: string;
-}
-
-const Login = () => {
-  const dispatch = useDispatch<AppDispatch>();
+const Login = ({
+  dispatchValues,
+}: {
+  dispatchValues: (values: LoginValues) => Promise<void>;
+}) => {
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
+  const initialFormValues = {
+    email: "",
+    password: "",
+  };
 
   const form = useForm({
-    initialValues: {
-      honeypot: "",
-      email: "",
-      password: "",
-    },
-
+    initialValues: initialFormValues,
     validate: yupResolver(loginSchema),
   });
 
-  const handleSubmit = async (values: LoginValues) => {
+  const handleLoginSubmit = async (values: LoginValues) => {
     try {
       setIsLoading(true);
       setIsError(false);
-      if (form.values.honeypot) {
+      if (honeypotRef.current && honeypotRef.current.value !== "") {
         throw new Error("Bot detected");
       }
-      await dispatch(loginAsync(values)).unwrap();
+      await dispatchValues(values);
       form.reset();
       setIsLoading(false);
       navigate("/");
@@ -73,7 +72,7 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+    <form onSubmit={form.onSubmit(handleLoginSubmit)}>
       <Stack>
         <Box>
           <Title order={1}>Login</Title>
@@ -89,7 +88,8 @@ const Login = () => {
           name="honeypot"
           placeholder="do not fill this"
           type="hidden"
-          {...form.getInputProps("honeypot")}
+          data-testid="honeypot"
+          ref={honeypotRef}
         />
         <TextInput
           label="Email"
@@ -101,7 +101,7 @@ const Login = () => {
           placeholder="••••••••"
           {...form.getInputProps("password")}
         />
-        <Button type="submit" loading={isLoading}>
+        <Button type="submit" loading={isLoading} data-testid="login-button">
           Login
         </Button>
         <Anchor onClick={() => navigate("/signup")}>
