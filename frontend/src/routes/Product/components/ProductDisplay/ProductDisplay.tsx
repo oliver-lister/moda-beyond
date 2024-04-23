@@ -32,11 +32,17 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                 <Anchor
                   component={Link}
                   to={`/shop?brand=${product.brand}&sortBy=date&sortOrder=-1`}
+                  data-testid="product-brand"
                 >
                   {product.brand}
                 </Anchor>
               </Title>
-              <Title order={1} fw={600} fz={{ base: "1.5rem", md: "2rem" }}>
+              <Title
+                order={1}
+                fw={600}
+                fz={{ base: "1.5rem", md: "2rem" }}
+                data-testid="product-name"
+              >
                 {product.name}
               </Title>
               <Group gap="xs" className={styles.prices}>

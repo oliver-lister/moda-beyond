@@ -82,12 +82,13 @@ const ProductForm = ({ product }: { product: ProductProps }) => {
           </Text>
           <Group>
             {product.availableColors &&
-              product.availableColors.map((color) => (
+              product.availableColors.map((color, index) => (
                 <ColorSwatch
                   ml={2}
                   key={color.label}
                   component="button"
                   type="button"
+                  data-testid={`color-input-${index}`}
                   color={color.hex}
                   onClick={() => handleColorChange(color.label)}
                   style={{ color: "#fff", cursor: "pointer" }}
@@ -105,12 +106,15 @@ const ProductForm = ({ product }: { product: ProductProps }) => {
         </Stack>
         <Group align="start">
           <Select
+            data-testid="size-input"
             withAsterisk
             data={product.availableSizes}
             {...form.getInputProps("size")}
             placeholder="Pick a size..."
           />
-          <Button type="submit">Add to Cart</Button>
+          <Button type="submit" data-testid="submit-button">
+            Add to Cart
+          </Button>
         </Group>
       </Stack>
     </form>
