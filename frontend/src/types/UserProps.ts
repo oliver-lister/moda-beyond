@@ -9,8 +9,8 @@ export interface CartItemProps {
   cartItemId: string;
   productId: string;
   price: number;
-  color: string | null;
-  size: string | null;
+  color: string;
+  size: string;
   quantity: number;
 }
 

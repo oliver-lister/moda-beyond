@@ -2,12 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import {
   fireEvent,
   renderWithProviders,
+  screen,
+  userEvent,
   waitFor,
 } from "../../../../testing-utils";
 import ProductDisplay from "./ProductDisplay";
 import ProductProps from "../../../../types/ProductProps";
 import { setupStore } from "../../../../state/store";
-import { addItemToCart } from "../../../../state/cart/cartSlice";
 import { CartItemProps } from "../../../../types/UserProps";
 import ProductForm from "./components/ProductForm";
 
@@ -19,6 +20,11 @@ const mockProduct: ProductProps = {
   availableSizes: ["UK 23", "UK 13"],
   price: 32,
   images: [""],
+  category: "men",
+  description: "",
+  material: "",
+  date: new Date(),
+  available: true,
 };
 
 describe("ProductDisplay", () => {
@@ -33,22 +39,50 @@ describe("ProductDisplay", () => {
     expect(brandText).toHaveTextContent("Nike");
     expect(nameText).toHaveTextContent("Raincoat");
   });
-  it("dispatches addToCart redux reducer when form is filled in and submit button pressed", async () => {
+
+  it("selects UK 13 option", async () => {
     const store = setupStore();
-    const dispatchSpy = vi.spyOn(store, "dispatch");
-    const { getByTestId, getAllByTestId } = renderWithProviders(
-      <ProductForm product={mockProduct} />,
+    const mockAddToCart = vi.fn();
+    renderWithProviders(
+      <ProductForm product={mockProduct} handleAddToCart={mockAddToCart} />,
+      { store }
+    );
+
+    // Click Select to open the options list
+    await userEvent.click(screen.getByPlaceholderText("Pick a size..."));
+
+    // Get option by its label and click it
+    await userEvent.click(screen.getByRole("option", { name: "UK 13" }));
+
+    // Verify that the option is selected
+    expect(screen.getByRole("textbox")).toHaveValue("UK 13");
+    expect(document.querySelector('input[name="size"]')).toHaveValue("UK 13");
+  });
+
+  it("dispatches addToCart function when form is filled in and submit button pressed", async () => {
+    const store = setupStore();
+    const mockAddToCart = vi.fn();
+    const { getByTestId } = renderWithProviders(
+      <ProductForm product={mockProduct} handleAddToCart={mockAddToCart} />,
       { store }
     );
     const colorButton = getByTestId("color-input-0");
-    const sizeInput = getByTestId("size-input");
     const submitButton = getByTestId("submit-button");
 
-    fireEvent.change(sizeInput, {
-      target: { value: 1 },
-    });
+    fireEvent.click(colorButton);
 
-    expect(sizeInput.value).toBe("1");
+    // Click Select to open the options list
+    await userEvent.click(screen.getByPlaceholderText("Pick a size..."));
+
+    // Get option by its label and click it
+    await userEvent.click(screen.getByRole("option", { name: "UK 13" }));
+
+    fireEvent.click(submitButton);
+
+    // expect error state to not be shown
+    expect(getByTestId("form-container")).not.toHaveTextContent(
+      "Please pick a size."
+    );
 
     const mockCartItem: CartItemProps = {
       cartItemId: "23",
@@ -59,12 +93,12 @@ describe("ProductDisplay", () => {
       quantity: 1,
     };
 
-    fireEvent.click(colorButton);
-
-    fireEvent.click(submitButton);
-
     await waitFor(() => {
-      expect(dispatchSpy).toHaveBeenCalled();
+      expect(mockAddToCart).toHaveBeenCalledWith(
+        mockCartItem.quantity,
+        mockCartItem.size,
+        mockCartItem.color
+      );
     });
   });
 });

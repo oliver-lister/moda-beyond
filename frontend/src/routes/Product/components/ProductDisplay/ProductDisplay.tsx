@@ -15,8 +15,53 @@ import ProductAccordion from "./components/ProductAccordion.tsx";
 import ProductPhotos from "./components/ProductPhotos.tsx";
 import ProductForm from "./components/ProductForm.tsx";
 import { Link } from "react-router-dom";
+import { IconShoppingCart, IconX } from "@tabler/icons-react";
+import { SerializedError } from "@reduxjs/toolkit";
+import { addItemToCart } from "../../../../state/cart/cartSlice.ts";
+import { v4 as uuidv4 } from "uuid";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../state/store.ts";
+import { notifications } from "@mantine/notifications";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleAddToCart = async (
+    quantity: number,
+    size: string,
+    color: string
+  ) => {
+    try {
+      dispatch(
+        addItemToCart({
+          cartItemId: uuidv4(),
+          productId: product._id,
+          color: color,
+          quantity: quantity,
+          size: size,
+          price: product.price,
+        })
+      );
+
+      notifications.show({
+        title: "Success! You've added an item to your cart.",
+        message: `${size} ${product.brand} ${color} ${product.name}`,
+        icon: <IconShoppingCart />,
+      });
+    } catch (err) {
+      console.log(
+        "Error adding product to cart:",
+        (err as SerializedError).message
+      );
+      notifications.show({
+        title: "Error! Something went wrong.",
+        message: "Please try again.",
+        icon: <IconX />,
+        color: "red",
+      });
+    }
+  };
+
   if (!product) {
     return <Text>Waiting for product.</Text>;
   }
@@ -70,7 +115,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
                 )}
               </Group>
             </Box>
-            <ProductForm product={product} />
+            <ProductForm product={product} handleAddToCart={handleAddToCart} />
           </Stack>
           <ProductAccordion product={product} />
         </Stack>
