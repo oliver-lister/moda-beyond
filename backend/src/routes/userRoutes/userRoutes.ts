@@ -2,8 +2,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import 'dotenv/config';
 import { authorizeJWT } from '../../middleware/authMiddleware';
 import express, { Request, Response } from 'express';
-import { User, Product } from '../../models/models';
-import 'dotenv/config';
+import { User } from '../../models/models';
 
 const router = express.Router();
 

@@ -1,6 +1,14 @@
-import { Stack, Group, Center, Loader, Title, Text } from "@mantine/core";
+import {
+  Stack,
+  Group,
+  Center,
+  Loader,
+  Title,
+  Text,
+  Button,
+} from "@mantine/core";
 import styles from "./ordersummary.module.css";
-import GradientButton from "../../../../components/GradientButton/GradientButton";
+import { Link } from "react-router-dom";
 
 const OrderSummary = ({
   cartSumWithDelivery,
@@ -40,7 +48,9 @@ const OrderSummary = ({
               <Text>Total</Text>
               <Text>${cartSumWithDelivery}</Text>
             </Group>
-            <GradientButton>Checkout</GradientButton>
+            <Button component={Link} to="/cart/checkout">
+              Checkout
+            </Button>
           </>
         )}
         <Text fz="0.7rem" fw={400}>

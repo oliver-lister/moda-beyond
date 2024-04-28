@@ -1,6 +1,6 @@
 import { Stack, Group, Radio, Text } from "@mantine/core";
 import styles from "./delivery.module.css";
-import { DeliveryData } from "../../Cart";
+import { DeliveryData } from "../../../Cart";
 
 const Delivery = ({
   delivery,
