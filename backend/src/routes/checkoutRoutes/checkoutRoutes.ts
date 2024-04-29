@@ -69,6 +69,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       shipping_address_collection: {
         allowed_countries: ['AU'],
       },
+      customer_email: req.body.customer_email,
     });
 
     return res

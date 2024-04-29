@@ -2,7 +2,7 @@ import EmbeddedCheckoutForm from "./components/EmbeddedCheckoutForm";
 import { useCartOutletContext } from "../hooks/useCartOutletContext.ts";
 
 const Checkout = () => {
-  const { cart, delivery, deliveryData } = useCartOutletContext();
+  const { cart, user, delivery, deliveryData } = useCartOutletContext();
 
   return (
     <>
@@ -10,6 +10,7 @@ const Checkout = () => {
         items={cart.items}
         delivery={delivery}
         deliveryData={deliveryData}
+        user={user}
       />
     </>
   );

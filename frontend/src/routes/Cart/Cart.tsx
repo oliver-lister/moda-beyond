@@ -30,6 +30,7 @@ const deliveryData: DeliveryData = {
 const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart);
   const auth = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.user);
   const [delivery, setDelivery] = useState<string>("standard");
 
   const handleDeliveryChange = (value: string) => {
@@ -46,6 +47,7 @@ const Cart = () => {
             delivery,
             handleDeliveryChange,
             deliveryData,
+            user,
           }}
         />
       </Container>
