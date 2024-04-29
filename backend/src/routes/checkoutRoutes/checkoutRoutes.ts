@@ -40,14 +40,16 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
     );
 
     const session = await stripe.checkout.sessions.create({
+      ui_mode: 'embedded',
       line_items: line_items,
       payment_method_types: ['card'],
       mode: 'payment',
-      success_url: `${process.env.CLIENT_URL}cart/checkout/success`,
-      cancel_url: `${process.env.CLIENT_URL}cart/checkout/cancel`,
+      return_url: `${req.headers.origin}/return?session_id={CHECKOUT_SESSION_ID}`,
     });
 
-    return res.status(200).json({ success: true, message: 'Checkout session creation successful', url: session.url });
+    return res
+      .status(200)
+      .json({ success: true, message: 'Checkout session creation successful', id: session.id, client_secret: session.client_secret });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

@@ -9,7 +9,6 @@ type ContextType = {
   delivery: string;
   handleDeliveryChange: (value: string) => void;
   deliveryData: DeliveryData;
-  submitCheckout: () => void;
 };
 
 export function useCartOutletContext() {

@@ -8,6 +8,7 @@ import {
   Button,
 } from "@mantine/core";
 import styles from "./ordersummary.module.css";
+import { Link } from "react-router-dom";
 
 const OrderSummary = ({
   cartSumWithDelivery,
@@ -15,14 +16,12 @@ const OrderSummary = ({
   cartSum,
   deliveryFee,
   isLoading,
-  submitCheckout,
 }: {
   cartSumWithDelivery: number;
   cartTotalQuantity: number;
   cartSum: number;
   deliveryFee: number;
   isLoading: boolean;
-  submitCheckout: () => void;
 }) => {
   return (
     <Stack className={styles.container}>
@@ -49,7 +48,9 @@ const OrderSummary = ({
               <Text>Total</Text>
               <Text>${cartSumWithDelivery}</Text>
             </Group>
-            <Button onClick={submitCheckout}>Checkout</Button>
+            <Button component={Link} to="/cart/checkout">
+              Checkout
+            </Button>
           </>
         )}
         <Text fz="0.7rem" fw={400}>

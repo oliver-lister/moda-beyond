@@ -2,9 +2,8 @@ import { Container } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import styles from "./cart.module.css";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../state/store";
-import { submitCheckoutAsync } from "../../state/cart/cartSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
 export type DeliveryData = {
   standard: {
@@ -32,22 +31,9 @@ const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart);
   const auth = useSelector((state: RootState) => state.auth);
   const [delivery, setDelivery] = useState<string>("standard");
-  const dispatch = useDispatch<AppDispatch>();
 
   const handleDeliveryChange = (value: string) => {
     setDelivery(value);
-  };
-
-  const submitCheckout = async () => {
-    try {
-      const url = await dispatch(submitCheckoutAsync(cart.items)).unwrap();
-      console.log(url);
-      window.location.href = url;
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log("Error: " + err.message);
-      }
-    }
   };
 
   return (
@@ -60,7 +46,6 @@ const Cart = () => {
             delivery,
             handleDeliveryChange,
             deliveryData,
-            submitCheckout,
           }}
         />
       </Container>

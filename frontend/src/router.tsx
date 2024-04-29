@@ -12,6 +12,7 @@ import DeleteAccount from "./routes/Account/DeleteAccount/DeleteAccount.tsx";
 import Profile from "./routes/Account/Profile/Profile.tsx";
 import AccountDashboard from "./routes/Account/AccountDashboard/AccountDashboard.tsx";
 import CartOverview from "./routes/Cart/CartOverview/CartOverview.tsx";
+import Checkout from "./routes/Cart/Checkout/Checkout.tsx";
 
 // Router Routes ** hash router was required for github pages
 export const router = createHashRouter([
@@ -34,6 +35,10 @@ export const router = createHashRouter([
             path: "/cart",
             element: <CartOverview />,
             index: true,
+          },
+          {
+            path: "/cart/checkout",
+            element: <Checkout />,
           },
         ],
       },

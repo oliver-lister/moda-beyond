@@ -2,7 +2,7 @@ import ProductProps from "../../../types/ProductProps.ts";
 import Item from "../../../components/Item/Item.tsx";
 import { SimpleGrid, Center, Text, Skeleton } from "@mantine/core";
 interface ItemContainerProps {
-  products: ProductProps[] | null;
+  products: ProductProps[];
   isLoading: boolean;
   error: string;
 }
