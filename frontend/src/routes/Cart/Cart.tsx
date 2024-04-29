@@ -41,9 +41,9 @@ const Cart = () => {
 
   const submitCheckout = async () => {
     try {
-      const url = await dispatch(submitCheckoutAsync(cart.items)).unwrap();
-      console.log(url);
-      navigate(url);
+      const payload = await dispatch(submitCheckoutAsync(cart.items)).unwrap();
+      console.log(payload);
+      navigate(payload);
     } catch (err) {
       if (err instanceof Error) {
         console.log("Error: " + err.message);

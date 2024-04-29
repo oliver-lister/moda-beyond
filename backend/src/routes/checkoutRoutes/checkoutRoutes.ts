@@ -26,7 +26,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       cancel_url: `${process.env.CLIENT_URL}cart/checkout/cancel`,
     });
 
-    return res.status(200).json({ success: true, message: 'Payment successful', url: session.url });
+    return res.status(200).json({ success: true, message: 'Checkout session creation successful', url: session.url });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

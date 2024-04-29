@@ -90,18 +90,15 @@ export const submitCheckoutAsync = createAsyncThunk(
           }),
         }
       );
-
       const responseData = await response.json();
 
       if (!response.ok) {
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
-
-      const { url } = responseData;
-      return url;
+      return responseData;
     } catch (err) {
       if (err instanceof Error) {
-        console.log("Error: " + err.message);
+        throw err;
       }
     }
   }
