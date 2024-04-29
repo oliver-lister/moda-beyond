@@ -21,27 +21,43 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
   try {
     if (!req.body.items) throw new Error('No items supplied as arguments');
 
-    const line_items = await Promise.all(
-      req.body.items.map(async (item: CartItemProps) => {
-        const product = await Product.findById(item.productId);
-        if (!product)
-          return res
-            .status(404)
-            .json({ success: false, error: `Product Id: ${item.productId} in cart does not exist in database`, errorCode: 'NO_SUCH_PRODUCT' });
-
-        return {
+    const deliveryLineItem = req.body.deliveryFee
+      ? {
           price_data: {
             currency: 'aud',
             product_data: {
-              name: `${item.size} ${item.color} ${product.name}`,
-              images: product.images.map((img) => `${process.env.BACKEND_HOST}${img}`),
+              name: 'Delivery Fee',
             },
-            unit_amount: product.price * 100,
+            unit_amount: req.body.deliveryFee * 100,
           },
-          quantity: item.quantity,
-        };
-      }),
-    );
+          quantity: 1,
+        }
+      : null;
+
+    const line_items = [
+      ...(await Promise.all(
+        req.body.items.map(async (item: CartItemProps) => {
+          const product = await Product.findById(item.productId);
+          if (!product)
+            return res
+              .status(404)
+              .json({ success: false, error: `Product Id: ${item.productId} in cart does not exist in database`, errorCode: 'NO_SUCH_PRODUCT' });
+
+          return {
+            price_data: {
+              currency: 'aud',
+              product_data: {
+                name: `${item.size} ${item.color} ${product.name}`,
+                images: product.images.map((img) => `${process.env.BACKEND_HOST}${img}`),
+              },
+              unit_amount: product.price * 100,
+            },
+            quantity: item.quantity,
+          };
+        }),
+      )),
+      deliveryLineItem,
+    ];
 
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
@@ -49,6 +65,14 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       payment_method_types: ['card'],
       mode: 'payment',
       return_url: `${req.headers.origin}/moda-beyond/#/cart/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+      shipping_address_collection: {
+        allowed_countries: ['AUS'],
+      },
+      custom_text: {
+        shipping_address: {
+          message: "Please note that we can't guarantee 2-day delivery for PO boxes at this time.",
+        },
+      },
     });
 
     return res

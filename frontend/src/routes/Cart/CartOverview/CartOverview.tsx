@@ -85,6 +85,7 @@ const CartOverview = () => {
       <GridCol span={{ base: 12, lg: 4 }}>
         {cart.totalItems === 0 ? null : (
           <OrderSummary
+            auth={auth}
             cartSum={cartSum}
             cartSumWithDelivery={cartSumWithDelivery}
             cartTotalQuantity={cartTotalQuantity}

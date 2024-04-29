@@ -1,6 +1,9 @@
-import { Loader } from "@mantine/core";
+import { Loader, Title, Text, Center } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../state/store.ts";
+import { clearCart } from "../../../../state/cart/cartSlice";
 
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
@@ -8,6 +11,7 @@ const CheckoutReturn = () => {
   const [status, setStatus] = useState(null);
   const [customerEmail, setCustomerEmail] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const getSession = async (sessionId: string) => {
@@ -46,7 +50,11 @@ const CheckoutReturn = () => {
   }, [sessionId]);
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <Center mih="50vh">
+        <Loader />
+      </Center>
+    );
   }
 
   if (status === "open") {
@@ -54,13 +62,14 @@ const CheckoutReturn = () => {
   }
 
   if (status === "complete") {
+    dispatch(clearCart());
     return (
       <section id="success">
-        <p>
+        <Title order={1}>Order Success</Title>
+        <Text>
           We appreciate your business! A confirmation email will be sent to{" "}
-          {customerEmail}. If you have any questions, please email{" "}
-          <a href="mailto:orders@example.com">orders@example.com</a>.
-        </p>
+          {customerEmail}.
+        </Text>
       </section>
     );
   }

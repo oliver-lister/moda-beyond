@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import styles from "./ordersummary.module.css";
 import { Link } from "react-router-dom";
+import { AuthState } from "../../../../../state/auth/authSlice";
 
 const OrderSummary = ({
   cartSumWithDelivery,
@@ -16,12 +17,14 @@ const OrderSummary = ({
   cartSum,
   deliveryFee,
   isLoading,
+  auth,
 }: {
   cartSumWithDelivery: number;
   cartTotalQuantity: number;
   cartSum: number;
   deliveryFee: number;
   isLoading: boolean;
+  auth: AuthState;
 }) => {
   return (
     <Stack className={styles.container}>
@@ -48,7 +51,11 @@ const OrderSummary = ({
               <Text>Total</Text>
               <Text>${cartSumWithDelivery}</Text>
             </Group>
-            <Button component={Link} to="/cart/checkout">
+            <Button
+              component={Link}
+              disabled={auth.isLoading}
+              to="/cart/checkout"
+            >
               Checkout
             </Button>
           </>

@@ -1,13 +1,16 @@
 import EmbeddedCheckoutForm from "./components/EmbeddedCheckoutForm";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../state/store";
+import { useCartOutletContext } from "../hooks/useCartOutletContext.ts";
+import { DeliveryData } from "../Cart.tsx";
 
 const Checkout = () => {
-  const cart = useSelector((state: RootState) => state.cart);
+  const { cart, delivery, deliveryData } = useCartOutletContext();
 
   return (
     <>
-      <EmbeddedCheckoutForm items={cart.items} />
+      <EmbeddedCheckoutForm
+        items={cart.items}
+        deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
+      />
     </>
   );
 };
