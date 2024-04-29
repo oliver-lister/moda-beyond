@@ -99,6 +99,7 @@ export const submitCheckoutAsync = createAsyncThunk(
       return url;
     } catch (err) {
       if (err instanceof Error) {
+        console.log("Error: " + err.message);
         throw err;
       }
     }

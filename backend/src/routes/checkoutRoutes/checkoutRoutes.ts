@@ -19,11 +19,14 @@ export interface CartItemProps {
 
 router.post('/create-checkout-session', async (req: Request, res: Response) => {
   try {
+    if (!req.body.items) throw new Error('No items supplied as arguments');
     const items = req.body.items.map(async (item: CartItemProps) => {
       const product = await Product.findById(item.productId);
       if (!product) throw new Error(`Product Id: ${item.productId} in cart does not exist in database`);
       return { price_data: { currency: 'aud', product_data: { name: product.name }, unit_amount: product.price * 100 }, quantity: item.quantity };
     });
+
+    console.log(items);
 
     const session = await stripe.checkout.sessions.create({
       line_items: items,

@@ -1,5 +1,5 @@
 import { Container } from "@mantine/core";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import styles from "./cart.module.css";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
