@@ -5,6 +5,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { CartItemProps } from "../../../../types/UserProps";
 import { useNavigate } from "react-router-dom";
+import { DeliveryData } from "../../Cart";
 
 const stripePromise = loadStripe(
   `pk_test_51P9cesH9BiFrt61cpSPsP4N7SgM6iRQl5TQyLjgHMJG5afyvSj1N6ERbtxApQO2ENdQ72EwMksArhXASm4kSPxPA00covoS7Bt`
@@ -12,10 +13,12 @@ const stripePromise = loadStripe(
 
 const EmbeddedCheckoutForm = ({
   items,
-  deliveryFee,
+  delivery,
+  deliveryData,
 }: {
   items: CartItemProps[];
-  deliveryFee: number;
+  delivery: string;
+  deliveryData: DeliveryData;
 }) => {
   const navigate = useNavigate();
 
@@ -31,7 +34,10 @@ const EmbeddedCheckoutForm = ({
           },
           body: JSON.stringify({
             items: items,
-            deliveryFee: deliveryFee !== 0 ? deliveryFee : null,
+            delivery: {
+              fee: deliveryData[delivery as keyof DeliveryData].fee,
+              label: deliveryData[delivery as keyof DeliveryData].label,
+            },
           }),
         }
       );

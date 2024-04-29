@@ -19,20 +19,20 @@ export interface CartItemProps {
 
 router.post('/create-checkout-session', async (req: Request, res: Response) => {
   try {
-    if (!req.body.items) throw new Error('No items supplied as arguments');
+    if (!req.body.items) return res.status(404).json({ success: false, error: `No items supplied in request body`, errorCode: 'NO_ITEMS' });
 
-    const deliveryLineItem = req.body.deliveryFee
-      ? {
-          price_data: {
-            currency: 'aud',
-            product_data: {
-              name: 'Delivery Fee',
-            },
-            unit_amount: req.body.deliveryFee * 100,
-          },
-          quantity: 1,
-        }
-      : null;
+    const delivery = req.body.delivery;
+
+    const deliveryLineItem = {
+      price_data: {
+        currency: 'aud',
+        product_data: {
+          name: delivery.label,
+        },
+        unit_amount: delivery.fee * 100,
+      },
+      quantity: 1,
+    };
 
     const line_items = [
       ...(await Promise.all(
@@ -67,11 +67,6 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       return_url: `${req.headers.origin}/moda-beyond/#/cart/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
       shipping_address_collection: {
         allowed_countries: ['AU'],
-      },
-      custom_text: {
-        shipping_address: {
-          message: "Please note that we can't guarantee 2-day delivery for PO boxes at this time.",
-        },
       },
     });
 
