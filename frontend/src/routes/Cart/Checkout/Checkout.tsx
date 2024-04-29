@@ -4,9 +4,6 @@ import { RootState } from "../../../state/store";
 
 const Checkout = () => {
   const cart = useSelector((state: RootState) => state.cart);
-  const auth = useSelector((state: RootState) => state.auth);
-
-  if (auth.isLoading || cart.isLoading) return null;
 
   return (
     <>
