@@ -1,14 +1,18 @@
+import { Loader } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const [session, setSession] = useState();
+  const [status, setStatus] = useState(null);
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getSession = async (sessionId: string) => {
       try {
+        setIsLoading(true);
         const response = await fetch(
           `${
             import.meta.env.VITE_BACKEND_HOST
@@ -22,34 +26,42 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        const { session } = responseData;
-        return session;
+        const { status, customer_email } = responseData;
+        setIsLoading(false);
+        setStatus(status);
+        setCustomerEmail(customer_email);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
+          setIsLoading(false);
         }
       }
     };
     const fetchData = async () => {
       if (!sessionId) return;
-      const checkoutSession = await getSession(sessionId);
-      console.log(checkoutSession);
-      setSession(checkoutSession);
+      await getSession(sessionId);
     };
 
     fetchData();
   }, [sessionId]);
 
-  if (session.status === "open") {
-    return <p>Payment did not work.</p>;
+  if (isLoading) {
+    return <Loader />;
   }
 
-  if (session.status === "complete") {
+  if (status === "open") {
+    return <Navigate to="/cart/checkout" />;
+  }
+
+  if (status === "complete") {
     return (
-      <h3>
-        We appreciate your business! Your Stripe customer ID is:
-        {session.customer as string}.
-      </h3>
+      <section id="success">
+        <p>
+          We appreciate your business! A confirmation email will be sent to{" "}
+          {customerEmail}. If you have any questions, please email{" "}
+          <a href="mailto:orders@example.com">orders@example.com</a>.
+        </p>
+      </section>
     );
   }
 

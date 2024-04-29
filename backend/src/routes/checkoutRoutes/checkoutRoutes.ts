@@ -66,7 +66,12 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId!);
 
-    return res.status(200).json({ success: true, message: 'Checkout session fetched successfully', session: session });
+    return res.status(200).json({
+      success: true,
+      message: 'Checkout session fetched successfully',
+      status: session.status,
+      customer_email: session.customer_details.email,
+    });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
