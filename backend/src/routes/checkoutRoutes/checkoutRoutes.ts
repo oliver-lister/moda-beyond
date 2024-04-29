@@ -48,7 +48,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       line_items: line_items,
       payment_method_types: ['card'],
       mode: 'payment',
-      return_url: `${req.headers.origin}/moda-beyond/cart/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `${req.headers.origin}/moda-beyond/#/cart/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     return res
