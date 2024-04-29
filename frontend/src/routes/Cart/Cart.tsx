@@ -32,7 +32,6 @@ const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart);
   const auth = useSelector((state: RootState) => state.auth);
   const [delivery, setDelivery] = useState<string>("standard");
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const handleDeliveryChange = (value: string) => {
@@ -41,9 +40,9 @@ const Cart = () => {
 
   const submitCheckout = async () => {
     try {
-      const payload = await dispatch(submitCheckoutAsync(cart.items)).unwrap();
-      console.log(payload);
-      navigate(payload);
+      const url = await dispatch(submitCheckoutAsync(cart.items)).unwrap();
+      console.log(url);
+      window.location.href = url;
     } catch (err) {
       if (err instanceof Error) {
         console.log("Error: " + err.message);

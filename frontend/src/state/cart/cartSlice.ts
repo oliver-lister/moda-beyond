@@ -95,7 +95,8 @@ export const submitCheckoutAsync = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`${responseData.error}, ${responseData.errorCode}`);
       }
-      return responseData;
+      const { url } = responseData;
+      return url;
     } catch (err) {
       if (err instanceof Error) {
         throw err;
