@@ -66,7 +66,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       mode: 'payment',
       return_url: `${req.headers.origin}/moda-beyond/#/cart/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
       shipping_address_collection: {
-        allowed_countries: ['AUS'],
+        allowed_countries: ['AU'],
       },
       custom_text: {
         shipping_address: {
