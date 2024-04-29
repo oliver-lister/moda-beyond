@@ -24,8 +24,14 @@ import { useCartOutletContext } from "../hooks/useCartOutletContext.ts";
 import { DeliveryData } from "../Cart.tsx";
 
 const CartOverview = () => {
-  const { cart, auth, delivery, handleDeliveryChange, deliveryData } =
-    useCartOutletContext();
+  const {
+    cart,
+    auth,
+    delivery,
+    handleDeliveryChange,
+    deliveryData,
+    submitCheckout,
+  } = useCartOutletContext();
 
   // Cart Totalling Functions
 
@@ -90,6 +96,7 @@ const CartOverview = () => {
             cartTotalQuantity={cartTotalQuantity}
             isLoading={auth.isLoading}
             deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
+            submitCheckout={submitCheckout}
           />
         )}
       </GridCol>

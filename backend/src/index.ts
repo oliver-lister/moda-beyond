@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import productRoutes from './routes/productRoutes/productRoutes';
 import userRoutes from './routes/userRoutes/userRoutes';
 import authRoutes from './routes/authRoutes/authRoutes';
+import checkoutRoutes from './routes/checkoutRoutes/checkoutRoutes';
 
 const app = express();
 export const port = process.env.PORT;
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/products', productRoutes);
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
+app.use('/checkout', checkoutRoutes);
 
 app.use('/images', express.static('./upload/images'));
 

@@ -1,9 +1,10 @@
 import { Container } from "@mantine/core";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./cart.module.css";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../state/store";
+import { submitCheckoutAsync } from "../../state/cart/cartSlice";
 
 export type DeliveryData = {
   standard: {
@@ -31,16 +32,37 @@ const Cart = () => {
   const cart = useSelector((state: RootState) => state.cart);
   const auth = useSelector((state: RootState) => state.auth);
   const [delivery, setDelivery] = useState<string>("standard");
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleDeliveryChange = (value: string) => {
     setDelivery(value);
+  };
+
+  const submitCheckout = async () => {
+    try {
+      const url = await dispatch(submitCheckoutAsync(cart.items)).unwrap();
+      console.log(url);
+      navigate(url);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("Error: " + err.message);
+      }
+    }
   };
 
   return (
     <section className={styles.container}>
       <Container size="xl">
         <Outlet
-          context={{ cart, auth, delivery, handleDeliveryChange, deliveryData }}
+          context={{
+            cart,
+            auth,
+            delivery,
+            handleDeliveryChange,
+            deliveryData,
+            submitCheckout,
+          }}
         />
       </Container>
     </section>

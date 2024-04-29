@@ -29,7 +29,7 @@ export const initialCartState: CartState = {
 // Update DB Cart
 
 export const updateDBCartAsync = createAsyncThunk(
-  "auth/updateDBCartAsync",
+  "cart/updateDBCartAsync",
   async (newCart: CartItemProps[], thunkAPI) => {
     try {
       const { auth } = thunkAPI.getState() as RootState;
@@ -69,6 +69,39 @@ export const updateDBCartAsync = createAsyncThunk(
       if (err instanceof Error) {
         console.log("Error: " + err.message);
         throw err;
+      }
+    }
+  }
+);
+
+export const submitCheckoutAsync = createAsyncThunk(
+  "cart/submitCheckoutAsync",
+  async (items: CartItemProps[]) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/checkout/create-checkout-session`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: items,
+          }),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+      }
+
+      const { url } = responseData;
+      return url;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("Error: " + err.message);
       }
     }
   }

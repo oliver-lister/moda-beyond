@@ -1,10 +1,13 @@
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+import { Product } from '../../models/models';
 
 const router = express.Router();
 
-router.post('/checkout', async (req: Request, res: Response) => {
+// Stripe prices as price in cents
+
+router.post('/create-checkout-session', async (req: Request, res: Response) => {
   try {
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -28,3 +31,5 @@ router.post('/checkout', async (req: Request, res: Response) => {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
+
+export default router;
