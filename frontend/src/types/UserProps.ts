@@ -1,7 +1,8 @@
 export interface Address {
   street: string;
-  city: string;
-  zipCode: string;
+  suburb: string;
+  state: string;
+  postcode: string;
 }
 
 export interface CartItemProps {

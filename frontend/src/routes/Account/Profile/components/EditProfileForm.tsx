@@ -9,6 +9,7 @@ import {
   Fieldset,
   Group,
   Title,
+  NativeSelect,
 } from "@mantine/core";
 import { object, string, date, boolean } from "yup";
 import { useState } from "react";
@@ -28,8 +29,9 @@ const editProfileSchema = object({
   lastName: string().required("Last Name is required"),
   dob: date(),
   street: string(),
-  city: string(),
-  zipCode: string(),
+  suburb: string(),
+  state: string(),
+  postcode: string(),
   shoppingPreference: string()
     .required("Shopping preference is required")
     .oneOf(
@@ -45,8 +47,9 @@ export interface EditProfileValues {
   lastName: string;
   dob: Date;
   street?: string;
-  city?: string;
-  zipCode?: string;
+  suburb?: string;
+  state?: string;
+  postcode?: string;
   shoppingPreference: string;
   newsletter: boolean;
 }
@@ -69,8 +72,9 @@ const EditProfileForm = ({
         lastName: user.lastName,
         dob: user.dob ? new Date(user.dob) : new Date(),
         street: user.address ? user.address.street : "",
-        city: user.address ? user.address.city : "",
-        zipCode: user.address ? user.address.zipCode : "",
+        suburb: user.address ? user.address.suburb : "",
+        state: user.address ? user.address.state : "",
+        postcode: user.address ? user.address.postcode : "",
         shoppingPreference: user.shoppingPreference,
         newsletter: user.newsletter,
       }
@@ -80,8 +84,9 @@ const EditProfileForm = ({
         lastName: "",
         dob: new Date(),
         street: "",
-        city: "",
-        zipCode: "",
+        suburb: "",
+        state: "",
+        postcode: "",
         shoppingPreference: "Womenswear",
         newsletter: false,
       };
@@ -152,8 +157,13 @@ const EditProfileForm = ({
           </Fieldset>
           <Fieldset legend="Address">
             <TextInput label="Street" {...form.getInputProps("street")} />
-            <TextInput label="City" {...form.getInputProps("city")} />
-            <TextInput label="Zip Code" {...form.getInputProps("zipCode")} />
+            <TextInput label="Suburb" {...form.getInputProps("suburb")} />
+            <NativeSelect
+              label="State"
+              data={["NSW", "VIC", "QLD", "SA", "WA", "NT", "ACT"]}
+              {...form.getInputProps("state")}
+            />
+            <TextInput label="Postcode" {...form.getInputProps("postcode")} />
           </Fieldset>
           <Fieldset legend="Preferences">
             <Stack>

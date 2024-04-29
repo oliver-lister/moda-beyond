@@ -28,6 +28,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
         currency: 'aud',
         product_data: {
           name: delivery.label,
+          description: `Estimated delivery: ${delivery.est}`,
         },
         unit_amount: delivery.fee * 100,
       },

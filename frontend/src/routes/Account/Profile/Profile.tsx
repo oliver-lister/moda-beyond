@@ -28,8 +28,9 @@ const Profile = () => {
   const isAddressValid =
     user.data.address &&
     user.data.address.street &&
-    user.data.address.city &&
-    user.data.address.zipCode;
+    user.data.address.suburb &&
+    user.data.address.postcode &&
+    user.data.address.state;
 
   return (
     <AccountPage title="Profile">
@@ -49,7 +50,7 @@ const Profile = () => {
                   Address:
                 </Text>
                 <Text size="md">
-                  {`${user.data.address.street}, ${user.data.address.city}, ${user.data.address.zipCode}`}
+                  {`${user.data.address.street}, ${user.data.address.suburb}, ${user.data.address.state} ${user.data.address.postcode}`}
                 </Text>
               </Box>
             ) : null}

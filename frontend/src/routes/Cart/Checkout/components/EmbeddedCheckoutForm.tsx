@@ -6,6 +6,7 @@ import {
 import { CartItemProps } from "../../../../types/UserProps";
 import { useNavigate } from "react-router-dom";
 import { DeliveryData } from "../../Cart";
+import { getDateInFuture } from "../../cartUtils.ts";
 
 const stripePromise = loadStripe(
   `pk_test_51P9cesH9BiFrt61cpSPsP4N7SgM6iRQl5TQyLjgHMJG5afyvSj1N6ERbtxApQO2ENdQ72EwMksArhXASm4kSPxPA00covoS7Bt`
@@ -37,6 +38,9 @@ const EmbeddedCheckoutForm = ({
             delivery: {
               fee: deliveryData[delivery as keyof DeliveryData].fee,
               label: deliveryData[delivery as keyof DeliveryData].label,
+              est: getDateInFuture(
+                deliveryData[delivery as keyof DeliveryData].estDays
+              ),
             },
           }),
         }

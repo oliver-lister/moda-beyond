@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   dob: { type: Date },
-  address: { street: String, city: String, zipCode: String },
+  address: { street: String, suburb: String, state: String, postcode: String },
   shoppingPreference: { type: String, required: true },
   newsletter: { type: Boolean, required: true, default: true },
   cart: { type: [cartItemSchema], required: true, default: [] },
@@ -87,7 +87,7 @@ export interface UserDocument extends Document {
   firstName: string;
   lastName: string;
   dob?: Date;
-  address?: { street: string; city: string; zipCode: string };
+  address?: { street: string; suburb: string; state: string; postcode: string };
   shoppingPreference: string;
   newsletter: boolean;
   cart: CartItem[];
