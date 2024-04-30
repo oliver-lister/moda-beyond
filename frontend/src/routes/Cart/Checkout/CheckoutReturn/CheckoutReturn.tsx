@@ -96,7 +96,10 @@ const CheckoutReturn = () => {
   if (isLoading || !session) {
     return (
       <Center mih="50vh">
-        <Loader />
+        <Stack align="center">
+          <Text c="violet">Processing Checkout...</Text>
+          <Loader />
+        </Stack>
       </Center>
     );
   }
