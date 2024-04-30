@@ -69,6 +69,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       shipping_address_collection: {
         allowed_countries: ['AU'],
       },
+      billing_address_collection: 'required',
       customer_email: req.body.customer_email,
     });
 
@@ -87,18 +88,6 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items'] });
 
-    console.log({
-      line_items: session.line_items.data,
-      id: session.id,
-      status: session.status,
-      customer_name: session.customer_details.name,
-      shipping_name: session.shipping.name,
-      shipping_address: session.shipping.address,
-      billing_name: session.billing_details.name,
-      billing_address: session.billing_details.address,
-      receipt_url: session.receipt_url,
-    });
-
     const stripeSessionData = {
       line_items: session.line_items.data,
       id: session.id,
@@ -110,8 +99,6 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
       billing_address: session.billing_details.address,
       receipt_url: session.receipt_url,
     };
-
-    console.log(stripeSessionData);
 
     return res.status(200).json({
       success: true,

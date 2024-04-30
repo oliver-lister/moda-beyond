@@ -18,13 +18,9 @@ import { IconCheck } from "@tabler/icons-react";
 
 interface StripeSessionData {
   line_items: {
-    id: string;
-    object: string;
-    amount_subtotal: number;
-    currency: string;
-    description: string;
-    price: string;
+    amount_total: number;
     quantity: number;
+    description: string;
   }[];
   id: string;
   customer_email: string;
@@ -92,6 +88,8 @@ const CheckoutReturn = () => {
 
     fetchData();
   }, [sessionId]);
+
+  console.log(session);
 
   if (isLoading || !session) {
     return (
