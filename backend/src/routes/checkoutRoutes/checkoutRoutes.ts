@@ -87,10 +87,23 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items'] });
 
+    const stripeSessionData = {
+      line_items: session.line_items,
+      id: session.id,
+      customer_email: session.customer_details.email,
+      customer_name: session.customer_details.name,
+      status: session.status,
+      shipping_name: session.shipping.name,
+      shipping_address: session.shipping.address,
+      billing_name: session.billing_details.name,
+      billing_address: session.billing_details.address,
+      receipt_url: session.receipt_url,
+    };
+
     return res.status(200).json({
       success: true,
       message: 'Checkout session fetched successfully',
-      session: session,
+      stripeSessionData: stripeSessionData,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });

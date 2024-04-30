@@ -15,14 +15,46 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../state/store.ts";
 import { clearCart } from "../../../../state/cart/cartSlice";
 import { IconCheck } from "@tabler/icons-react";
-import { Stripe } from "@stripe/stripe-js";
+
+interface StripeSessionData {
+  line_items: {
+    id: string;
+    object: string;
+    amount_subtotal: number;
+    currency: string;
+    description: string;
+    price: string;
+    quantity: number;
+  }[];
+  id: string;
+  customer_email: string;
+  customer_name: string;
+  status: "complete" | "open";
+  shipping_name: string;
+  shipping_address: {
+    city: string;
+    country: string;
+    line1: string;
+    line2: string;
+    postal_code: string;
+    state: string;
+  };
+  billing_name: string;
+  billing_address: {
+    city: string;
+    country: string;
+    line1: string;
+    line2: string;
+    postal_code: string;
+    state: string;
+  };
+  receipt_url: string;
+}
 
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const [status, setStatus] = useState(null);
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [stripeSession, setStripeSession] = useState(null);
+  const [session, setSession] = useState<StripeSessionData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -45,7 +77,7 @@ const CheckoutReturn = () => {
         }
         const { session } = responseData;
         setIsLoading(false);
-        setStripeSession(session);
+        setSession(session);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
@@ -61,7 +93,7 @@ const CheckoutReturn = () => {
     fetchData();
   }, [sessionId]);
 
-  if (isLoading || !stripeSession) {
+  if (isLoading || !session) {
     return (
       <Center mih="50vh">
         <Loader />
@@ -69,11 +101,11 @@ const CheckoutReturn = () => {
     );
   }
 
-  if (stripeSession.status === "open") {
+  if (session.status === "open") {
     return <Navigate to="/cart/checkout" />;
   }
 
-  if (stripeSession.status === "complete") {
+  if (session.status === "complete") {
     dispatch(clearCart());
     return (
       <section id="success">
@@ -92,14 +124,15 @@ const CheckoutReturn = () => {
               <IconCheck color="var(--mantine-color-violet-5)" />
             </Group>
             <Text>
-              Thanks for your order! A confirmation email will be sent to{" "}
-              <Anchor type="email" href={`mailto: ${customerEmail}`}>
-                {stripeSession.customerEmail}
+              Thanks for your order {session.customer_name.split("")[0]}! A
+              confirmation email will be sent to{" "}
+              <Anchor type="email" href={`mailto: ${session.customer_email}`}>
+                {session.customer_email}
               </Anchor>
               .
             </Text>
             <Grid></Grid>
-            <Anchor href="https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xUDljZXNIOUJpRnJ0NjFjKM7VwrEGMgZRyOp72u46LBbMC3RusXSl0zP6dwv-ZwCKhpdM6erPLipi9ZlQdcw_YaLSzuAwTkwItCfk">
+            <Anchor href={session.receipt_url} target="_blank">
               Click here to view your Stripe payment receipt.
             </Anchor>
           </Stack>
