@@ -90,8 +90,6 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
     const stripeSessionData = {
       line_items: session.line_items,
       id: session.id,
-      customer_email: session.customer_details.email,
-      customer_name: session.customer_details.name,
       status: session.status,
       shipping_name: session.shipping.name,
       shipping_address: session.shipping.address,

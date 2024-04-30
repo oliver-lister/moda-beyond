@@ -75,9 +75,9 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        const { session } = responseData;
+        const { stripeSessionData } = responseData;
         setIsLoading(false);
-        setSession(session);
+        setSession(stripeSessionData);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
