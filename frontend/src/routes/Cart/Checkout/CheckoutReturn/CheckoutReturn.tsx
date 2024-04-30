@@ -1,15 +1,28 @@
-import { Loader, Title, Text, Center } from "@mantine/core";
+import {
+  Loader,
+  Title,
+  Text,
+  Center,
+  Stack,
+  Group,
+  Button,
+  Anchor,
+  Grid,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../state/store.ts";
 import { clearCart } from "../../../../state/cart/cartSlice";
+import { IconCheck } from "@tabler/icons-react";
+import { Stripe } from "@stripe/stripe-js";
 
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [status, setStatus] = useState(null);
   const [customerEmail, setCustomerEmail] = useState("");
+  const [stripeSession, setStripeSession] = useState(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -30,10 +43,9 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        const { status, customer_email } = responseData;
+        const { session } = responseData;
         setIsLoading(false);
-        setStatus(status);
-        setCustomerEmail(customer_email);
+        setStripeSession(session);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
@@ -49,7 +61,7 @@ const CheckoutReturn = () => {
     fetchData();
   }, [sessionId]);
 
-  if (isLoading) {
+  if (isLoading || !stripeSession) {
     return (
       <Center mih="50vh">
         <Loader />
@@ -57,19 +69,41 @@ const CheckoutReturn = () => {
     );
   }
 
-  if (status === "open") {
+  if (stripeSession.status === "open") {
     return <Navigate to="/cart/checkout" />;
   }
 
-  if (status === "complete") {
+  if (stripeSession.status === "complete") {
     dispatch(clearCart());
     return (
       <section id="success">
-        <Title order={1}>Order Success</Title>
-        <Text>
-          We appreciate your business! A confirmation email will be sent to{" "}
-          {customerEmail}.
-        </Text>
+        <Stack>
+          <Group justify="space-between" align="center">
+            <Title order={1}>Checkout</Title>
+            <Button component={Link} to="/">
+              Continue Shopping
+            </Button>
+          </Group>
+          <Stack align="center">
+            <Group>
+              <Title order={2} c="violet">
+                Order Success
+              </Title>
+              <IconCheck color="var(--mantine-color-violet-5)" />
+            </Group>
+            <Text>
+              Thanks for your order! A confirmation email will be sent to{" "}
+              <Anchor type="email" href={`mailto: ${customerEmail}`}>
+                {stripeSession.customerEmail}
+              </Anchor>
+              .
+            </Text>
+            <Grid></Grid>
+            <Anchor href="https://pay.stripe.com/receipts/payment/CAcaFwoVYWNjdF8xUDljZXNIOUJpRnJ0NjFjKM7VwrEGMgZRyOp72u46LBbMC3RusXSl0zP6dwv-ZwCKhpdM6erPLipi9ZlQdcw_YaLSzuAwTkwItCfk">
+              Click here to view your Stripe payment receipt.
+            </Anchor>
+          </Stack>
+        </Stack>
       </section>
     );
   }

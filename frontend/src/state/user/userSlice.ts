@@ -99,15 +99,17 @@ export const updateUserAsync = createAsyncThunk(
         ...values,
         address: {
           street: values.street,
-          city: values.city,
-          zipCode: values.zipCode,
+          suburb: values.suburb,
+          state: values.state,
+          postcode: values.postcode,
         },
       };
 
       delete newUserDetails.honeypot;
-      delete newUserDetails.city;
+      delete newUserDetails.suburb;
       delete newUserDetails.street;
-      delete newUserDetails.zipCode;
+      delete newUserDetails.state;
+      delete newUserDetails.postcode;
 
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,

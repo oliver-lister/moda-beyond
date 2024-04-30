@@ -83,7 +83,7 @@ const ShopByBrand = () => {
         <Title order={3} ta="center">
           SHOP BY BRAND
         </Title>
-        <SimpleGrid cols={{ base: 1, xs: 2, sm: 3, md: 3, lg: 4 }}>
+        <SimpleGrid cols={{ base: 1, xs: 1, sm: 2, lg: 3, xl: 4 }}>
           {brandCardData.map((item, index) => (
             <BrandCard
               key={index}
