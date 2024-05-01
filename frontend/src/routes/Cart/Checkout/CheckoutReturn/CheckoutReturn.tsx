@@ -73,8 +73,8 @@ const CheckoutReturn = () => {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
         const { session } = responseData;
-        console.log(session);
         setSession(session);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
@@ -87,7 +87,7 @@ const CheckoutReturn = () => {
     getSession(sessionId);
   }, [sessionId]);
 
-  useEffect(() => {
+  const reDirectToReceipt = async () => {
     const getCharge = async (payment_intent: string) => {
       try {
         const response = await fetch(
@@ -117,7 +117,7 @@ const CheckoutReturn = () => {
 
     if (!session) return;
     getCharge(session.payment_intent);
-  }, [session]);
+  };
 
   if (isLoading || !session) {
     return (
@@ -185,20 +185,26 @@ const CheckoutReturn = () => {
                         key={index}
                         style={{
                           borderBottom: "1px solid var(--mantine-color-gray-3)",
-                          paddingBlock: "0.5rem",
+                          paddingBottom: "0.5rem",
                         }}
                       >
-                        <Text size="xs">
+                        <Text fz={{ base: "xs", sm: "sm", md: "md" }}>
                           {item.quantity}x {item.description}{" "}
                         </Text>
-                        <Text size="xs">${item.amount_total / 100}</Text>
+                        <Text fz={{ base: "xs", sm: "sm", md: "md" }}>
+                          ${item.amount_total / 100}
+                        </Text>
                       </Group>
                     );
                   })}
                 </Stack>
                 <Group justify="space-between">
-                  <Text fw={600}>Total</Text>
-                  <Text fw={600}>AUD${session.amount_total / 100}</Text>
+                  <Text fw={600} c="violet">
+                    Total
+                  </Text>
+                  <Text fw={600} c="violet">
+                    AUD${session.amount_total / 100}
+                  </Text>
                 </Group>
               </Stack>
               <Stack w="100%">
@@ -206,7 +212,7 @@ const CheckoutReturn = () => {
                 <SimpleGrid cols={{ base: 1, md: 2 }}>
                   <Stack>
                     <Box>
-                      <Text style={{ textDecoration: "underline" }}>
+                      <Text fw={600} c="violet">
                         Deliver to:
                       </Text>
                       <Text>{session.shipping_details.name}</Text>
@@ -231,9 +237,9 @@ const CheckoutReturn = () => {
                   </Center>
                 </SimpleGrid>
               </Stack>
-              <Anchor href={charge?.receipt_url} target="_blank">
-                Click here to view your Stripe payment receipt.
-              </Anchor>
+              <Button onClick={reDirectToReceipt}>
+                View your Stripe Payment Receipt
+              </Button>
             </Stack>
           </Container>
         </Stack>
