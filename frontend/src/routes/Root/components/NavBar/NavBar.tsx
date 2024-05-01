@@ -133,7 +133,7 @@ const NavBar = () => {
                   <AccountMenu auth={auth} user={user.data} />
                 ) : (
                   <Box className={styles.profile}>
-                    <Link to="/login">
+                    <Link to="/login" aria-label="Click to login">
                       <IconUserCircle
                         style={{ width: rem(32), height: rem(32) }}
                       />
@@ -147,6 +147,7 @@ const NavBar = () => {
                 to="/cart"
                 className={styles.cart}
                 onClick={() => opened && toggle()}
+                aria-label="Click to view cart"
               >
                 <ShoppingCartButton cartTotal={cart.totalItems} />
               </Link>

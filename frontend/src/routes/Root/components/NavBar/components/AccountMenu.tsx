@@ -38,7 +38,7 @@ const AccountMenu = ({ auth, user }: { auth: AuthState; user: UserProps }) => {
   return (
     <Menu>
       <Menu.Target>
-        <UnstyledButton>
+        <UnstyledButton aria-label="Click to reveal account menu options">
           <InitialsAvatar
             firstNameLetter={user.firstName[0]}
             lastNameLetter={user.lastName[0]}

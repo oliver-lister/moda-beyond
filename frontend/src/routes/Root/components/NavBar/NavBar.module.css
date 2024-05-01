@@ -6,6 +6,7 @@
 
 .burger {
   z-index: 11;
+  margin-inline: 1rem;
 }
 
 .logo {
@@ -33,25 +34,15 @@
   align-items: center;
   text-align: center;
   background-color: var(--mantine-color-dark-7);
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
 }
 
 .list_item {
   height: 100%;
 }
 
-@media (max-width: $mantine-breakpoint-lg) {
-  .list_item:not(.list_item:nth-of-type(1)) {
-    display: none;
-  }
-
-  .link.active::before {
-    display: none;
-  }
-
-  .list {
-    grid-template-columns: 1fr;
-  }
+.list_item:not(.list_item:nth-of-type(1)) {
+  display: none;
 }
 
 .link {
@@ -61,7 +52,7 @@
   font-weight: bold;
   color: var(--mantine-color-white);
   display: block;
-  padding: 1rem 2rem;
+  padding: 1rem 0.5rem;
   height: 100%;
   display: flex;
   align-items: center;
@@ -80,10 +71,29 @@
   left: 0;
   position: absolute;
   width: 100%;
+  display: none;
 }
 
 .link:hover {
   background-color: var(--mantine-color-dark-4);
+}
+
+@media (min-width: $mantine-breakpoint-lg) {
+  .link.active::before {
+    display: block;
+  }
+
+  .list_item:not(.list_item:nth-of-type(1)) {
+    display: block;
+  }
+
+  .link {
+    padding: 1rem 2rem;
+  }
+
+  .list {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
 }
 
 .profile svg,
