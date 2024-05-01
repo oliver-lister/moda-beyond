@@ -85,7 +85,7 @@ const CheckoutReturn = () => {
   }, [sessionId, dispatch]);
 
   useEffect(() => {
-    const getCharge = async (payment_intent: string) => {
+    const getReceiptUrl = async (payment_intent: string) => {
       try {
         const response = await fetch(
           `${
@@ -100,6 +100,7 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
+        console.log(responseData);
         const { receiptUrl } = responseData;
         setReceiptUrl(receiptUrl);
       } catch (err) {
@@ -110,7 +111,7 @@ const CheckoutReturn = () => {
     };
 
     if (!session) return;
-    getCharge(session.payment_intent);
+    getReceiptUrl(session.payment_intent);
   }, [session]);
 
   if (isLoading || !session) {

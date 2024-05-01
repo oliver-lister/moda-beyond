@@ -110,8 +110,8 @@ router.get('/get-charge/:paymentIntentId', async (req: Request, res: Response) =
 
     return res.status(200).json({
       success: true,
-      message: 'Charge object fetched successfully',
-      receiptUrl: paymentIntent.receipt_url,
+      message: 'Receipt url fetched successfull from latest charge on payment intent',
+      receiptUrl: paymentIntent.latest_charge.receipt_url,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
