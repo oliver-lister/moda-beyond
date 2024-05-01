@@ -97,4 +97,21 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/get-charge/:chargeId', async (req: Request, res: Response) => {
+  try {
+    const chargeId = req.params.chargeId;
+    if (!chargeId) return res.status(404).json({ success: false, error: 'chargeId not supplied', errorCode: 'NO_CHARGE_ID' });
+
+    const charge = await stripe.charges.retrieve(chargeId!, { expand: ['latest_charge'] });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Charge object fetched successfully',
+      charge: charge,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
 export default router;
