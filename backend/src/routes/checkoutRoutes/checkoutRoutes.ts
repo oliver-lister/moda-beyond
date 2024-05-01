@@ -69,7 +69,6 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       shipping_address_collection: {
         allowed_countries: ['AU'],
       },
-      billing_address_collection: 'required',
       customer_email: req.body.customer_email,
     });
 
@@ -95,8 +94,6 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
       customer_name: session.customer_details.name,
       shipping_name: session.shipping.name,
       shipping_address: session.shipping.address,
-      billing_name: session.billing_details.name,
-      billing_address: session.billing_details.address,
       receipt_url: session.receipt_url,
     };
 
@@ -104,6 +101,7 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
       success: true,
       message: 'Checkout session fetched successfully',
       stripeSessionData: stripeSessionData,
+      session: session,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
