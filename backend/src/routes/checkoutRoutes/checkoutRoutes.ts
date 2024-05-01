@@ -97,17 +97,17 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/get-charge/:PaymentIntentID', async (req: Request, res: Response) => {
+router.get('/get-charge/:paymentIntentId', async (req: Request, res: Response) => {
   try {
-    const PaymentIntentID = req.params.PaymentIntent;
-    if (!PaymentIntentID) return res.status(404).json({ success: false, error: 'chargeId not supplied', errorCode: 'NO_CHARGE_ID' });
+    const paymentIntentId = req.params.paymentIntentId;
+    if (!paymentIntentId) return res.status(404).json({ success: false, error: 'chargeId not supplied', errorCode: 'NO_CHARGE_ID' });
 
-    const pi = await stripe.PaymentIntent.retrieve(PaymentIntentID!, { expand: ['latest_charge'] });
+    const paymentIntent = await stripe.PaymentIntent.retrieve(paymentIntentId!, { expand: ['latest_charge'] });
 
     return res.status(200).json({
       success: true,
       message: 'Charge object fetched successfully',
-      charge: pi.charges.data[0],
+      charge: paymentIntent.charges.data[0],
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });

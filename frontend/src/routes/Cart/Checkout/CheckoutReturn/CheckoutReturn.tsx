@@ -43,11 +43,15 @@ interface StripeSessionData {
   payment_intent: string;
 }
 
+interface ChargeData {
+  receipt_url: string;
+}
+
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [session, setSession] = useState<StripeSessionData | null>(null);
-  const [charge, setCharge] = useState<Object | null>(null);
+  const [charge, setCharge] = useState<ChargeData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -69,7 +73,7 @@ const CheckoutReturn = () => {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
         const { session } = responseData;
-        setIsLoading(false);
+        console.log(session);
         setSession(session);
       } catch (err) {
         if (err instanceof Error) {
@@ -86,7 +90,6 @@ const CheckoutReturn = () => {
   useEffect(() => {
     const getCharge = async (payment_intent: string) => {
       try {
-        setIsLoading(true);
         const response = await fetch(
           `${
             import.meta.env.VITE_BACKEND_HOST
@@ -101,6 +104,7 @@ const CheckoutReturn = () => {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
         const { charge } = responseData;
+        console.log(charge);
         setIsLoading(false);
         setCharge(charge);
       } catch (err) {
@@ -223,7 +227,7 @@ const CheckoutReturn = () => {
                   </Center>
                 </SimpleGrid>
               </Stack>
-              <Anchor href={charge.receipt_url} target="_blank">
+              <Anchor href={charge?.receipt_url} target="_blank">
                 Click here to view your Stripe payment receipt.
               </Anchor>
             </Stack>
