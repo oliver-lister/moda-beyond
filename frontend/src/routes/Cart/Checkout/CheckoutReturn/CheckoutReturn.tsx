@@ -143,7 +143,7 @@ const CheckoutReturn = () => {
   }+${session.shipping_details.address.postal_code}`;
 
   if (session.status === "complete") {
-    dispatch(clearCart());
+    // dispatch(clearCart());
     return (
       <section id="success">
         <Stack>
@@ -153,7 +153,7 @@ const CheckoutReturn = () => {
               Continue Shopping
             </Button>
           </Group>
-          <Container size="xl">
+          <Container>
             <Stack align="center" gap="2rem">
               <Stack align="center">
                 <Group>
@@ -162,9 +162,6 @@ const CheckoutReturn = () => {
                   </Title>
                   <IconCheck color="var(--mantine-color-violet-5)" />
                 </Group>
-                <Text size="sm" c="gray">
-                  PAYMENT ID: {session.id}
-                </Text>
                 <Text>
                   Thanks for your order{" "}
                   {session.customer_details.name.split(" ")[0]}! A confirmation
@@ -180,18 +177,25 @@ const CheckoutReturn = () => {
               </Stack>
               <Stack w="100%">
                 <Title order={3}>Order Summary:</Title>
-                <Box>
-                  {session.line_items.data.map((item) => {
+                <Stack>
+                  {session.line_items.data.map((item, index) => {
                     return (
-                      <Group justify="space-between">
-                        <Text>
+                      <Group
+                        justify="space-between"
+                        key={index}
+                        style={{
+                          borderBottom: "1px solid var(--mantine-color-gray-3)",
+                          paddingBlock: "0.5rem",
+                        }}
+                      >
+                        <Text size="xs">
                           {item.quantity}x {item.description}{" "}
                         </Text>
-                        <Text>${item.amount_total / 100}</Text>
+                        <Text size="xs">${item.amount_total / 100}</Text>
                       </Group>
                     );
                   })}
-                </Box>
+                </Stack>
                 <Group justify="space-between">
                   <Text fw={600}>Total</Text>
                   <Text fw={600}>AUD${session.amount_total / 100}</Text>
@@ -217,7 +221,7 @@ const CheckoutReturn = () => {
                   </Stack>
                   <Center>
                     <iframe
-                      style={{ border: "none" }}
+                      style={{ border: "none", borderRadius: "0.5rem" }}
                       loading="lazy"
                       width="100%"
                       src={`https://www.google.com/maps/embed/v1/place?key=${
