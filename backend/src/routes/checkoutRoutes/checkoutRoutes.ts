@@ -85,7 +85,7 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
     const sessionId = req.params.sessionId;
     if (!sessionId) return res.status(404).json({ success: false, error: 'Session ID not supplied', errorCode: 'NO_SESSION_ID' });
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items', 'latest_charge'] });
+    const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items'] });
 
     return res.status(200).json({
       success: true,
