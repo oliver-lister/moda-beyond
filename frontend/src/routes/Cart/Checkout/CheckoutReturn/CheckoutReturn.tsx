@@ -40,13 +40,14 @@ interface StripeSessionData {
   status: "complete" | "open";
   shipping_details: { address: Address; name: string };
   amount_total: number;
-  receipt_url: string;
+  payment_intent: string;
 }
 
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [session, setSession] = useState<StripeSessionData | null>(null);
+  const [charge, setCharge] = useState<Object | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -68,7 +69,6 @@ const CheckoutReturn = () => {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
         const { session } = responseData;
-        console.log(session);
         setIsLoading(false);
         setSession(session);
       } catch (err) {
@@ -78,13 +78,42 @@ const CheckoutReturn = () => {
         }
       }
     };
-    const fetchData = async () => {
-      if (!sessionId) return;
-      await getSession(sessionId);
+
+    if (!sessionId) return;
+    getSession(sessionId);
+  }, [sessionId]);
+
+  useEffect(() => {
+    const getCharge = async (payment_intent: string) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${
+            import.meta.env.VITE_BACKEND_HOST
+          }/checkout/get-charge/${payment_intent}`,
+          {
+            method: "GET",
+          }
+        );
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+        }
+        const { charge } = responseData;
+        setIsLoading(false);
+        setCharge(charge);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.log("Error: " + err.message);
+          setIsLoading(false);
+        }
+      }
     };
 
-    fetchData();
-  }, [sessionId]);
+    if (!session) return;
+    getCharge(session.payment_intent);
+  }, [session]);
 
   if (isLoading || !session) {
     return (
@@ -120,7 +149,7 @@ const CheckoutReturn = () => {
               Continue Shopping
             </Button>
           </Group>
-          <Container>
+          <Container size="xl">
             <Stack align="center" gap="2rem">
               <Stack align="center">
                 <Group>
@@ -184,6 +213,7 @@ const CheckoutReturn = () => {
                   </Stack>
                   <Center>
                     <iframe
+                      style={{ border: "none" }}
                       loading="lazy"
                       width="100%"
                       src={`https://www.google.com/maps/embed/v1/place?key=${
@@ -193,7 +223,7 @@ const CheckoutReturn = () => {
                   </Center>
                 </SimpleGrid>
               </Stack>
-              <Anchor href={session.receipt_url} target="_blank">
+              <Anchor href={charge.receipt_url} target="_blank">
                 Click here to view your Stripe payment receipt.
               </Anchor>
             </Stack>
