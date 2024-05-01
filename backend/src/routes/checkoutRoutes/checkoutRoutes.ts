@@ -104,16 +104,14 @@ router.get('/get-charge/:paymentIntentId', async (req: Request, res: Response) =
 
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId!, { expand: ['latest_charge'] });
 
-    console.log(paymentIntent);
-
-    if (!paymentIntent || !paymentIntent.charges || paymentIntent.charges.data.length === 0) {
-      return res.status(404).json({ success: false, error: 'Charge not found for this payment intent', errorCode: 'CHARGE_NOT_FOUND' });
+    if (!paymentIntent) {
+      return res.status(404).json({ success: false, error: 'Payment intent not found', errorCode: 'PAYMENT_INTENT_NOT_FOUND' });
     }
 
     return res.status(200).json({
       success: true,
       message: 'Charge object fetched successfully',
-      charge: paymentIntent.charges.data[0],
+      receiptUrl: paymentIntent.receipt_url,
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });

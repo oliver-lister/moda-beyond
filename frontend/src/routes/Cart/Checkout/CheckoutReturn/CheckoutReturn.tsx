@@ -43,15 +43,11 @@ interface StripeSessionData {
   payment_intent: string;
 }
 
-interface ChargeData {
-  receipt_url: string;
-}
-
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [session, setSession] = useState<StripeSessionData | null>(null);
-  const [charge, setCharge] = useState<ChargeData | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -75,6 +71,7 @@ const CheckoutReturn = () => {
         const { session } = responseData;
         setSession(session);
         setIsLoading(false);
+        dispatch(clearCart());
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
@@ -85,9 +82,9 @@ const CheckoutReturn = () => {
 
     if (!sessionId) return;
     getSession(sessionId);
-  }, [sessionId]);
+  }, [sessionId, dispatch]);
 
-  const reDirectToReceipt = async () => {
+  useEffect(() => {
     const getCharge = async (payment_intent: string) => {
       try {
         const response = await fetch(
@@ -103,21 +100,18 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        const { charge } = responseData;
-        console.log(charge);
-        setIsLoading(false);
-        setCharge(charge);
+        const { receiptUrl } = responseData;
+        setReceiptUrl(receiptUrl);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
-          setIsLoading(false);
         }
       }
     };
 
     if (!session) return;
     getCharge(session.payment_intent);
-  };
+  }, [session]);
 
   if (isLoading || !session) {
     return (
@@ -143,7 +137,6 @@ const CheckoutReturn = () => {
   }+${session.shipping_details.address.postal_code}`;
 
   if (session.status === "complete") {
-    // dispatch(clearCart());
     return (
       <section id="success">
         <Stack>
@@ -237,9 +230,11 @@ const CheckoutReturn = () => {
                   </Center>
                 </SimpleGrid>
               </Stack>
-              <Button onClick={reDirectToReceipt}>
-                View your Stripe Payment Receipt
-              </Button>
+              {receiptUrl ? (
+                <Anchor href={receiptUrl} target="_blank">
+                  View your Stripe Payment Receipt
+                </Anchor>
+              ) : null}
             </Stack>
           </Container>
         </Stack>
