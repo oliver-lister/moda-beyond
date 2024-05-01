@@ -85,17 +85,7 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
     const sessionId = req.params.sessionId;
     if (!sessionId) return res.status(404).json({ success: false, error: 'Session ID not supplied', errorCode: 'NO_SESSION_ID' });
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items'] });
-
-    // const stripeSessionData = {
-    //   line_items: session.line_items.data,
-    //   id: session.id,
-    //   status: session.status,
-    //   customer_name: session.customer_details.name,
-    //   shipping_name: session.shipping.name,
-    //   shipping_address: session.shipping.address,
-    //   receipt_url: session.receipt_url,
-    // };
+    const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items', 'latest_charge'] });
 
     return res.status(200).json({
       success: true,

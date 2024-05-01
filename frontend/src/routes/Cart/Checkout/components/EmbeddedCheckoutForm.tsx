@@ -9,9 +9,7 @@ import { DeliveryData } from "../../Cart";
 import { getDateInFuture } from "../../cartUtils.ts";
 import { UserState } from "../../../../state/user/userSlice.ts";
 
-const stripePromise = loadStripe(
-  `pk_test_51P9cesH9BiFrt61cpSPsP4N7SgM6iRQl5TQyLjgHMJG5afyvSj1N6ERbtxApQO2ENdQ72EwMksArhXASm4kSPxPA00covoS7Bt`
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const EmbeddedCheckoutForm = ({
   items,

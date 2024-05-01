@@ -7,7 +7,9 @@ import {
   Group,
   Button,
   Anchor,
-  Grid,
+  SimpleGrid,
+  Container,
+  Box,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
@@ -16,34 +18,28 @@ import { AppDispatch } from "../../../../state/store.ts";
 import { clearCart } from "../../../../state/cart/cartSlice";
 import { IconCheck } from "@tabler/icons-react";
 
+interface LineItem {
+  amount_total: number;
+  quantity: number;
+  description: string;
+}
+
+interface Address {
+  city: string;
+  country: string;
+  line1: string;
+  line2: string;
+  postal_code: string;
+  state: string;
+}
+
 interface StripeSessionData {
-  line_items: {
-    amount_total: number;
-    quantity: number;
-    description: string;
-  }[];
+  line_items: { data: LineItem[] };
   id: string;
-  customer_email: string;
-  customer_name: string;
+  customer_details: { email: string; name: string };
   status: "complete" | "open";
-  shipping_name: string;
-  shipping_address: {
-    city: string;
-    country: string;
-    line1: string;
-    line2: string;
-    postal_code: string;
-    state: string;
-  };
-  billing_name: string;
-  billing_address: {
-    city: string;
-    country: string;
-    line1: string;
-    line2: string;
-    postal_code: string;
-    state: string;
-  };
+  shipping_details: { address: Address; name: string };
+  amount_total: number;
   receipt_url: string;
 }
 
@@ -105,6 +101,14 @@ const CheckoutReturn = () => {
     return <Navigate to="/cart/checkout" />;
   }
 
+  const GoogleMapsAPIQuery = `${session.shipping_details.address.line1
+    .split(" ")
+    .join("+")}+${session.shipping_details.address.line2
+    .split(" ")
+    .join("+")},${session.shipping_details.address.city}+${
+    session.shipping_details.address.state
+  }+${session.shipping_details.address.postal_code}`;
+
   if (session.status === "complete") {
     dispatch(clearCart());
     return (
@@ -116,26 +120,84 @@ const CheckoutReturn = () => {
               Continue Shopping
             </Button>
           </Group>
-          <Stack align="center">
-            <Group>
-              <Title order={2} c="violet">
-                Order Success
-              </Title>
-              <IconCheck color="var(--mantine-color-violet-5)" />
-            </Group>
-            <Text>
-              Thanks for your order {session.customer_name.split("")[0]}! A
-              confirmation email will be sent to{" "}
-              <Anchor type="email" href={`mailto: ${session.customer_email}`}>
-                {session.customer_email}
+          <Container>
+            <Stack align="center" gap="2rem">
+              <Stack align="center">
+                <Group>
+                  <Title order={2} c="violet">
+                    Order Success
+                  </Title>
+                  <IconCheck color="var(--mantine-color-violet-5)" />
+                </Group>
+                <Text size="sm" c="gray">
+                  PAYMENT ID: {session.id}
+                </Text>
+                <Text>
+                  Thanks for your order{" "}
+                  {session.customer_details.name.split(" ")[0]}! A confirmation
+                  email will be sent to{" "}
+                  <Anchor
+                    type="email"
+                    href={`mailto: ${session.customer_details.email}`}
+                  >
+                    {session.customer_details.email}
+                  </Anchor>
+                  .
+                </Text>
+              </Stack>
+              <Stack w="100%">
+                <Title order={3}>Order Summary:</Title>
+                <Box>
+                  {session.line_items.data.map((item) => {
+                    return (
+                      <Group justify="space-between">
+                        <Text>
+                          {item.quantity}x {item.description}{" "}
+                        </Text>
+                        <Text>${item.amount_total / 100}</Text>
+                      </Group>
+                    );
+                  })}
+                </Box>
+                <Group justify="space-between">
+                  <Text fw={600}>Total</Text>
+                  <Text fw={600}>AUD${session.amount_total / 100}</Text>
+                </Group>
+              </Stack>
+              <Stack w="100%">
+                <Title order={3}>Shipping Details:</Title>
+                <SimpleGrid cols={{ base: 1, md: 2 }}>
+                  <Stack>
+                    <Box>
+                      <Text style={{ textDecoration: "underline" }}>
+                        Deliver to:
+                      </Text>
+                      <Text>{session.shipping_details.name}</Text>
+                      <Text>{session.shipping_details.address.line1}</Text>
+                      {session.shipping_details.address.line2 ? (
+                        <Text>{session.shipping_details.address.line2}</Text>
+                      ) : null}
+                      <Text>
+                        {`${session.shipping_details.address.city}, ${session.shipping_details.address.state} ${session.shipping_details.address.postal_code}`}
+                      </Text>
+                    </Box>
+                  </Stack>
+                  <Center>
+                    <iframe
+                      loading="lazy"
+                      width="100%"
+                      src={`https://www.google.com/maps/embed/v1/place?key=${
+                        import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+                      }&q=${GoogleMapsAPIQuery}`}
+                    />
+                  </Center>
+                </SimpleGrid>
+              </Stack>
+              <Anchor href={session.receipt_url} target="_blank">
+                Click here to view your Stripe payment receipt.
               </Anchor>
-              .
-            </Text>
-            <Grid></Grid>
-            <Anchor href={session.receipt_url} target="_blank">
-              Click here to view your Stripe payment receipt.
-            </Anchor>
-          </Stack>
+            </Stack>
+          </Container>
         </Stack>
       </section>
     );
