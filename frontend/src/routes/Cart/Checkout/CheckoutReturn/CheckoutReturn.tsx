@@ -50,7 +50,7 @@ interface StripeSessionData {
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const [stripeSession, setSession] = useState<StripeSessionData | null>(null);
+  const [session, setSession] = useState<StripeSessionData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -71,10 +71,10 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        const { stripeSessionData, session } = responseData;
+        const { session } = responseData;
         console.log(session);
         setIsLoading(false);
-        setSession(stripeSessionData);
+        setSession(session);
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);
@@ -90,7 +90,7 @@ const CheckoutReturn = () => {
     fetchData();
   }, [sessionId]);
 
-  if (isLoading || !stripeSession) {
+  if (isLoading || !session) {
     return (
       <Center mih="50vh">
         <Stack align="center">
@@ -101,11 +101,11 @@ const CheckoutReturn = () => {
     );
   }
 
-  if (stripeSession.status === "open") {
+  if (session.status === "open") {
     return <Navigate to="/cart/checkout" />;
   }
 
-  if (stripeSession.status === "complete") {
+  if (session.status === "complete") {
     dispatch(clearCart());
     return (
       <section id="success">
@@ -124,18 +124,15 @@ const CheckoutReturn = () => {
               <IconCheck color="var(--mantine-color-violet-5)" />
             </Group>
             <Text>
-              Thanks for your order {stripeSession.customer_name.split("")[0]}!
-              A confirmation email will be sent to{" "}
-              <Anchor
-                type="email"
-                href={`mailto: ${stripeSession.customer_email}`}
-              >
-                {stripeSession.customer_email}
+              Thanks for your order {session.customer_name.split("")[0]}! A
+              confirmation email will be sent to{" "}
+              <Anchor type="email" href={`mailto: ${session.customer_email}`}>
+                {session.customer_email}
               </Anchor>
               .
             </Text>
             <Grid></Grid>
-            <Anchor href={stripeSession.receipt_url} target="_blank">
+            <Anchor href={session.receipt_url} target="_blank">
               Click here to view your Stripe payment receipt.
             </Anchor>
           </Stack>

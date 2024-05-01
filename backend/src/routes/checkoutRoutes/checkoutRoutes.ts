@@ -87,20 +87,19 @@ router.get('/get-session/:sessionId', async (req: Request, res: Response) => {
 
     const session = await stripe.checkout.sessions.retrieve(sessionId!, { expand: ['line_items'] });
 
-    const stripeSessionData = {
-      line_items: session.line_items.data,
-      id: session.id,
-      status: session.status,
-      customer_name: session.customer_details.name,
-      shipping_name: session.shipping.name,
-      shipping_address: session.shipping.address,
-      receipt_url: session.receipt_url,
-    };
+    // const stripeSessionData = {
+    //   line_items: session.line_items.data,
+    //   id: session.id,
+    //   status: session.status,
+    //   customer_name: session.customer_details.name,
+    //   shipping_name: session.shipping.name,
+    //   shipping_address: session.shipping.address,
+    //   receipt_url: session.receipt_url,
+    // };
 
     return res.status(200).json({
       success: true,
       message: 'Checkout session fetched successfully',
-      stripeSessionData: stripeSessionData,
       session: session,
     });
   } catch (err: any) {
