@@ -130,9 +130,11 @@ const CheckoutReturn = () => {
 
   const GoogleMapsAPIQuery = `${session.shipping_details.address.line1
     .split(" ")
-    .join("+")}+${session.shipping_details.address.line2
-    .split(" ")
-    .join("+")},${session.shipping_details.address.city}+${
+    .join("+")}+${
+    session.shipping_details.address.line2
+      ? session.shipping_details.address.line2.split(" ").join("+")
+      : null
+  },${session.shipping_details.address.city}+${
     session.shipping_details.address.state
   }+${session.shipping_details.address.postal_code}`;
 
@@ -156,7 +158,9 @@ const CheckoutReturn = () => {
                   <IconCheck color="var(--mantine-color-violet-5)" />
                 </Group>
                 <Text>
-                  Thanks for your order! A confirmation email will be sent to{" "}
+                  Thanks for your order{" "}
+                  {session.customer_details.name.split(" ")[0]}! A confirmation
+                  email will be sent to{" "}
                   <Anchor
                     type="email"
                     href={`mailto: ${session.customer_details.email}`}
