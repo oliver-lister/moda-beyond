@@ -156,9 +156,7 @@ const CheckoutReturn = () => {
                   <IconCheck color="var(--mantine-color-violet-5)" />
                 </Group>
                 <Text>
-                  Thanks for your order{" "}
-                  {session.customer_details.name.split(" ")[0]}! A confirmation
-                  email will be sent to{" "}
+                  Thanks for your order! A confirmation email will be sent to{" "}
                   <Anchor
                     type="email"
                     href={`mailto: ${session.customer_details.email}`}
