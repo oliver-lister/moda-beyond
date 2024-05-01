@@ -100,7 +100,6 @@ const CheckoutReturn = () => {
         if (!response.ok) {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
-        console.log(responseData);
         const { receiptUrl } = responseData;
         setReceiptUrl(receiptUrl);
       } catch (err) {

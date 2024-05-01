@@ -19,6 +19,7 @@ import {
   getDateInFuture,
   useCartTotalQuantity,
   useCartSum,
+  roundToTwoDec,
 } from "../cartUtils.ts";
 import { useCartOutletContext } from "../hooks/useCartOutletContext.ts";
 import { DeliveryData } from "../Cart.tsx";
@@ -89,6 +90,7 @@ const CartOverview = () => {
             cartSum={cartSum}
             cartSumWithDelivery={cartSumWithDelivery}
             cartTotalQuantity={cartTotalQuantity}
+            roundToTwoDec={roundToTwoDec}
             isLoading={auth.isLoading}
             deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
           />

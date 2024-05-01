@@ -18,6 +18,7 @@ const OrderSummary = ({
   deliveryFee,
   isLoading,
   auth,
+  roundToTwoDec,
 }: {
   cartSumWithDelivery: number;
   cartTotalQuantity: number;
@@ -25,6 +26,7 @@ const OrderSummary = ({
   deliveryFee: number;
   isLoading: boolean;
   auth: AuthState;
+  roundToTwoDec: (num: number) => number;
 }) => {
   return (
     <Stack className={styles.container}>
@@ -49,7 +51,7 @@ const OrderSummary = ({
             </Group>
             <Group justify="space-between" className={styles.total}>
               <Text>Total</Text>
-              <Text>${cartSumWithDelivery}</Text>
+              <Text>${roundToTwoDec(cartSumWithDelivery)}</Text>
             </Group>
             <Button
               component={Link}
