@@ -5,21 +5,17 @@ import {
 } from "@stripe/react-stripe-js";
 import { CartItemProps } from "../../../../types/UserProps";
 import { useNavigate } from "react-router-dom";
-import { DeliveryData } from "../../Cart";
-import { getDateInFuture } from "../../cartUtils.ts";
 import { UserState } from "../../../../state/user/userSlice.ts";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const EmbeddedCheckoutForm = ({
   items,
-  delivery,
-  deliveryData,
+  selectedDelivery,
   user,
 }: {
   items: CartItemProps[];
-  delivery: string;
-  deliveryData: DeliveryData;
+  selectedDelivery: { fee: number; est: string; label: string };
   user: UserState;
 }) => {
   const navigate = useNavigate();
@@ -36,14 +32,8 @@ const EmbeddedCheckoutForm = ({
           },
           body: JSON.stringify({
             items: items,
-            delivery: {
-              fee: deliveryData[delivery as keyof DeliveryData].fee,
-              label: deliveryData[delivery as keyof DeliveryData].label,
-              est: getDateInFuture(
-                deliveryData[delivery as keyof DeliveryData].estDays
-              ),
-              customer_email: user.data?.email,
-            },
+            delivery: selectedDelivery,
+            customer_email: user.data ? user.data.email : undefined,
           }),
         }
       );

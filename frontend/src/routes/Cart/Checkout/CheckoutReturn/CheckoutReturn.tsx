@@ -17,40 +17,18 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../state/store.ts";
 import { clearCart } from "../../../../state/cart/cartSlice";
 import { IconCheck } from "@tabler/icons-react";
-
-interface LineItem {
-  amount_total: number;
-  quantity: number;
-  description: string;
-}
-
-interface Address {
-  city: string;
-  country: string;
-  line1: string;
-  line2: string;
-  postal_code: string;
-  state: string;
-}
-
-interface StripeSessionData {
-  line_items: { data: LineItem[] };
-  id: string;
-  customer_details: { email: string; name: string };
-  status: "complete" | "open";
-  shipping_details: { address: Address; name: string };
-  amount_total: number;
-  payment_intent: string;
-}
+import { StripeSessionData } from "./CheckoutReturnTypes.ts";
 
 const CheckoutReturn = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
+
   const [session, setSession] = useState<StripeSessionData | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const dispatch = useDispatch<AppDispatch>();
 
+  // Retrieve Session object from Stripe
   useEffect(() => {
     const getSession = async (sessionId: string) => {
       try {
@@ -84,6 +62,7 @@ const CheckoutReturn = () => {
     getSession(sessionId);
   }, [sessionId, dispatch]);
 
+  // Retrieve receipt url from Stripe API
   useEffect(() => {
     const getReceiptUrl = async (payment_intent: string) => {
       try {
@@ -124,10 +103,12 @@ const CheckoutReturn = () => {
     );
   }
 
+  // If session was cancelled or had a problem, redirect to cart
   if (session.status === "open") {
-    return <Navigate to="/cart/checkout" />;
+    return <Navigate to="/cart" />;
   }
 
+  // Creating query string for Google Maps embedded API
   const GoogleMapsAPIQuery = `${session.shipping_details.address.line1
     .split(" ")
     .join("+")}+${
