@@ -134,7 +134,7 @@ const EditProductForm = ({ product }: { product: ProductProps }) => {
       const availableColors = await findAvailableColors(availableColorHexes);
 
       const response = await fetch(
-        `http://localhost:3000/products/edit/${product._id}`,
+        `${import.meta.env.VITE_BACKEND_HOST}/products/edit/${product._id}`,
         {
           method: "PATCH",
           headers: {

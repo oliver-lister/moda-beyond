@@ -18,14 +18,14 @@ import { Link } from "react-router-dom";
 const Dashboard = () => {
   const dashMenu = [
     {
-      label: "Add Product",
-      path: "/addproduct",
-      left: <IconTablePlus />,
-    },
-    {
       label: "View Products",
       path: "/viewproducts",
       left: <IconZoomScan />,
+    },
+    {
+      label: "Add Product",
+      path: "/addproduct",
+      left: <IconTablePlus />,
     },
     {
       label: "Edit Product",

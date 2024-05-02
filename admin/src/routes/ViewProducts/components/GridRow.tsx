@@ -28,7 +28,7 @@ const GridRow = ({
       <GridCol span={3}>
         <Box className={styles.images_inner}>
           <Image
-            src={product.images[0]}
+            src={`${import.meta.env.VITE_BACKEND_HOST}${product.images[0]}`}
             maw={150}
             onClick={() => openImages(product)}
             className={styles.image}

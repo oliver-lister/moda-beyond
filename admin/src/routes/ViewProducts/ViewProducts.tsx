@@ -1,45 +1,35 @@
-import { Box, Stack, Title, Text, Image, Grid, GridCol } from "@mantine/core";
+import {
+  Box,
+  Stack,
+  Title,
+  Text,
+  Image,
+  Grid,
+  GridCol,
+  Center,
+  Loader,
+  TextInput,
+  Group,
+  Button,
+} from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { Carousel } from "@mantine/carousel";
-import { useEffect, useState } from "react";
 import { ProductProps } from "../AddProduct/components/AddProductForm";
 import GridHeader from "./components/GridHeader";
 import GridRow from "./components/GridRow";
+import { useProducts } from "../../hooks/useProducts";
+import { IconSearch } from "@tabler/icons-react";
 
 const ViewProducts = () => {
-  const [products, setProducts] = useState<ProductProps[]>([]);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/products/fetchproducts",
-          {
-            method: "GET",
-          }
-        );
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-        }
-
-        const { products } = responseData;
-
-        setProducts(products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  const { products, isLoading } = useProducts();
 
   const removeProduct = async (_id: ProductProps["_id"]) => {
     try {
       if (!_id) throw new Error("Product _id is undefined");
       const response = await fetch(
-        `http://localhost:3000/products/remove/${_id.toString()}`,
+        `${
+          import.meta.env.VITE_BACKEND_HOST
+        }/products/remove/${_id.toString()}`,
         {
           method: "DELETE",
         }
@@ -64,7 +54,7 @@ const ViewProducts = () => {
             <Carousel withIndicators>
               {clickedProduct.images.map((img, index) => (
                 <Carousel.Slide key={index}>
-                  <Image src={img} />
+                  <Image src={`${import.meta.env.VITE_BACKEND_HOST}${img}`} />
                 </Carousel.Slide>
               ))}
             </Carousel>
@@ -81,6 +71,13 @@ const ViewProducts = () => {
       <Box>
         <Title>View Products</Title>
         <Text c="gray.8">Review products in the MongoDB Database</Text>
+      </Box>
+      <Box>
+        <Group grow justify="flex-start" align="flex-end" gap={0}>
+          <TextInput label="Search the Database" leftSection={<IconSearch />} />
+          <Button>Search</Button>
+        </Group>
+        <Text>Searching for: </Text>
       </Box>
       <Box>
         <Grid
@@ -101,19 +98,29 @@ const ViewProducts = () => {
             overflowY: "auto",
           }}
         >
-          {products.length > 0 ? (
-            products.map((product: ProductProps) => (
-              <GridRow
-                product={product}
-                openImages={openImages}
-                removeProduct={removeProduct}
-                key={product._id}
-              />
-            ))
+          {!isLoading ? (
+            products.length > 0 ? (
+              products.map((product: ProductProps) => (
+                <GridRow
+                  product={product}
+                  openImages={openImages}
+                  removeProduct={removeProduct}
+                  key={product._id}
+                />
+              ))
+            ) : (
+              <GridCol span={12}>
+                <Text style={{ textAlign: "center" }}>
+                  No products in database.
+                </Text>
+              </GridCol>
+            )
           ) : (
             <GridCol span={12}>
               <Text style={{ textAlign: "center" }}>
-                No products in database.
+                <Center mih="60vh">
+                  <Loader />
+                </Center>
               </Text>
             </GridCol>
           )}

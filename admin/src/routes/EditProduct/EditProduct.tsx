@@ -4,55 +4,25 @@ import { useEffect, useState } from "react";
 import EditProductForm from "./components/EditProductForm";
 import { ProductProps } from "./components/EditProductForm";
 import { useNavigate } from "react-router-dom";
+import { useProducts } from "../../hooks/useProducts";
 
 const EditProduct = () => {
   const { productId }: Readonly<Params<string>> | undefined = useParams();
   const [productToEdit, setProductToEdit] = useState<ProductProps | null>(null);
-  const [productList, setProductList] = useState<ProductProps[] | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { products, isLoading } = useProducts();
   const navigate = useNavigate();
-
-  // Fetch all products on startup
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          "http://localhost:3000/products/fetchproducts",
-          {
-            method: "GET",
-          }
-        );
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-        }
-
-        const { products } = responseData;
-        setProductList(products);
-        setIsLoading(false);
-      } catch (err) {
-        if (err instanceof Error)
-          console.error("Error fetching products:", err.message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   // Assign Product to Edit based on Url Params
   useEffect(() => {
-    if (!productList) return;
+    if (!products) return;
 
-    const product = productList.find((product) => product._id === productId);
+    const product = products.find((product) => product._id === productId);
     if (product) {
       setProductToEdit(product);
     } else {
       setProductToEdit(null);
     }
-  }, [productId, productList]);
+  }, [productId, products]);
 
   const handleChange = (value: string) => {
     const newProductId = value.split("| ")[1];
@@ -66,10 +36,10 @@ const EditProduct = () => {
         <Text c="gray.8">Edit a product in the MongoDB Database</Text>
       </Box>
       <Stack>
-        {productList ? (
+        {products ? (
           <Select
             placeholder="Please search for a product."
-            data={productList.map(
+            data={products.map(
               (product) => `${product.brand} ${product.name} | ${product._id}`
             )}
             searchable

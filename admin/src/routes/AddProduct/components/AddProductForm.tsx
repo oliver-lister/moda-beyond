@@ -144,7 +144,7 @@ const AddProductForm = () => {
         formData.append("productImg", image, image.name);
       });
 
-      const response = await fetch("http://localhost:3000/products/add", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/products/add`, {
         method: "POST",
         body: formData,
       });

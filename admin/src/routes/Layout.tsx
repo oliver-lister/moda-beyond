@@ -3,9 +3,43 @@ import { AppShell, Burger, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import NavBar from "../components/NavBar/NavBar";
 import styles from "./layout.module.css";
+import { useEffect, useState } from "react";
+import { ProductProps } from "./AddProduct/components/AddProductForm";
 
 const Layout = () => {
   const [opened, { toggle }] = useDisclosure();
+  const [products, setProducts] = useState<ProductProps[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Fetch all products on startup and supply to outlet context
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_HOST}/products/fetch`,
+          {
+            method: "GET",
+          }
+        );
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
+        }
+
+        const { data } = responseData;
+
+        setProducts(data);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <>
@@ -35,7 +69,7 @@ const Layout = () => {
           <NavBar toggle={toggle} />
         </AppShell.Navbar>
         <AppShell.Main>
-          <Outlet />
+          <Outlet context={{ products: products, isLoading: isLoading }} />
         </AppShell.Main>
         <AppShell.Footer></AppShell.Footer>
       </AppShell>

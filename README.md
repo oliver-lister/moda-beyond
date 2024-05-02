@@ -1,9 +1,11 @@
 # MØDA-BEYOND E-Commerce Store
+
 A full-stack e-commerce store.
 
 Brief description of what the website does and its purpose.
 
-Table of Contents
+## Table of Contents
+
 Features
 Installation
 Usage
@@ -13,37 +15,34 @@ License
 Features
 List of key features of the website.
 
-## Installation
+## Setup
 
-### Backend
-To run the backend locally, cd into the backend folder, install the dependencies and then run the server in development mode.
+### Run Frontend Locally using the Render-hosted Backend
 
-    cd backend
-    npm i && npm run dev
+Unfortunately you <b>cannot</b> run the backend locally at full functionality without the keys and secrets in my backend's .env file which is ignored by git.
 
+To avoid problems, I recommend running the frontend in production mode via the below commands:
 
+    cd frontend // change directory into frontend folder
+    npm install // install dependencies
+    npm run build // run build
+    npx vite preview // expose the build on a localhost port for viewing
 
-### Frontend
-To run the client-side website locally, follow the below setups clone GitHub repository. 
-
-Point your terminal to the frontend folder, install the dependencies and then run the program in development mode. 
-
-    cd frontend
-    npm i && npm run dev
-
-
+This will connect your frontend running on your localhost server with the backend hosted by <a href="https://render.com/">render</a>.
 
 _Note: The frontend is currently pointed to a backend hosted by <a href="https://render.com/">render</a> on a free instance. This means it will spin down with inactivity, which can delay requests by 50 seconds or more. Please allow a minute for the backend to warmup on start-up before testing any functionality._
 
-### Admin
-To run the admin custom CMS locally, cd into the admin folder, install the dependencies and then run the program in development mode. 
+### Admin (Custom CMS)
 
-    cd admin
-    npm i && npm run dev
+The same situation presents itself with the admin frontend, again please run it in production mode via the below commands
 
+    cd admin // change directory into frontend folder
+    npm install // install dependencies
+    npm run build // run build
+    npx vite preview // expose the build on a localhost port for viewing
 
-    
-Usage
+## Usage
+
 Instructions on how to use the website, including any user interfaces or commands.
 
 Technologies Used
@@ -56,7 +55,9 @@ License
 Information about the license under which the website is distributed, including any terms and conditions.
 
 ## Authors
+
 Oliver Lister - Creator
 
 ## Acknowledgements
+
 Any acknowledgements or credits for third-party resources, libraries, or inspiration.
