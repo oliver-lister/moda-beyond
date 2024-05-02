@@ -5,9 +5,6 @@
 build/
 out/
 
-# Ignore environment variables file (if applicable)
-.env
-
 # Ignore production build files
 *.log
 *.pid
@@ -21,6 +18,10 @@ out/
 # Ignore backend build artifacts (if using a specific build tool)
 /backend/build
 /backend/dist
+
+# Ignore admin build artifacts (if using a specific build tool)
+/admin/build
+/admin/dist
 
 # Ignore dependency lock files
 yarn.lock

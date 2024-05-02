@@ -28,7 +28,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
     );
   }
 
-  if (!isLoading && !products && error) {
+  if (!isLoading && error) {
     return (
       <Center h="60vh">
         <Text fw={600}>{error}</Text>

@@ -13,6 +13,13 @@ describe("Item", () => {
         price={20}
         lastPrice={35}
         images={["", ""]}
+        category={"men"}
+        availableSizes={[]}
+        availableColors={[]}
+        description={""}
+        material={""}
+        date={new Date()}
+        available={false}
       />
     );
 
@@ -44,6 +51,13 @@ describe("Item", () => {
         price={20}
         lastPrice={15}
         images={["", ""]}
+        category={"men"}
+        availableSizes={[]}
+        availableColors={[]}
+        description={""}
+        material={""}
+        date={new Date()}
+        available={false}
       />
     );
     expect(screen.getByTestId("item-container")).not.toHaveTextContent("Sale");

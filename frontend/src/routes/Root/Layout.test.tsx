@@ -5,7 +5,6 @@ import { setupStore } from "../../state/store";
 import { setCart } from "../../state/cart/cartSlice";
 import UserProps from "../../types/UserProps";
 import { mockedCartItems } from "../../testing-utils/mocks/mockedCartItems";
-import React from "react";
 
 describe("Layout", () => {
   afterEach(() => {
