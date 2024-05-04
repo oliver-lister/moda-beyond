@@ -6,10 +6,10 @@ This project is a personal portfolio project, and not intended for any commerica
 
 ## Table of Contents
 
-- Setup
-- Technologies Used
-- Features
-- Acknowledgements
+1. <a href=#setup>Setup</a>
+2. <a href=#technologies-used>Technologies Used</a>
+3. <a href=#features>Features</a>
+4. <a href=#acknowledgements>Acknowledgements</a>
 
 ## Setup
 
@@ -75,7 +75,86 @@ The same situation presents itself with the admin frontend, again please run it 
 
 ## Features
 
-TBC
+### Cart
+
+The cart is built around using a local state controlled by Redux Toolkit, in cartSlice.ts. This cartState has a few key-value pairs:
+
+    export const initialCartState: CartState = {
+        items: [],
+        totalItems: 0,
+        isLoading: false,
+    };
+
+and reducers which allow you to:
+
+1. Add items to your cart
+2. Remove items from your cart
+3. Clear your cart
+4. Update the size of an item in your cart
+5. Update the quantity of an item in your cart
+
+When a user opens the webpage, a useEffect in the Layout.tsx page (the root layout page) completes the following set of conditional statements:
+
+1. Checks whether the user is logged in (user.data is not null) and if so, sets the cart to the user's cart data stored in the database.
+2. If the user is not logged in, but there's cart data stored in the localStorage API, it sets the cart data to that.
+3. If neither of these checks result to true, it relys on the default cartState which is an empty array [] for cart.items.
+
+<!-- end of the list -->
+
+    useEffect(() => {
+        const localCart = localStorage.getItem("cart");
+
+        if (!user.data && !localCart) {
+        return;
+        }
+
+        if (user.data) {
+        dispatch(setCart(user.data.cart));
+        return;
+        }
+
+        if (localCart) {
+        dispatch(setCart(JSON.parse(localCart)));
+        return;
+        }
+    }, [user.data, dispatch]);
+
+When a user is logged in, and any change is made to their local cart, a reducer is dispatched via a RDTK Async Thunk to update the user's cart data in the database.
+
+    useEffect(() => {
+        if (auth.isAuthenticated) {
+        dispatch(updateDBCartAsync(cart));
+        }
+    }, [cart, auth.isAuthenticated, dispatch]);
+
+That way, the data stored on the database is always up to date with what the user is being shown live, and as the cart state is stored locally, there is no delay when the user makes changes to their cart.
+
+#### Comprehensive Cart Logic
+
+When designing the RDTK cartSlice reducers, a few edge cases became visible to me:
+
+1.  What happens when a user has two cart items of the same product, but with differing size values...
+    <br><br>
+    i.e. 1x INTL M Red Shorts, and 1x INTL L Red Shorts.
+    <br><br>
+    If the user decides to change the size on one of the two items to make them both match (e.g. INTL M becomes INTL L). Without proper logic, this edge case would result in two cart item entries for what should just be one:
+    <br><br>
+    i.e. 1x INTL L Red Shorts, and 1x INTL L Red Shorts.
+    <br><br>
+    When ideally, it should result in:
+    <br><br>
+    i.e. 2x INTL L Red Shorts.
+    <br><br>
+    To implement this functionality, I had to first search the existing cart to see if an item of the same properties existed (same productId, color and size). This below function finds the index of the first item that returns a true in the conditional statement.
+
+        const sameItemIndex = state.items.findIndex((item, index) => {
+            if (index === itemToUpdateIndex) return false;
+            return (
+            item.productId === itemToUpdate.productId &&
+            item.size === newSize &&
+            item.color === itemToUpdate.color
+            );
+        });
 
 ## Acknowledgements
 
