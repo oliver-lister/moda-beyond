@@ -1,8 +1,6 @@
 import express, { Request, Response } from 'express';
 import { tempUpload } from '../../middleware/multerMiddleware';
 import { Product } from '../../models/models';
-import { port } from '../../index';
-import { SortOrder } from 'mongoose';
 import * as fs from 'fs';
 
 const router = express.Router();
