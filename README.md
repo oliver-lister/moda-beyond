@@ -131,9 +131,9 @@ That way, the data stored on the database is always up to date with what the use
 
 #### Comprehensive Cart Logic
 
-When designing the RDTK cartSlice reducers, a few edge cases became visible to me:
+When designing the RDTK cartSlice reducers, an edge case became visible to me:
 
-1.  What happens when a user has two cart items of the same product, but with differing size values...
+What happens when a user has two cart items of the same product, but with differing size values...
     <br><br>
     i.e. 1x INTL M Red Shorts, and 1x INTL L Red Shorts.
     <br><br>
@@ -153,8 +153,40 @@ When designing the RDTK cartSlice reducers, a few edge cases became visible to m
             item.productId === itemToUpdate.productId &&
             item.size === newSize &&
             item.color === itemToUpdate.color
-            );
+        );
+    });
+
+If the same product with same size & color properties does not exist, simply amend the selected item to the new size specified in the reducer's arguments.
+
+    if (sameItemIndex === -1) {
+        state.items = state.items.map((item) => {
+            if (item.cartItemId === cartItemId) {
+                return { ...item, size: newSize };
+            }
+            return item;
         });
+        return;
+    }
+
+If the same product with the same color and size does exist, add to its quantity and remove the originally selected cart item.
+
+    const newCart: CartItemProps[] = [];
+
+    state.items.forEach((item, index) => {
+        if (index === sameItemIndex) {
+        const updatedQuantity =
+            Number(item.quantity) + Number(itemToUpdate.quantity);
+        newCart.push({
+            ...item,
+            quantity: updatedQuantity,
+        });
+        } else if (item.cartItemId !== cartItemId) {
+            newCart.push(item);
+        }
+    });
+    state.items = newCart;
+
+This style of functionality was also used for the AddItemToCart reducer, to check whether an item of the same color, size and productId existed when adding an item to the cart. 
 
 ## Acknowledgements
 
