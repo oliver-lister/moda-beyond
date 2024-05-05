@@ -9,8 +9,8 @@ This project is a personal portfolio project, and not intended for any commerica
 1. <a href=#setup>Setup</a>
 2. <a href=#technologies-used>Technologies Used</a>
 3. <a href=#features>Features</a>
-4. <a href=#acknowledgements>Acknowledgements</a>
-5. <a href=#future-to-dos>Future To-dos</a>
+4. <a href=#future-to-dos>Future To-dos</a>
+5. <a href=#acknowledgements>Acknowledgements</a>
 
 ## Setup
 
