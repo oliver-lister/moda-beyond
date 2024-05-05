@@ -71,10 +71,7 @@ const Shop = () => {
       searchParams.set("sortOrder", "-1");
     }
 
-    const fetchProductsfromDB = async () => {
-      await fetchProducts(searchParams.toString());
-    };
-    fetchProductsfromDB();
+    fetchProducts(searchParams.toString());
   }, [searchParams]);
 
   const handleChangeSort = (value: string | null) => {
