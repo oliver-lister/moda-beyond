@@ -5,6 +5,7 @@ import EditProduct from "./routes/EditProduct/EditProduct.tsx";
 import Layout from "./routes/Layout.tsx";
 import ErrorPage from "./routes/error-page.tsx";
 import Dashboard from "./routes/Dashboard/Dashboard.tsx";
+import ClearSessions from "./routes/ClearSessions/ClearSessions.tsx";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             element: <EditProduct />,
           },
         ],
+      },
+      {
+        path: "/clearsessions",
+        element: <ClearSessions />,
       },
     ],
   },

@@ -47,14 +47,14 @@ router.post('/signup', async (req: Request, res: Response) => {
     await newUser.save();
 
     // Generate a JWT token for authentication
-    const accessToken = generateAccessToken(newUser._id, '5m');
+    const accessToken = generateAccessToken(String(newUser._id), '5m');
     const refreshToken = generateRefreshToken();
 
     // Create a new authentication session in MongoDB
     const newSession = new Session({ userId: newUser._id, refreshToken: refreshToken });
     newSession.save();
 
-    const userId = newUser._id.toString();
+    const userId = String(newUser._id);
 
     return res.status(200).json({ success: true, message: 'User registered successfully.', accessToken, refreshToken, userId });
   } catch (err: any) {
@@ -79,14 +79,14 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // Generate a JWT token for authentication
-    const accessToken = generateAccessToken(user._id, '5m');
+    const accessToken = generateAccessToken(String(user._id), '5m');
     const refreshToken = generateRefreshToken();
 
     const newSession = new Session({ userId: user._id, refreshToken: refreshToken });
 
     newSession.save();
 
-    const userId = user._id.toString();
+    const userId = String(user._id);
 
     return res.status(200).json({ success: true, message: 'Login successful', accessToken, refreshToken, userId });
   } catch (err: any) {
@@ -143,7 +143,7 @@ router.delete('/clearsessions', async (req: AuthorizedRequest, res: Response) =>
     // Delete all sessions
     await Session.deleteMany({});
 
-    return res.status(204).json({ success: true, message: 'All authenication sessions deleted' });
+    return res.status(204).send();
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
