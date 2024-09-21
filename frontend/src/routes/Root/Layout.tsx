@@ -11,6 +11,7 @@ import Footer from "./components/Footer/Footer.tsx";
 import Copyright from "./components/Copyright/Copyright.tsx";
 import { setCart } from "../../state/cart/cartSlice.ts";
 import { clearUser } from "../../state/user/userSlice.ts";
+import BackendInfoModal from "./components/BackendInfoModal/BackendInfoModal.tsx";
 
 const Layout = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -87,6 +88,7 @@ const Layout = () => {
         <Footer />
         <Copyright />
       </footer>
+      <BackendInfoModal isAuthenticated={auth.isAuthenticated} />
     </>
   );
 };
