@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../state/store.ts";
 import { refreshAccessTokenAsync } from "../../state/auth/authSlice.ts";
@@ -11,6 +11,7 @@ import Footer from "./components/Footer/Footer.tsx";
 import Copyright from "./components/Copyright/Copyright.tsx";
 import { setCart } from "../../state/cart/cartSlice.ts";
 import { clearUser } from "../../state/user/userSlice.ts";
+import { Modal, Button, Text } from "@mantine/core";
 
 const Layout = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,6 +19,18 @@ const Layout = () => {
   const cart = useSelector((state: RootState) => state.cart.items);
   const user = useSelector((state: RootState) => state.user);
   const storedRefreshToken = localStorage.getItem("refreshToken");
+
+  // State to manage the modal visibility
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    // Show modal if user is not signed in and modal hasn't been shown before
+    const hasSeenModal = localStorage.getItem("hasSeenModal");
+    if (!auth.isAuthenticated && !hasSeenModal) {
+      setShowModal(true);
+      localStorage.setItem("hasSeenModal", "true");
+    }
+  }, [auth.isAuthenticated]);
 
   useEffect(() => {
     // Refresh the access token upon refresh
@@ -87,6 +100,22 @@ const Layout = () => {
         <Footer />
         <Copyright />
       </footer>
+      {/* Mantine Modal */}
+      <Modal
+        opened={showModal}
+        onClose={() => setShowModal(false)}
+        title="Backend Information"
+        centered
+      >
+        <Text>
+          The backend is hosted on Render.com, which has a 1-minute spin-up time
+          before database data will load. Please wait a moment for the data to
+          appear.
+        </Text>
+        <Button onClick={() => setShowModal(false)} fullWidth mt="md">
+          Close
+        </Button>
+      </Modal>
     </>
   );
 };
