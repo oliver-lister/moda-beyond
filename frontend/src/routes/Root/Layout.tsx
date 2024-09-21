@@ -7,7 +7,6 @@ import MessageBar from "./components/MessageBar/MessageBar.tsx";
 import Footer from "./components/Footer/Footer.tsx";
 import Copyright from "./components/Copyright/Copyright.tsx";
 import BackendInfoModal from "./components/BackendInfoModal/BackendInfoModal.tsx";
-import useCartSync from "../../hooks/useCartSync.ts";
 import useAuthSync from "../../hooks/useAuthSync.ts";
 import useUserSync from "../../hooks/useUserSync.ts";
 
@@ -21,8 +20,7 @@ const Layout = () => {
 
   // Retrieve auth, user, and cart state using custom hooks
   const auth = useAuthSync(dispatch, storedRefreshToken);
-  const user = useUserSync(auth, dispatch);
-  useCartSync(auth, user, dispatch);
+  useUserSync(auth, dispatch);
 
   return (
     <>

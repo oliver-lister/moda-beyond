@@ -12,45 +12,41 @@ import {
 import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
-import { CartItemProps } from "../../../../../../types/UserProps.ts";
+import { CartItem } from "../../../../../../types/UserProps.ts";
 import { useState, useEffect } from "react";
 import ProductProps from "../../../../../../types/ProductProps.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../../state/store.ts";
 import {
-  removeItemFromCart,
-  updateQuantity,
-  updateSize,
+  useDeleteCartItemMutation,
+  useUpdateCartItemMutation,
 } from "../../../../../../state/cart/cartSlice.ts";
 
-const CartItem = ({
-  cartItemId,
-  productId,
-  color,
-  size,
-  quantity,
-}: CartItemProps) => {
+const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const dispatch = useDispatch<AppDispatch>();
+  const [deleteItem] = useDeleteCartItemMutation();
+  const [updateItem] = useUpdateCartItemMutation();
 
-  const handleRemoveFromCart = () => {
-    dispatch(removeItemFromCart(cartItemId));
+  const handleRemoveFromCart = async (id: string) => {
+    await deleteItem({
+      userId: import.meta.env.VITE_TEST_USER_ID,
+      itemId: id,
+    }).unwrap();
   };
 
-  const handleUpdateSize = (value: string | null) => {
+  const handleUpdateSize = async (value: string | null) => {
     if (!value) return;
-    dispatch(updateSize({ cartItemId: cartItemId, newSize: value }));
+    await updateItem({
+      userId: import.meta.env.VITE_TEST_USER_ID,
+      updatedItem: { _id, productId, color, quantity, size: value },
+    }).unwrap();
   };
 
-  const handleUpdateQuantity = (value: string | null) => {
+  const handleUpdateQuantity = async (value: string | null) => {
     if (!value) return;
-    dispatch(
-      updateQuantity({
-        cartItemId: cartItemId,
-        newQuantity: Number(value),
-      })
-    );
+    await updateItem({
+      userId: import.meta.env.VITE_TEST_USER_ID,
+      updatedItem: { _id, productId, color, size, quantity: Number(value) },
+    }).unwrap();
   };
 
   useEffect(() => {
@@ -113,16 +109,7 @@ const CartItem = ({
           span={{ base: 12, md: 4 }}
           order={{ base: 3, md: 2 }}
         ></GridCol>
-        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
-          <Stack align="flex-end">
-            <UnstyledButton
-              className={styles.remove}
-              onClick={handleRemoveFromCart}
-            >
-              <IconTrash />
-            </UnstyledButton>
-          </Stack>
-        </GridCol>
+        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}></GridCol>
       </Grid>
     );
   }
@@ -171,7 +158,7 @@ const CartItem = ({
           </Text>
           <UnstyledButton
             className={styles.remove}
-            onClick={handleRemoveFromCart}
+            onClick={() => handleRemoveFromCart(_id)}
           >
             <IconTrash />
           </UnstyledButton>
@@ -181,4 +168,4 @@ const CartItem = ({
   );
 };
 
-export default CartItem;
+export default CartItemRow;

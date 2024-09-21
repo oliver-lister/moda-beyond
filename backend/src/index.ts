@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes/productRoutes';
 import userRoutes from './routes/userRoutes/userRoutes';
 import authRoutes from './routes/authRoutes/authRoutes';
 import checkoutRoutes from './routes/checkoutRoutes/checkoutRoutes';
+import { authorizeJWT } from './middleware/authMiddleware';
 
 const app = express();
 export const port = process.env.PORT;
@@ -16,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/products', productRoutes);
-app.use('/users', userRoutes);
+app.use('/user', authorizeJWT, userRoutes);
 app.use('/auth', authRoutes);
 app.use('/checkout', checkoutRoutes);
 

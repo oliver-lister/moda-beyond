@@ -17,14 +17,11 @@ import ProductForm from "./components/ProductForm.tsx";
 import { Link } from "react-router-dom";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
 import { SerializedError } from "@reduxjs/toolkit";
-import { addItemToCart } from "../../../../state/cart/cartSlice.ts";
-import { v4 as uuidv4 } from "uuid";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
 import { notifications } from "@mantine/notifications";
+import { useAddCartItemMutation } from "../../../../state/cart/cartSlice.ts";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const [addItemToCart] = useAddCartItemMutation();
 
   const handleAddToCart = async (
     quantity: number,
@@ -32,16 +29,15 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
     color: string
   ) => {
     try {
-      dispatch(
-        addItemToCart({
-          cartItemId: uuidv4(),
+      await addItemToCart({
+        userId: import.meta.env.VITE_TEST_USER_ID,
+        newItem: {
           productId: product._id,
           color: color,
           quantity: quantity,
           size: size,
-          price: product.price,
-        })
-      );
+        },
+      }).unwrap();
 
       notifications.show({
         title: "Success! You've added an item to your cart.",

@@ -20,6 +20,7 @@ import SearchBox from "./components/SearchBox.tsx";
 import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
 import MobileNav from "./components/MobileNav/MobileNav.tsx";
 import { IconUserCircle } from "@tabler/icons-react";
+import { selectCart } from "../../../../state/cart/cartSlice.ts";
 
 const navMenu = [
   {
@@ -40,7 +41,8 @@ const NavBar = () => {
   const navigate = useNavigate();
   const auth = useSelector((state: RootState) => state.auth);
   const user = useSelector((state: RootState) => state.user);
-  const cart = useSelector((state: RootState) => state.cart);
+  // const cart = useSelector(selectCart);
+
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -157,7 +159,7 @@ const NavBar = () => {
                 onClick={() => opened && toggle()}
                 aria-label="Click to view cart"
               >
-                <ShoppingCartButton cartTotal={cart.totalItems} />
+                <ShoppingCartButton cartTotal={8} />
               </Link>
             </Group>
           </Flex>

@@ -25,14 +25,17 @@ const productSchema = new mongoose.Schema(
 productSchema.index({ name: 'text', brand: 'text', description: 'text' });
 
 // Cart Item Schema
-const cartItemSchema = new mongoose.Schema({
-  cartItemId: { type: String, required: true },
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  size: { type: String, required: true },
-  price: { type: Number, required: true, min: 0 },
-  color: { type: String, required: true },
-  quantity: { type: Number, default: 1, min: 1 },
-});
+const cartItemSchema = new mongoose.Schema(
+  {
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    size: { type: String, required: true },
+    color: { type: String, required: true },
+    quantity: { type: Number, default: 1, min: 1 },
+  },
+  {
+    timestamps: true,
+  },
+);
 
 // User Schema
 const userSchema = new mongoose.Schema(
@@ -87,13 +90,14 @@ const sessionSchema = new mongoose.Schema(
 );
 
 // TypeScript interfaces
-interface CartItem {
-  cartItemId: string;
+export interface CartItem {
+  _id: mongoose.Schema.Types.ObjectId;
   productId: mongoose.Schema.Types.ObjectId;
   size: string;
-  price: number;
   color: string;
   quantity: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UserDocument extends Document {
@@ -111,6 +115,8 @@ export interface UserDocument extends Document {
   shoppingPreference: string;
   newsletter: boolean;
   cart: CartItem[];
+  createdAt: Date;
+  updatedAt: Date;
   validPassword(password: string): Promise<boolean>;
 }
 

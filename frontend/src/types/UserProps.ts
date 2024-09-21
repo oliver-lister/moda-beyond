@@ -5,17 +5,17 @@ export interface Address {
   postcode: string;
 }
 
-export interface CartItemProps {
-  _id?: string;
-  cartItemId: string;
+export interface CartItem {
+  _id: string;
   productId: string;
-  price: number;
   color: string;
   size: string;
   quantity: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export default interface UserProps {
+export interface User {
   _id: string;
   email: string;
   password: string;
@@ -25,5 +25,7 @@ export default interface UserProps {
   address?: Address;
   shoppingPreference: string;
   newsletter: boolean;
-  cart: CartItemProps[];
+  cart: CartItem[];
+  createdAt: string;
+  updatedAt: string;
 }

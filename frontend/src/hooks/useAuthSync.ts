@@ -9,7 +9,6 @@ const useAuth = (dispatch: AppDispatch, storedRefreshToken: string | null) => {
   const auth = useSelector((state: RootState) => state.auth, {
     equalityFn: shallowEqual,
   });
-  console.log("ive been called");
 
   useEffect(() => {
     const refreshAccessToken = async (refreshToken: string) => {

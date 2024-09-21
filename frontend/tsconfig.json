@@ -13,14 +13,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node", "jest", "@testing-library/jest-dom"],
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src", "./src/setupTest.ts", "vitest.setup.mjs"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  }
 }

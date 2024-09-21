@@ -36,7 +36,7 @@ export const fetchUserDataAsync = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/fetchdata`,
+        `${import.meta.env.VITE_BACKEND_HOST}/user/${userId}/fetchdata`,
         {
           method: "GET",
           headers: {
@@ -112,7 +112,7 @@ export const updateUserAsync = createAsyncThunk(
       delete newUserDetails.postcode;
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,
+        `${import.meta.env.VITE_BACKEND_HOST}/user/${userId}/update`,
         {
           method: "PUT",
           headers: {
@@ -174,7 +174,7 @@ export const updateUserSecurityAsync = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/update`,
+        `${import.meta.env.VITE_BACKEND_HOST}/user/${userId}/update`,
         {
           method: "PUT",
           headers: {
@@ -236,7 +236,7 @@ export const deleteUserAsync = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/users/${userId}/delete`,
+        `${import.meta.env.VITE_BACKEND_HOST}/user/${userId}/delete`,
         {
           method: "DELETE",
           headers: {
