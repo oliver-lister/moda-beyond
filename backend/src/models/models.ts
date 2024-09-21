@@ -1,100 +1,121 @@
-import mongoose, { Document } from 'mongoose';
-import crypto from 'crypto';
+import mongoose, { Document, Schema } from 'mongoose';
+import argon2 from 'argon2';
 
 const productSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
     category: { type: String, required: true, enum: ['men', 'women', 'kids'] },
-    brand: { type: String, required: true },
+    brand: { type: String, required: true, trim: true },
     availableSizes: { type: [String], required: true },
     availableColors: { type: [{ label: String, hex: String }], required: true },
-    material: { type: String },
-    description: { type: String },
-    price: { type: Number, required: true },
-    lastPrice: { type: Number },
+    material: { type: String, trim: true },
+    description: { type: String, trim: true },
+    price: { type: Number, required: true, min: 0 },
+    lastPrice: { type: Number, min: 0 },
     images: { type: [String], default: [] },
-    date: { type: Date, default: Date.now },
     available: { type: Boolean, default: true },
   },
-  { autoIndex: false },
+  {
+    timestamps: true,
+    autoIndex: true,
+  },
 );
 
-productSchema.index({ name: 'text', brand: 'text' });
+// Add full-text search index
+productSchema.index({ name: 'text', brand: 'text', description: 'text' });
 
-const Product = mongoose.model('Product', productSchema);
-
+// Cart Item Schema
 const cartItemSchema = new mongoose.Schema({
   cartItemId: { type: String, required: true },
-  productId: { type: String, required: true },
+  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
   size: { type: String, required: true },
-  price: { type: Number, required: true },
+  price: { type: Number, required: true, min: 0 },
   color: { type: String, required: true },
-  quantity: { type: Number, default: 1 },
+  quantity: { type: Number, default: 1, min: 1 },
 });
 
-const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true, required: true },
-  hash: String,
-  salt: String,
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  dob: { type: Date },
-  address: { street: String, suburb: String, state: String, postcode: String },
-  shoppingPreference: { type: String, required: true },
-  newsletter: { type: Boolean, required: true, default: true },
-  cart: { type: [cartItemSchema], required: true, default: [] },
+// User Schema
+const userSchema = new mongoose.Schema(
+  {
+    email: { type: String, unique: true, required: true, trim: true },
+    passwordHash: { type: String, required: true },
+    firstName: { type: String, required: true, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    dob: { type: Date },
+    address: {
+      street: { type: String, trim: true },
+      suburb: { type: String, trim: true },
+      state: { type: String, trim: true },
+      postcode: { type: String, trim: true },
+    },
+    shoppingPreference: { type: String, enum: ['Womenswear', 'Menswear'], required: true },
+    newsletter: { type: Boolean, default: true },
+    cart: { type: [cartItemSchema], default: [] },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true }, // Enable virtual fields in JSON responses
+  },
+);
+
+// Pre-save hook to hash password using argon2
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('passwordHash')) return next();
+
+  try {
+    this.passwordHash = await argon2.hash(this.passwordHash);
+    next();
+  } catch (err) {
+    if (err instanceof Error) next(err);
+  }
 });
 
-userSchema.methods.setPassword = function (password: string) {
-  // Creating a unique salt for a particular user
-  this.salt = crypto.randomBytes(16).toString('hex');
-
-  // Hashing user's salt and password with 1000 iterations,
-  // 64 length and sha512 digest
-  this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
+// Password validation method using argon2
+userSchema.methods.validPassword = async function (password: string) {
+  return argon2.verify(this.passwordHash, password);
 };
 
-userSchema.methods.validPassword = function (password: string) {
-  const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, `sha512`).toString(`hex`);
-  return this.hash === hash;
-};
+// Session Schema
+const sessionSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    refreshToken: { type: String, required: true },
+  },
+  {
+    timestamps: true,
+  },
+);
 
-const sessionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  refreshToken: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now, required: true },
-  updatedAt: { type: Date, default: Date.now, required: true },
-});
-
-const Session = mongoose.model('Session', sessionSchema);
-
-// Define the CartItem interface
+// TypeScript interfaces
 interface CartItem {
-  _id?: string;
   cartItemId: string;
-  productId: string;
+  productId: mongoose.Schema.Types.ObjectId;
+  size: string;
   price: number;
-  size?: string;
-  color?: string;
-  quantity?: number;
+  color: string;
+  quantity: number;
 }
 
-// Define the UserDocument interface
 export interface UserDocument extends Document {
   email: string;
-  hash: string;
-  salt: string;
+  passwordHash: string;
   firstName: string;
   lastName: string;
   dob?: Date;
-  address?: { street: string; suburb: string; state: string; postcode: string };
+  address?: {
+    street: string;
+    suburb: string;
+    state: string;
+    postcode: string;
+  };
   shoppingPreference: string;
   newsletter: boolean;
   cart: CartItem[];
-  setPassword(password: string): void;
-  validPassword(password: string): boolean;
+  validPassword(password: string): Promise<boolean>;
 }
 
-const User = mongoose.model<UserDocument>('Users', userSchema);
+const Product = mongoose.model('Product', productSchema);
+const User = mongoose.model<UserDocument>('User', userSchema);
+const Session = mongoose.model('Session', sessionSchema);
 
 export { Product, User, Session };

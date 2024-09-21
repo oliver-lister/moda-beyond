@@ -38,10 +38,9 @@ router.post('/signup', async (req: Request, res: Response) => {
     }
 
     // Create a new user instance
-    const newUserData = req.body;
+    const passwordHash = req.body.password;
+    const newUserData = { ...req.body, passwordHash };
     const newUser = new User(newUserData);
-
-    newUser.setPassword(req.body.password);
 
     // Save the new user to the database
     await newUser.save();
@@ -71,8 +70,9 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found', errorCode: 'USER_NOT_FOUND' });
     }
-
-    const isPasswordValid = user.validPassword(req.body.password);
+    console.log(req.body.password);
+    console.log(user.passwordHash);
+    const isPasswordValid = await user.validPassword(req.body.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, error: 'Password provided was incorrect', errorCode: 'INVALID_PASSWORD' });

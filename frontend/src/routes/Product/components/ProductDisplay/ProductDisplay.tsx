@@ -76,7 +76,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
               <Title order={2} fw={400} fz="1rem">
                 <Anchor
                   component={Link}
-                  to={`/shop?brand=${product.brand}&sortBy=date&sortOrder=-1`}
+                  to={`/shop?brand=${product.brand}&sortBy=createdAt&sortOrder=-1`}
                   data-testid="product-brand"
                 >
                   {product.brand}

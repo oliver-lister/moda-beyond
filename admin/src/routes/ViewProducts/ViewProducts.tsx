@@ -27,9 +27,7 @@ const ViewProducts = () => {
     try {
       if (!_id) throw new Error("Product _id is undefined");
       const response = await fetch(
-        `${
-          import.meta.env.VITE_BACKEND_HOST
-        }/products/remove/${_id.toString()}`,
+        `${import.meta.env.VITE_BACKEND_HOST}/products/${_id.toString()}`,
         {
           method: "DELETE",
         }

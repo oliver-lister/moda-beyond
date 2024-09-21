@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 const router = express.Router();
 
-router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Response) => {
+router.post('/', tempUpload.array('productImg'), async (req: Request, res: Response) => {
   try {
     const newProductData = {
       name: req.body.name,
@@ -38,7 +38,7 @@ router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Re
   }
 });
 
-router.patch('/edit/:productId', async (req: Request, res: Response) => {
+router.patch('/:productId', async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
     if (!productId) return res.status(404).json({ success: false, error: 'Product ID not supplied', errorCode: 'NO_PRODUCT_ID' });
@@ -77,7 +77,7 @@ router.patch('/edit/:productId', async (req: Request, res: Response) => {
   }
 });
 
-router.delete('/remove/:productId', async (req: Request, res: Response) => {
+router.delete('/:productId', async (req: Request, res: Response) => {
   try {
     const id = req.params.productId;
     await Product.findOneAndDelete({ _id: id });
@@ -93,7 +93,7 @@ router.delete('/remove/:productId', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/fetch', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const sortBy = req.query.sortBy as string | undefined;
     const sortOrder = parseInt(req.query.sortOrder as string) || 1;
@@ -167,7 +167,7 @@ router.get('/fetch', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/fetchproductbyid/:productId', async (req, res) => {
+router.get('/:productId', async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId);

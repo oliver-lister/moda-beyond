@@ -7,7 +7,7 @@ const OnSale = () => {
       <Stack>
         <Title order={3}>On Sale</Title>
         <ProductCollectionTeaser
-          query="lastPrice[$exists]=true&sortBy=date&sortOrder=-1"
+          query="lastPrice[$exists]=true&sortBy=createdAt&sortOrder=-1"
           cap={6}
         />
       </Stack>

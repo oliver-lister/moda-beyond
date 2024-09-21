@@ -24,12 +24,15 @@ import { IconUserCircle } from "@tabler/icons-react";
 const navMenu = [
   {
     label: "Women",
-    path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=women&page=1&sortBy=createdAt&sortOrder=-1",
   },
-  { label: "Men", path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1" },
+  {
+    label: "Men",
+    path: "/shop?category=men&page=1&sortBy=createdAt&sortOrder=-1",
+  },
   {
     label: "Kids",
-    path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=kids&page=1&sortBy=createdAt&sortOrder=-1",
   },
 ];
 
@@ -68,7 +71,12 @@ const NavBar = () => {
       setSearch({ ...search, text: "" });
     } else {
       setSearchParams(
-        { search: search.text, page: "1", sortBy: "date", sortOrder: "-1" },
+        {
+          search: search.text,
+          page: "1",
+          sortBy: "createdAt",
+          sortOrder: "-1",
+        },
         { replace: true }
       );
       setSearch({ ...search, text: "" });

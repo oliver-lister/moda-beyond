@@ -144,10 +144,13 @@ const AddProductForm = () => {
         formData.append("productImg", image, image.name);
       });
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}/products/add`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_HOST}/products`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const responseData = await response.json();

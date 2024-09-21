@@ -5,39 +5,43 @@ import men_category_card from "../../../assets/images/categoryCards/men_category
 import kids_category_card from "../../../assets/images/categoryCards/kids_category_card.webp";
 import { useEffect } from "react";
 
-const categoryImages = [
-  women_category_card,
-  men_category_card,
-  kids_category_card,
+// Consolidating category data
+const categories = [
+  {
+    label: "Women",
+    link: "/shop?category=women&page=1&sortBy=createdAt&sortOrder=-1",
+    image: women_category_card,
+  },
+  {
+    label: "Men",
+    link: "/shop?category=men&page=1&sortBy=createdAt&sortOrder=-1",
+    image: men_category_card,
+  },
+  {
+    label: "Kids",
+    link: "/shop?category=kids&page=1&sortBy=createdAt&sortOrder=-1",
+    image: kids_category_card,
+  },
 ];
+
+const preloadImages = (images: string[]) => {
+  images.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+};
 
 const ShopCategories = () => {
   useEffect(() => {
-    //preloading images
-    categoryImages.forEach((catImg) => {
-      const img = new Image();
-      img.src = catImg;
-    });
+    preloadImages(categories.map((category) => category.image));
   }, []);
 
   return (
     <section>
       <SimpleGrid cols={{ base: 1, sm: 3 }}>
-        <CategoryCard
-          link="/shop?category=women&page=1&sortBy=date&sortOrder=-1"
-          image={women_category_card}
-          label="Women"
-        />
-        <CategoryCard
-          link="/shop?category=men&page=1&sortBy=date&sortOrder=-1"
-          image={men_category_card}
-          label="Men"
-        />
-        <CategoryCard
-          link="/shop?category=kids&page=1&sortBy=date&sortOrder=-1"
-          image={kids_category_card}
-          label="Kids"
-        />
+        {categories.map(({ label, link, image }) => (
+          <CategoryCard key={label} link={link} image={image} label={label} />
+        ))}
       </SimpleGrid>
     </section>
   );

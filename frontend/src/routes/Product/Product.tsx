@@ -25,12 +25,7 @@ const Product = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_HOST
-          }/products/fetchproductbyid/${productId}`,
-          {
-            method: "GET",
-          }
+          `${import.meta.env.VITE_BACKEND_HOST}/products/${productId}`
         );
 
         const responseData = await response.json();
@@ -59,11 +54,13 @@ const Product = () => {
       title: product && product.category && product.category.toUpperCase(),
       href: `/shop?category=${
         product && product.category
-      }&sortBy=date&sortOrder=-1`,
+      }&sortBy=createdAt&sortOrder=-1`,
     },
     {
       title: product && product.brand && product.brand.toUpperCase(),
-      href: `/shop?brand=${product && product.brand}&sortBy=date&sortOrder=-1`,
+      href: `/shop?brand=${
+        product && product.brand
+      }&sortBy=createdAt&sortOrder=-1`,
     },
   ].map((item, index) => (
     <Anchor

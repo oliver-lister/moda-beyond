@@ -58,12 +58,7 @@ const CartItem = ({
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_HOST
-          }/products/fetchproductbyid/${productId}`,
-          {
-            method: "GET",
-          }
+          `${import.meta.env.VITE_BACKEND_HOST}/products/${productId}`
         );
 
         const responseData = await response.json();

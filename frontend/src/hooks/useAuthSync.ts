@@ -9,22 +9,34 @@ const useAuth = (dispatch: AppDispatch, storedRefreshToken: string | null) => {
   const auth = useSelector((state: RootState) => state.auth, {
     equalityFn: shallowEqual,
   });
+  console.log("ive been called");
 
   useEffect(() => {
     const refreshAccessToken = async (refreshToken: string) => {
       if (!refreshToken) return;
-      await dispatch(refreshAccessTokenAsync(refreshToken));
+      await dispatch(refreshAccessTokenAsync(refreshToken)).unwrap();
     };
 
+    // Only attempt to refresh the token if the user is not authenticated and is not loading
     if (!storedRefreshToken || auth.isAuthenticated || auth.isLoading) return;
 
-    try {
-      refreshAccessToken(storedRefreshToken);
-    } catch (err) {
-      console.error(err);
-      dispatch(clearUser());
-    }
-  }, [auth.isAuthenticated, auth.isLoading, storedRefreshToken, dispatch]);
+    let isMounted = true;
+
+    (async () => {
+      try {
+        await refreshAccessToken(storedRefreshToken);
+      } catch (err) {
+        console.error(err);
+        if (isMounted) {
+          dispatch(clearUser());
+        }
+      }
+    })();
+
+    return () => {
+      isMounted = false; // Cleanup function to prevent state updates after unmount
+    };
+  }, [storedRefreshToken, auth.isAuthenticated, auth.isLoading, dispatch]);
 
   return auth;
 };

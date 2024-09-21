@@ -17,10 +17,7 @@ const Layout = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/fetch`,
-          {
-            method: "GET",
-          }
+          `${import.meta.env.VITE_BACKEND_HOST}/products/`
         );
         const responseData = await response.json();
 

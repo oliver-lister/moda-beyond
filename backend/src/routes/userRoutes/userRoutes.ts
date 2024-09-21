@@ -47,7 +47,7 @@ router.put('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: 
     if (!updatedUser) return res.status(404).json({ success: false, error: 'User not be found in database', errorCode: 'USER_NOT_FOUND' });
 
     if (req.body.password) {
-      updatedUser.setPassword(req.body.password);
+      updatedUser.passwordHash = req.body.password;
       await updatedUser.save();
     }
 
@@ -60,7 +60,6 @@ router.put('/:userId/update', authorizeJWT, async (req: AuthorizedRequest, res: 
 // API for updating a user's account details
 router.delete('/:userId/delete', authorizeJWT, async (req: AuthorizedRequest, res: Response) => {
   try {
-    const newUserDetails = req.body;
     const userId = req.params.userId;
 
     if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {

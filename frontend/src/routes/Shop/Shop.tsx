@@ -24,7 +24,7 @@ type SortOption = {
 const sortOptions: { [key: string]: SortOption } = {
   price_low_to_high: { sortBy: "price", sortOrder: 1 },
   price_high_to_low: { sortBy: "price", sortOrder: -1 },
-  date_new_to_old: { sortBy: "date", sortOrder: -1 },
+  date_new_to_old: { sortBy: "createdAt", sortOrder: -1 },
 };
 
 const Shop = () => {
@@ -34,6 +34,17 @@ const Shop = () => {
   const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
   const [sort, setSort] = useState<string>("date_new_to_old");
+
+  useEffect(() => {
+    // Set default parameters if they are not already set
+    if (!searchParams.has("sortBy")) {
+      searchParams.set("sortBy", "createdAt");
+    }
+    if (!searchParams.has("sortOrder")) {
+      searchParams.set("sortOrder", "-1");
+    }
+    setSearchParams(searchParams);
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     // set 'Searching For' title based on searchParams
@@ -67,7 +78,7 @@ const Shop = () => {
     }
     if (searchParams.toString() === "") {
       searchParams.set("page", "1");
-      searchParams.set("sortBy", "date");
+      searchParams.set("sortBy", "createdAt");
       searchParams.set("sortOrder", "-1");
     }
 

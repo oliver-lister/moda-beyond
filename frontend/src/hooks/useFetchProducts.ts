@@ -21,10 +21,7 @@ export const useFetchProducts = () => {
       setProducts({ ...products, isLoading: true });
 
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_HOST}/products/fetch?${queryString}`,
-        {
-          method: "GET",
-        }
+        `${import.meta.env.VITE_BACKEND_HOST}/products?${queryString}`
       );
       const responseData = await response.json();
 

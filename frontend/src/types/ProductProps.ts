@@ -10,6 +10,6 @@ export default interface ProductProps {
   price: number;
   lastPrice?: number;
   images: string[];
-  date: Date;
+  createdAt: Date;
   available: boolean;
 }
