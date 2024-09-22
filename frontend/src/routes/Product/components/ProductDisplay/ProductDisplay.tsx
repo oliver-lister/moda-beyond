@@ -16,12 +16,13 @@ import ProductPhotos from "./components/ProductPhotos.tsx";
 import ProductForm from "./components/ProductForm.tsx";
 import { Link } from "react-router-dom";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
-import { SerializedError } from "@reduxjs/toolkit";
 import { notifications } from "@mantine/notifications";
 import { useAddCartItemMutation } from "../../../../state/cart/cartSlice.ts";
+import { useAppSelector } from "../../../../state/hooks.ts";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
-  const [addItemToCart] = useAddCartItemMutation();
+  const [addItemToCart, { error }] = useAddCartItemMutation();
+  const userId = useAppSelector((state) => state.auth.user?._id);
 
   const handleAddToCart = async (
     quantity: number,
@@ -30,7 +31,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   ) => {
     try {
       await addItemToCart({
-        userId: import.meta.env.VITE_TEST_USER_ID,
+        userId,
         newItem: {
           productId: product._id,
           color: color,
@@ -45,10 +46,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
         icon: <IconShoppingCart />,
       });
     } catch (err) {
-      console.log(
-        "Error adding product to cart:",
-        (err as SerializedError).message
-      );
+      console.log("Error adding product to cart:", error);
       notifications.show({
         title: "Error! Something went wrong.",
         message: "Please try again.",

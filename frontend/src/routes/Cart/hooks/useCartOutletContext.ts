@@ -1,8 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import { AuthState } from "../../../state/auth/authSlice";
 import { DeliveryData } from "../Cart";
-import { UserState } from "../../../state/user/userSlice";
-import { CartItem } from "../../../types/UserProps";
+import { CartItem, User } from "../../../types/UserProps";
 
 type ContextType = {
   cart: CartItem[];
@@ -10,7 +9,8 @@ type ContextType = {
   delivery: string;
   handleDeliveryChange: (value: string) => void;
   deliveryData: DeliveryData;
-  user: UserState;
+  user: User;
+  isLoading: boolean;
 };
 
 export function useCartOutletContext() {

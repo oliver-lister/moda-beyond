@@ -1,16 +1,7 @@
 // Redux
 import { Provider } from "react-redux";
 import { setupStore } from "./state/store.ts";
-import { cartApi } from "./state/cart/cartSlice.ts";
-
 const store = setupStore();
-
-// initate user cart
-store.dispatch(
-  cartApi.endpoints.getCart.initiate({
-    userId: import.meta.env.VITE_TEST_USER_ID,
-  })
-);
 
 // Mantine
 import "@mantine/core/styles.css";

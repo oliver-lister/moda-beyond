@@ -1,26 +1,15 @@
-import {
-  Container,
-  Flex,
-  Group,
-  Burger,
-  Box,
-  Stack,
-  rem,
-  Loader,
-} from "@mantine/core";
+import { Container, Flex, Group, Burger, Box, Stack, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../state/store.ts";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import AccountMenu from "./components/AccountMenu.tsx";
 import SearchBox from "./components/SearchBox.tsx";
 import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
 import MobileNav from "./components/MobileNav/MobileNav.tsx";
 import { IconUserCircle } from "@tabler/icons-react";
-import { selectAllItems } from "../../../../state/cart/cartSlice.ts";
+import AccountMenu from "./components/AccountMenu.tsx";
+import { useAppSelector, useCart } from "../../../../state/hooks.ts";
 
 const navMenu = [
   {
@@ -39,10 +28,8 @@ const navMenu = [
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = useSelector((state: RootState) => state.user);
-  const cart = useSelector(selectAllItems);
-
+  const user = useAppSelector((state) => state.auth.user);
+  const { cart } = useCart();
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -138,20 +125,16 @@ const NavBar = () => {
                   handleSearchValueChange={handleSearchValueChange}
                 />
               </Box>
-              {!auth.isLoading ? (
-                auth.userId && user.data ? (
-                  <AccountMenu auth={auth} user={user.data} />
-                ) : (
-                  <Box className={styles.profile}>
-                    <Link to="/login" aria-label="Click to login">
-                      <IconUserCircle
-                        style={{ width: rem(32), height: rem(32) }}
-                      />
-                    </Link>
-                  </Box>
-                )
+              {user ? (
+                <AccountMenu user={user} />
               ) : (
-                <Loader />
+                <Box className={styles.profile}>
+                  <Link to="/login" aria-label="Click to login">
+                    <IconUserCircle
+                      style={{ width: rem(32), height: rem(32) }}
+                    />
+                  </Link>
+                </Box>
               )}
               <Link
                 to="/cart"

@@ -4,7 +4,7 @@ import styles from "./cart.module.css";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
-import { selectAllItems } from "../../state/cart/cartSlice";
+import { useCart } from "../../state/hooks";
 
 export type DeliveryData = {
   standard: {
@@ -29,9 +29,10 @@ const deliveryData: DeliveryData = {
 };
 
 const Cart = () => {
-  const cart = useSelector(selectAllItems);
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { cart, isLoading } = useCart();
+  const localCart = localStorage.getItem("cart");
+
   const [delivery, setDelivery] = useState<string>("standard");
 
   const handleDeliveryChange = (value: string) => {
@@ -43,8 +44,8 @@ const Cart = () => {
       <Container size="xl">
         <Outlet
           context={{
-            cart,
-            auth,
+            cart: cart ? cart : localCart,
+            isLoading,
             delivery,
             handleDeliveryChange,
             deliveryData,

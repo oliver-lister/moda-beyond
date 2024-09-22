@@ -1,18 +1,15 @@
-import { Menu, UnstyledButton, Group, rem } from "@mantine/core";
+import { Group, Menu, UnstyledButton, rem } from "@mantine/core";
 import { Link } from "react-router-dom";
 import {
   IconUserCircle,
   IconLogout,
-  IconLogin,
   IconKey,
   IconShoppingCart,
+  IconLogin,
 } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../state/store.ts";
-import { AuthState, signOut } from "../../../../../state/auth/authSlice.ts";
+import { useLogoutMutation } from "../../../../../state/auth/authSlice.ts";
 import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
-import UserProps from "../../../../../types/UserProps.ts";
-import { clearUser } from "../../../../../state/user/userSlice.ts";
+import { User } from "../../../../../types/UserProps.ts";
 
 const accountMenuLinks = [
   {
@@ -32,8 +29,8 @@ const accountMenuLinks = [
   },
 ];
 
-const AccountMenu = ({ auth, user }: { auth: AuthState; user: UserProps }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const AccountMenu = ({ user }: { user: User }) => {
+  const [logout] = useLogoutMutation();
 
   return (
     <Menu>
@@ -46,44 +43,41 @@ const AccountMenu = ({ auth, user }: { auth: AuthState; user: UserProps }) => {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        {auth.isAuthenticated ? (
-          <>
-            {accountMenuLinks.map((link, index) => (
+        <>
+          {user ? (
+            <>
+              {accountMenuLinks.map((link, index) => (
+                <Menu.Item
+                  key={index}
+                  component={Link}
+                  to={link.path}
+                  leftSection={link.icon}
+                >
+                  {link.label}
+                </Menu.Item>
+              ))}
+              <Menu.Divider />
               <Menu.Item
-                key={index}
                 component={Link}
-                to={link.path}
-                leftSection={link.icon}
+                to="/"
+                leftSection={
+                  <IconLogout style={{ width: rem(16), height: rem(16) }} />
+                }
+                onClick={logout}
+                c="red"
               >
-                {link.label}
+                Logout
               </Menu.Item>
-            ))}
-            <Menu.Divider />
-            <Menu.Item
-              component={Link}
-              to="/"
-              leftSection={
-                <IconLogout style={{ width: rem(16), height: rem(16) }} />
-              }
-              onClick={() => {
-                dispatch(signOut());
-                dispatch(clearUser());
-              }}
-              c="red"
-            >
-              Logout
-            </Menu.Item>
-          </>
-        ) : (
-          <Menu.Item>
-            <Link to="/login">
+            </>
+          ) : (
+            <Menu.Item component={Link} to="/login">
               <Group>
                 <IconLogin style={{ width: rem(16), height: rem(16) }} />
                 Login
               </Group>
-            </Link>
-          </Menu.Item>
-        )}
+            </Menu.Item>
+          )}
+        </>
       </Menu.Dropdown>
     </Menu>
   );

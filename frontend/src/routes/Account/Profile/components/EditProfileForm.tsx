@@ -16,12 +16,9 @@ import { useState } from "react";
 import { useForm, yupResolver } from "@mantine/form";
 import { SerializedError } from "@reduxjs/toolkit";
 import { DateInput } from "@mantine/dates";
-import UserProps from "../../../../types/UserProps.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
-import { updateUserAsync } from "../../../../state/user/userSlice.ts";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
+import { User } from "../../../../types/UserProps.ts";
 
 const editProfileSchema = object({
   honeypot: string(),
@@ -58,10 +55,9 @@ const EditProfileForm = ({
   user,
   toggleFormOpen,
 }: {
-  user: UserProps;
+  user: User;
   toggleFormOpen: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -103,7 +99,7 @@ const EditProfileForm = ({
       if (form.values.honeypot) {
         throw new Error("Bot detected");
       }
-      await dispatch(updateUserAsync(values));
+      // update user here
       form.reset();
       setIsLoading(false);
       toggleFormOpen();

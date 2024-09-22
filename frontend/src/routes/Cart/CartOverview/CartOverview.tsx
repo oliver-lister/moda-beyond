@@ -5,9 +5,9 @@ import {
   GridCol,
   Alert,
   Center,
-  Loader,
   Text,
   Title,
+  Loader,
 } from "@mantine/core";
 import { IconShoppingBag, IconTruck } from "@tabler/icons-react";
 import styles from "../cart.module.css";
@@ -25,7 +25,7 @@ import { DeliveryData } from "../Cart.tsx";
 import OrderSummary from "./components/OrderSummary/OrderSummary.tsx";
 
 const CartOverview = () => {
-  const { cart, auth, delivery, handleDeliveryChange, deliveryData } =
+  const { cart, delivery, handleDeliveryChange, deliveryData, isLoading } =
     useCartOutletContext();
 
   // Cart Totalling Functions
@@ -41,11 +41,7 @@ const CartOverview = () => {
         <Stack className={styles.cart}>
           <Title order={2}>Shopping Cart</Title>
           <Stack gap="xs" className={styles.grid}>
-            {auth.isLoading ? (
-              <Center style={{ height: "40vh" }}>
-                <Loader />
-              </Center>
-            ) : cart.length === 0 ? (
+            {!isLoading && cart.length === 0 ? (
               <Center style={{ height: "40vh" }}>
                 <Stack>
                   <Text>You have no items in your shopping cart.</Text>
@@ -56,28 +52,45 @@ const CartOverview = () => {
               </Center>
             ) : (
               <>
-                <p className={styles.sub_heading}>Parcel from MØDA-BEYOND</p>
-                <Alert
-                  title={
-                    delivery !== "pickup"
-                      ? "Estimated delivery: " +
-                        getDateInFuture(
-                          deliveryData[delivery as keyof DeliveryData].estDays
+                {isLoading ? (
+                  <Center style={{ height: "40vh" }}>
+                    <Stack>
+                      <Loader />
+                    </Stack>
+                  </Center>
+                ) : (
+                  <>
+                    <p className={styles.sub_heading}>
+                      Parcel from MØDA-BEYOND
+                    </p>
+                    <Alert
+                      title={
+                        delivery !== "pickup"
+                          ? "Estimated delivery: " +
+                            getDateInFuture(
+                              deliveryData[delivery as keyof DeliveryData]
+                                .estDays
+                            )
+                          : "Pickup instore"
+                      }
+                      icon={
+                        delivery !== "pickup" ? (
+                          <IconTruck />
+                        ) : (
+                          <IconShoppingBag />
                         )
-                      : "Pickup instore"
-                  }
-                  icon={
-                    delivery !== "pickup" ? <IconTruck /> : <IconShoppingBag />
-                  }
-                  className={styles.alert}
-                />
-                <CartItemContainer cart={cart} />
-                <Delivery
-                  delivery={delivery}
-                  deliveryData={deliveryData}
-                  getDateInFuture={getDateInFuture}
-                  handleDeliveryChange={handleDeliveryChange}
-                />
+                      }
+                      className={styles.alert}
+                    />
+                    <CartItemContainer cart={cart} />
+                    <Delivery
+                      delivery={delivery}
+                      deliveryData={deliveryData}
+                      getDateInFuture={getDateInFuture}
+                      handleDeliveryChange={handleDeliveryChange}
+                    />
+                  </>
+                )}
               </>
             )}
           </Stack>
@@ -86,12 +99,10 @@ const CartOverview = () => {
       <GridCol span={{ base: 12, lg: 4 }}>
         {cart.length === 0 ? null : (
           <OrderSummary
-            auth={auth}
             cartSum={cartSum}
             cartSumWithDelivery={cartSumWithDelivery}
             cartTotalQuantity={cartTotalQuantity}
             roundToTwoDec={roundToTwoDec}
-            isLoading={auth.isLoading}
             deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
           />
         )}

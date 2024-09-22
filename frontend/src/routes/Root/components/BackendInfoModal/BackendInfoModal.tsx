@@ -3,22 +3,18 @@ import { useEffect, useState } from "react";
 
 // Modal component for displaying backend spin-up information
 
-const BackendInfoModal = ({
-  isAuthenticated,
-}: {
-  isAuthenticated: boolean;
-}) => {
+const BackendInfoModal = () => {
   // State to manage the modal visibility
   const [showModal, setShowModal] = useState<boolean>(false);
+  const hasSeenModal = localStorage.getItem("hasSeenModal");
 
   useEffect(() => {
-    // Show modal if user is not signed in and modal hasn't been shown before
-    const hasSeenModal = localStorage.getItem("hasSeenModal");
-    if (!isAuthenticated && !hasSeenModal) {
+    // Show modal if modal hasn't been shown before
+    if (!hasSeenModal) {
       setShowModal(true);
       localStorage.setItem("hasSeenModal", "true");
     }
-  }, [isAuthenticated]);
+  }, [hasSeenModal]);
 
   return (
     <Modal

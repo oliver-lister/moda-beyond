@@ -3,9 +3,8 @@ import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout,
 } from "@stripe/react-stripe-js";
-import { CartItemProps } from "../../../../types/UserProps";
+import { CartItem, User } from "../../../../types/UserProps";
 import { useNavigate } from "react-router-dom";
-import { UserState } from "../../../../state/user/userSlice.ts";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -14,9 +13,9 @@ const EmbeddedCheckoutForm = ({
   selectedDelivery,
   user,
 }: {
-  items: CartItemProps[];
+  items: CartItem[];
   selectedDelivery: { fee: number; est: string; label: string };
-  user: UserState;
+  user: User;
 }) => {
   const navigate = useNavigate();
 
@@ -33,7 +32,7 @@ const EmbeddedCheckoutForm = ({
           body: JSON.stringify({
             items: items,
             delivery: selectedDelivery,
-            customer_email: user.data ? user.data.email : undefined,
+            customer_email: user ? user.email : undefined,
           }),
         }
       );

@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema(
     passwordHash: { type: String, required: true },
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
+    roles: { type: [String], default: ['user'], enum: ['user', 'admin'] },
     dob: { type: Date },
     address: {
       street: { type: String, trim: true },
@@ -105,6 +106,7 @@ export interface UserDocument extends Document {
   passwordHash: string;
   firstName: string;
   lastName: string;
+  roles: string[];
   dob?: Date;
   address?: {
     street: string;

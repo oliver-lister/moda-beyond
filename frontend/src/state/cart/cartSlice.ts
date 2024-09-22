@@ -1,16 +1,12 @@
-import {
-  createEntityAdapter,
-  createSelector,
-  EntityAdapter,
-} from "@reduxjs/toolkit";
+import { createEntityAdapter, EntityAdapter } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
 import { CartItem } from "../../types/UserProps";
-import { RootState } from "../store";
 
 const cartAdapter: EntityAdapter<CartItem, string> = createEntityAdapter({
   selectId: (item) => item._id,
-  sortComparer: (a: CartItem, b: CartItem) =>
-    b.createdAt.localeCompare(a.createdAt),
+  // Uncomment next two lines for sorting based on createdAt
+  // sortComparer: (a: CartItem, b: CartItem) =>
+  //   b.createdAt.localeCompare(a.createdAt),
 });
 
 // Initial state
@@ -19,7 +15,7 @@ export const initialState = cartAdapter.getInitialState();
 type CartState = typeof initialState;
 
 interface CartQuery {
-  userId: string;
+  userId: string | undefined;
 }
 
 interface NewCartItem {
@@ -54,9 +50,7 @@ export const cartApi = apiSlice.injectEndpoints({
     getCart: build.query<CartState, CartQuery>({
       query: ({ userId }) => ({
         url: `/user/${userId}/cart`,
-        headers: {
-          Authorization: localStorage.getItem("accessToken") ?? undefined,
-        },
+        credentials: "include",
       }),
       transformResponse: (responseData: { cart: CartItem[] }) =>
         cartAdapter.setAll(initialState, responseData.cart),
@@ -76,9 +70,9 @@ export const cartApi = apiSlice.injectEndpoints({
         url: `/user/${userId}/cart`,
         method: "POST",
         headers: {
-          Authorization: localStorage.getItem("accessToken") ?? undefined,
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: newItem,
       }),
       invalidatesTags: [{ type: "CartItem", id: "LIST" }],
@@ -87,9 +81,7 @@ export const cartApi = apiSlice.injectEndpoints({
       query: ({ userId, updatedItem }) => ({
         url: `/user/${userId}/cart/${updatedItem._id}`,
         method: "PATCH",
-        headers: {
-          Authorization: localStorage.getItem("accessToken") ?? undefined,
-        },
+        credentials: "include",
         body: updatedItem,
       }),
       invalidatesTags: () => [{ type: "CartItem", id: "LIST" }],
@@ -98,9 +90,7 @@ export const cartApi = apiSlice.injectEndpoints({
       query: ({ userId, itemId }) => ({
         url: `/user/${userId}/cart/${itemId}`,
         method: "DELETE",
-        headers: {
-          Authorization: localStorage.getItem("accessToken") ?? undefined,
-        },
+        credentials: "include",
       }),
       invalidatesTags: (result, error, arg) => [
         { type: "CartItem", id: arg.itemId },
@@ -110,9 +100,7 @@ export const cartApi = apiSlice.injectEndpoints({
       query: ({ userId }) => ({
         url: `/user/${userId}/cart`,
         method: "DELETE",
-        headers: {
-          Authorization: localStorage.getItem("accessToken") ?? undefined,
-        },
+        credentials: "include",
       }),
       invalidatesTags: [{ type: "CartItem", id: "LIST" }],
     }),
@@ -126,22 +114,3 @@ export const {
   useDeleteCartItemMutation,
   useClearCartMutation,
 } = cartApi;
-
-// returns query result object
-const selectCartResult = cartApi.endpoints.getCart.select({
-  userId: import.meta.env.VITE_TEST_USER_ID,
-});
-
-// memoized selector
-const selectCartData = createSelector(
-  selectCartResult,
-  (cartResult) => cartResult.data
-);
-
-export const {
-  selectAll: selectAllItems,
-  selectById: selectItemById,
-  selectIds: selectItemIds,
-} = cartAdapter.getSelectors(
-  (state: RootState) => selectCartData(state) ?? initialState
-);

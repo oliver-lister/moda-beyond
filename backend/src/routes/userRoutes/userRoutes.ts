@@ -4,15 +4,15 @@ import express, { Request, Response } from 'express';
 import { User } from '../../models/models';
 import cartRoutes from './cartRoutes/cartRoutes';
 
-const userRouter = express.Router();
-userRouter.use('/:userId/cart', cartRoutes);
+const userRouter = express.Router({ mergeParams: true });
+userRouter.use('/cart', cartRoutes);
 
 export interface AuthorizedRequest extends Request {
   user?: JwtPayload | string;
 }
 
 // API for fetching user data
-userRouter.get('/:userId/fetchdata', async (req: AuthorizedRequest, res: Response) => {
+userRouter.get('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const userId = req.params.userId;
 
@@ -33,7 +33,7 @@ userRouter.get('/:userId/fetchdata', async (req: AuthorizedRequest, res: Respons
 });
 
 // API for updating a user's account details
-userRouter.put('/:userId/update', async (req: AuthorizedRequest, res: Response) => {
+userRouter.put('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const newUserDetails = req.body;
     const userId = req.params.userId;
@@ -58,7 +58,7 @@ userRouter.put('/:userId/update', async (req: AuthorizedRequest, res: Response) 
 });
 
 // API for updating a user's account details
-userRouter.delete('/:userId/delete', async (req: AuthorizedRequest, res: Response) => {
+userRouter.delete('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const userId = req.params.userId;
 

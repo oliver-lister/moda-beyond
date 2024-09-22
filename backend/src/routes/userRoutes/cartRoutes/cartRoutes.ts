@@ -7,9 +7,9 @@ const cartRouter = express.Router({ mergeParams: true });
 // Get cart
 cartRouter.get('/', async (req: AuthorizedRequest, res: Response) => {
   try {
-    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    // }
+    if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
+      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    }
 
     const userId = req.params.userId;
 
@@ -33,9 +33,9 @@ const isMatching = (item: CartItem, newItem: CartItem) =>
 // Add item to cart
 cartRouter.post('/', async (req: AuthorizedRequest, res: Response) => {
   try {
-    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    // }
+    if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
+      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    }
 
     const userId = req.params.userId;
 
@@ -53,7 +53,7 @@ cartRouter.post('/', async (req: AuthorizedRequest, res: Response) => {
 
     if (existingItemIndex !== -1) {
       // If the item exists, increment its quantity
-      updatedCart[existingItemIndex].quantity += newItem.quantity || 1;
+      updatedCart[existingItemIndex].quantity += Number(newItem.quantity);
     } else {
       // If it doesn't exist, add the new item to the cart
       updatedCart.push(newItem);
@@ -72,10 +72,6 @@ cartRouter.post('/', async (req: AuthorizedRequest, res: Response) => {
 // Update item in cart
 cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) => {
   try {
-    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    // }
-
     const userId = req.params.userId;
     const cartItemId = req.params.cartItemId;
     const updatedItem = req.body;
@@ -97,11 +93,9 @@ cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) =
       // check if a matching item already exists in consolidatedCart
       const existingItemIndex = consolidatedCart.findIndex((i) => isMatching(i, item));
 
-      console.log(existingItemIndex);
-
       // if it does, update its quantity
       if (existingItemIndex !== -1) {
-        consolidatedCart[existingItemIndex].quantity += item.quantity;
+        consolidatedCart[existingItemIndex].quantity += Number(item.quantity);
       } else {
         // otherwise, push item to consolidated cart
         consolidatedCart.push(item);
@@ -122,10 +116,6 @@ cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) =
 // Delete item from cart
 cartRouter.delete('/:cartItemId', async (req: AuthorizedRequest, res: Response) => {
   try {
-    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    // }
-
     const userId = req.params.userId;
     const cartItemId = req.params.cartItemId;
 
@@ -149,13 +139,7 @@ cartRouter.delete('/:cartItemId', async (req: AuthorizedRequest, res: Response) 
 // Clear cart
 cartRouter.delete('/', async (req: AuthorizedRequest, res: Response) => {
   try {
-    if (!req.user || typeof req.user === 'string') {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
-
-    const userId = req.user.userId;
-    const cartItemId = req.params.cartItemId;
-
+    const userId = req.params.userId;
     const user = await User.findById(userId);
 
     if (!user) {

@@ -19,16 +19,18 @@ import {
   useDeleteCartItemMutation,
   useUpdateCartItemMutation,
 } from "../../../../../../state/cart/cartSlice.ts";
+import { useAppSelector } from "../../../../../../state/hooks.ts";
 
 const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [deleteItem] = useDeleteCartItemMutation();
   const [updateItem] = useUpdateCartItemMutation();
+  const userId = useAppSelector((state) => state.auth.user?._id);
 
   const handleRemoveFromCart = async (id: string) => {
     await deleteItem({
-      userId: import.meta.env.VITE_TEST_USER_ID,
+      userId,
       itemId: id,
     }).unwrap();
   };
@@ -36,7 +38,7 @@ const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
   const handleUpdateSize = async (value: string | null) => {
     if (!value) return;
     await updateItem({
-      userId: import.meta.env.VITE_TEST_USER_ID,
+      userId,
       updatedItem: { _id, productId, color, quantity, size: value },
     }).unwrap();
   };
@@ -44,7 +46,7 @@ const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
   const handleUpdateQuantity = async (value: string | null) => {
     if (!value) return;
     await updateItem({
-      userId: import.meta.env.VITE_TEST_USER_ID,
+      userId,
       updatedItem: { _id, productId, color, size, quantity: Number(value) },
     }).unwrap();
   };

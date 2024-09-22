@@ -12,10 +12,7 @@ import { object, string } from "yup";
 import { useState } from "react";
 import { useForm, yupResolver } from "@mantine/form";
 import { SerializedError } from "@reduxjs/toolkit";
-import UserProps from "../../../../types/UserProps.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
-import { updateUserSecurityAsync } from "../../../../state/user/userSlice.ts";
+import { User } from "../../../../types/UserProps.ts";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
 
@@ -42,10 +39,9 @@ const EditLoginAndSecurityForm = ({
   user,
   toggleFormOpen,
 }: {
-  user: UserProps;
+  user: User;
   toggleFormOpen: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const formInitialValues: EditLoginAndSecurityValues = {
@@ -66,7 +62,7 @@ const EditLoginAndSecurityForm = ({
       if (form.values.honeypot) {
         throw new Error("Bot detected");
       }
-      await dispatch(updateUserSecurityAsync(values));
+      // update userData here
       form.reset();
       setIsLoading(false);
       toggleFormOpen();

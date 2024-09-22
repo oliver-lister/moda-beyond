@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthorizedRequest } from '../userRoutes/userRoutes';
+import { cookieJWTAuth } from '../../middleware/cookieJWTAuth';
 
 const router = express.Router();
 
@@ -27,38 +28,21 @@ const generateRefreshToken = () => {
   }
 };
 
-// API for User Registration
-router.post('/signup', async (req: Request, res: Response) => {
-  try {
-    // Check if the user already exists
-    const user = await User.findOne({ email: req.body.email });
-
-    if (user) {
-      return res.status(409).json({ success: false, error: 'Existing user found with the same email address.', errorCode: 'EXISTING_USER_CONFLICT' });
-    }
-
-    // Create a new user instance
-    const passwordHash = req.body.password;
-    const newUserData = { ...req.body, passwordHash };
-    const newUser = new User(newUserData);
-
-    // Save the new user to the database
-    await newUser.save();
-
-    // Generate a JWT token for authentication
-    const accessToken = generateAccessToken(String(newUser._id), '5m');
-    const refreshToken = generateRefreshToken();
-
-    // Create a new authentication session in MongoDB
-    const newSession = new Session({ userId: newUser._id, refreshToken: refreshToken });
-    newSession.save();
-
-    const userId = String(newUser._id);
-
-    return res.status(200).json({ success: true, message: 'User registered successfully.', accessToken, refreshToken, userId });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+// API for retrieving Auth session
+router.get('/session', cookieJWTAuth, async (req: AuthorizedRequest, res: Response) => {
+  if (!req.user || typeof req.user === 'string') {
+    return res.status(401).json({ success: false, message: 'User not authenticated', errorCode: 'USER_NOT_AUTHENTICATED' });
   }
+
+  const userId = req.user.userId;
+
+  const user = await User.findById(userId);
+
+  return res.status(200).json({
+    success: true,
+    message: 'Authentication successful',
+    user,
+  });
 });
 
 // API for User Login
@@ -78,59 +62,77 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // Generate a JWT token for authentication
-    const accessToken = generateAccessToken(String(user._id), '5m');
+    const accessToken = generateAccessToken(String(user._id), '1h');
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+
     const refreshToken = generateRefreshToken();
-
-    const newSession = new Session({ userId: user._id, refreshToken: refreshToken });
-
-    newSession.save();
+    const newSession = new Session({ userId: String(user._id), refreshToken: refreshToken });
+    await newSession.save();
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
     const userId = String(user._id);
 
-    return res.status(200).json({ success: true, message: 'Login successful', accessToken, refreshToken, userId });
+    return res.status(200).json({ success: true, message: 'Login successful', userId });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
-// API for refreshing JWT accessToken
-
-router.post('/refreshtoken', async (req: Request, res: Response) => {
+// API for User Logout
+router.post('/logout', async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(400).json({ success: false, error: 'Missing refresh token', errorCode: 'MISSING_REFRESH_TOKEN' });
+      return res.status(400).json({ success: false, error: 'No refresh token provided', errorCode: 'NO_REFRESH_TOKEN' });
     }
 
-    const session = await Session.findOne({ refreshToken: refreshToken });
+    // Remove the session associated with the refresh token from the database
+    const deletedSession = await Session.findOneAndDelete({ refreshToken });
 
-    if (!session) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid refresh token: missing session information',
-        errorCode: 'MISSING_SESSION_INFORMATION',
-      });
+    if (!deletedSession) {
+      return res.status(404).json({ success: false, error: 'Session not found', errorCode: 'SESSION_NOT_FOUND' });
     }
 
-    const userId = session.userId.toString();
+    // Clear the cookies
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
 
-    const user = await User.findById(userId);
+    return res.status(200).json({ success: true, message: 'Logout successful' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
 
-    if (!user) {
-      return res.status(404).json({ success: false, error: 'User not found', errorCode: 'USER_NOT_FOUND' });
+// API for User Registration
+router.post('/signup', async (req: Request, res: Response) => {
+  try {
+    // Check if the user already exists
+    const user = await User.findOne({ email: req.body.email });
+
+    if (user) {
+      return res.status(409).json({ success: false, error: 'Existing user found with the same email address.', errorCode: 'EXISTING_USER_CONFLICT' });
     }
 
-    // Generate a new access token
-    const newAccessToken = generateAccessToken(userId.toString(), '5m');
-    const newRefreshToken = generateRefreshToken();
+    // Create a new user instance
+    const passwordHash = req.body.password;
+    const newUserData = { ...req.body, passwordHash };
+    const newUser = new User(newUserData);
 
-    // Update session
-    session.updatedAt = new Date();
-    session.refreshToken = newRefreshToken;
-    await session.save();
+    // Save the new user to the database
+    await newUser.save();
 
-    return res.status(200).json({ success: true, message: 'Access token successfully refreshed', newAccessToken, newRefreshToken, userId });
+    const accessToken = generateAccessToken(String(newUser._id), '1h');
+    res.cookie('accessToken', accessToken, { httpOnly: true });
+
+    const refreshToken = generateRefreshToken();
+    const newSession = new Session({ userId: String(newUser._id), refreshToken: refreshToken });
+    await newSession.save();
+    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+
+    const userId = String(newUser._id);
+
+    return res.status(200).json({ success: true, message: 'User registered successfully.', accessToken, refreshToken, userId });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
