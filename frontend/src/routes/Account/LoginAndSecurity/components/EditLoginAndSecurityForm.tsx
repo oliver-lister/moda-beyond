@@ -15,6 +15,7 @@ import { SerializedError } from "@reduxjs/toolkit";
 import { User } from "../../../../types/UserProps.ts";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
+import { useUpdateUserMutation } from "../../../../state/auth/authSlice.ts";
 
 const EditLoginAndSecuritySchema = object({
   email: string()
@@ -43,6 +44,8 @@ const EditLoginAndSecurityForm = ({
   toggleFormOpen: () => void;
 }) => {
   const [isError, setIsError] = useState<boolean>(false);
+  const [updateUser] = useUpdateUserMutation();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const formInitialValues: EditLoginAndSecurityValues = {
     honeypot: "",
@@ -55,14 +58,23 @@ const EditLoginAndSecurityForm = ({
     validate: yupResolver(EditLoginAndSecuritySchema),
   });
 
-  const handleSubmit = async (values: EditLoginAndSecurityValues) => {
+  const handleSubmit = async (newUserDetails: EditLoginAndSecurityValues) => {
     try {
       setIsLoading(true);
       setIsError(false);
-      if (form.values.honeypot) {
+      if (newUserDetails.honeypot) {
         throw new Error("Bot detected");
       }
-      // update userData here
+
+      // delete newUserDetails.honeypot;
+      // if (newUserDetails.password === "") delete newUserDetails.password;
+
+      const response = await updateUser({
+        userId: String(user._id),
+        newUserDetails,
+      }).unwrap();
+      console.log("User updated successfully:", response);
+
       form.reset();
       setIsLoading(false);
       toggleFormOpen();
@@ -72,7 +84,7 @@ const EditLoginAndSecurityForm = ({
         icon: <IconUser />,
       });
     } catch (err) {
-      console.log("Error submitting form:", (err as SerializedError).message);
+      console.error("Error submitting form:", (err as SerializedError).message);
       setIsError(true);
       setIsLoading(false);
     }

@@ -34,8 +34,6 @@ const AccountMenu = ({ user }: { user: User }) => {
 
   const handleLogout = () => {
     logout({});
-    // Force a full page refresh after navigating to the homepage
-    window.location.href = "/";
   };
 
   return (

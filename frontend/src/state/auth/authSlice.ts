@@ -57,6 +57,7 @@ export const selectIsAuthenticated = (state: RootState) =>
 // RTK Query for managing auth API calls
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
+    // Get Auth Session
     getSession: build.query<AuthState, void>({
       query: () => ({
         url: `/auth/session`,
@@ -65,6 +66,7 @@ export const authApi = apiSlice.injectEndpoints({
       providesTags: ["Auth"],
     }),
 
+    // Fetch User data
     getUser: build.query<UserResponse, { userId: string }>({
       query: ({ userId }) => ({
         url: `/user/${userId}`,
@@ -73,6 +75,7 @@ export const authApi = apiSlice.injectEndpoints({
       providesTags: ["User"],
     }),
 
+    // Login
     login: build.mutation({
       query: (loginDetails) => ({
         url: "/auth/login",
@@ -86,6 +89,7 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Auth"],
     }),
 
+    // Signup
     signup: build.mutation({
       query: (signUpDetails) => ({
         url: "/auth/signup",
@@ -99,10 +103,35 @@ export const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Auth"],
     }),
 
+    // Logout
     logout: build.mutation({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Auth", { type: "CartItem", id: "LIST" }],
+    }),
+
+    // Update user details
+    updateUser: build.mutation({
+      query: ({ userId, newUserDetails }) => ({
+        url: `/users/${userId}`,
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUserDetails),
+        credentials: "include",
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
+    // Delete user account
+    deleteUser: build.mutation({
+      query: (userId) => ({
+        url: `/users/${userId}`,
+        method: "DELETE",
         credentials: "include",
       }),
       invalidatesTags: ["Auth", { type: "CartItem", id: "LIST" }],
@@ -116,4 +145,6 @@ export const {
   useSignupMutation,
   useGetSessionQuery,
   useLogoutMutation,
+  useDeleteUserMutation,
+  useUpdateUserMutation,
 } = authApi;

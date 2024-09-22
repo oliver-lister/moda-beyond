@@ -8,7 +8,7 @@ import { cookieJWTAuth } from '../../middleware/cookieJWTAuth';
 
 const router = express.Router();
 
-const generateAccessToken = (userId: string, expiryTime: string) => {
+export const generateAccessToken = (userId: string, expiryTime: string) => {
   const tokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
   if (!tokenSecret) {
     throw new Error('JWT secret could not be found or accessed.');
@@ -20,7 +20,7 @@ const generateAccessToken = (userId: string, expiryTime: string) => {
   }
 };
 
-const generateRefreshToken = () => {
+export const generateRefreshToken = () => {
   try {
     return uuidv4().replace(/-/g, '');
   } catch (err: any) {
@@ -62,7 +62,7 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // Generate a JWT token for authentication
-    const accessToken = generateAccessToken(String(user._id), '1h');
+    const accessToken = generateAccessToken(String(user._id), '5m');
     res.cookie('accessToken', accessToken, { httpOnly: true });
 
     const refreshToken = generateRefreshToken();
