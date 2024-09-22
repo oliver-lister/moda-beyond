@@ -7,11 +7,12 @@ const cartRouter = express.Router({ mergeParams: true });
 // Get cart
 cartRouter.get('/', async (req: AuthorizedRequest, res: Response) => {
   try {
-    if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
+    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
+    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    // }
 
     const userId = req.params.userId;
+
     console.log(userId);
 
     const user = await User.findById(userId);
@@ -34,9 +35,9 @@ const isMatching = (item: CartItem, newItem: CartItem) =>
 // Add item to cart
 cartRouter.post('/', async (req: AuthorizedRequest, res: Response) => {
   try {
-    if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
+    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
+    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    // }
 
     const userId = req.params.userId;
 
@@ -73,9 +74,9 @@ cartRouter.post('/', async (req: AuthorizedRequest, res: Response) => {
 // Update item in cart
 cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) => {
   try {
-    if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
+    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
+    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    // }
 
     const userId = req.params.userId;
     const cartItemId = req.params.cartItemId;
@@ -131,9 +132,9 @@ cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) =
 // Delete item from cart
 cartRouter.delete('/:cartItemId', async (req: AuthorizedRequest, res: Response) => {
   try {
-    if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
+    // if (!req.user || typeof req.user === 'string' || req.user.userId !== req.params.userId) {
+    //   return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
+    // }
 
     const userId = req.params.userId;
     const cartItemId = req.params.cartItemId;

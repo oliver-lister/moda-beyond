@@ -64,6 +64,7 @@ const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
         }
 
         const { product } = responseData;
+
         setProduct(product);
         setIsLoading(false);
       } catch (err) {

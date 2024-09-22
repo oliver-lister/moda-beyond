@@ -4,7 +4,7 @@ import styles from "./cart.module.css";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
-import { selectAllItems, useGetCartQuery } from "../../state/cart/cartSlice";
+import { selectAllItems } from "../../state/cart/cartSlice";
 
 export type DeliveryData = {
   standard: {
@@ -30,9 +30,6 @@ const deliveryData: DeliveryData = {
 
 const Cart = () => {
   const cart = useSelector(selectAllItems);
-
-  console.log(cart);
-
   const auth = useSelector((state: RootState) => state.auth);
   const user = useSelector((state: RootState) => state.user);
   const [delivery, setDelivery] = useState<string>("standard");

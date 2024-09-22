@@ -39,7 +39,7 @@ const CartOverview = () => {
               <Center style={{ height: "40vh" }}>
                 <Loader />
               </Center>
-            ) : cart ? (
+            ) : cart.length === 0 ? (
               <Center style={{ height: "40vh" }}>
                 <Stack>
                   <Text>You have no items in your shopping cart.</Text>

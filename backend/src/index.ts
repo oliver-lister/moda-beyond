@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/products', productRoutes);
-app.use('/user', authorizeJWT, userRoutes);
+app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/checkout', checkoutRoutes);
 

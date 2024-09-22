@@ -1,6 +1,11 @@
-import { createEntityAdapter, EntityAdapter } from "@reduxjs/toolkit";
+import {
+  createEntityAdapter,
+  createSelector,
+  EntityAdapter,
+} from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
 import { CartItem } from "../../types/UserProps";
+import { RootState } from "../store";
 
 const cartAdapter: EntityAdapter<CartItem, string> = createEntityAdapter({
   selectId: (item) => item._id,
@@ -10,6 +15,7 @@ const cartAdapter: EntityAdapter<CartItem, string> = createEntityAdapter({
 
 // Initial state
 export const initialState = cartAdapter.getInitialState();
+
 type CartState = typeof initialState;
 
 interface CartQuery {
@@ -124,8 +130,21 @@ export const {
   useClearCartMutation,
 } = cartApi;
 
+// returns query result object
+const selectCartResult = cartApi.endpoints.getCart.select({
+  userId: import.meta.env.VITE_TEST_USER_ID,
+});
+
+// memoized selector
+const selectCartData = createSelector(
+  selectCartResult,
+  (cartResult) => cartResult.data
+);
+
 export const {
   selectAll: selectAllItems,
   selectById: selectItemById,
   selectIds: selectItemIds,
-} = cartAdapter.getSelectors((state) => state.cart);
+} = cartAdapter.getSelectors(
+  (state: RootState) => selectCartData(state) ?? initialState
+);
