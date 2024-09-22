@@ -53,7 +53,6 @@ router.patch('/:productId', async (req: Request, res: Response) => {
       material: req.body.material,
       price: req.body.price,
     };
-    console.log(newProductData);
 
     const productToUpdate = await Product.findById(productId);
     if (!productToUpdate) return res.status(404).json({ success: false, error: 'Cannot find product to update', errorCode: 'PRODUCT_NOT_FOUND' });

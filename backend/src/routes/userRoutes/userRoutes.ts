@@ -20,7 +20,6 @@ userRouter.get('/:userId/fetchdata', async (req: AuthorizedRequest, res: Respons
       return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
     }
 
-    console.log(userId);
     const user = await User.findById(userId);
 
     if (!user) {

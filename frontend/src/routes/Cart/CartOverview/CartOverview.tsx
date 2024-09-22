@@ -14,9 +14,15 @@ import styles from "../cart.module.css";
 import { Link } from "react-router-dom";
 import Delivery from "./components/Delivery/Delivery.tsx";
 import CartItemContainer from "./components/CartItemContainer/CartItemContainer.tsx";
-import { getDateInFuture } from "../cartUtils.ts";
+import {
+  getDateInFuture,
+  roundToTwoDec,
+  useCartSum,
+  useCartTotalQuantity,
+} from "../cartUtils.ts";
 import { useCartOutletContext } from "../hooks/useCartOutletContext.ts";
 import { DeliveryData } from "../Cart.tsx";
+import OrderSummary from "./components/OrderSummary/OrderSummary.tsx";
 
 const CartOverview = () => {
   const { cart, auth, delivery, handleDeliveryChange, deliveryData } =
@@ -24,10 +30,10 @@ const CartOverview = () => {
 
   // Cart Totalling Functions
 
-  // const cartTotalQuantity = useCartTotalQuantity(cart);
-  // const cartSum = useCartSum(cart.items);
-  // const deliveryFee = deliveryData[delivery as keyof DeliveryData].fee;
-  // const cartSumWithDelivery = cartSum + deliveryFee;
+  const cartTotalQuantity = useCartTotalQuantity(cart);
+  const cartSum = useCartSum(cart);
+  const deliveryFee = deliveryData[delivery as keyof DeliveryData].fee;
+  const cartSumWithDelivery = cartSum + deliveryFee;
 
   return (
     <Grid>
@@ -78,7 +84,7 @@ const CartOverview = () => {
         </Stack>
       </GridCol>
       <GridCol span={{ base: 12, lg: 4 }}>
-        {/* {cart.length === 0 ? null : (
+        {cart.length === 0 ? null : (
           <OrderSummary
             auth={auth}
             cartSum={cartSum}
@@ -88,7 +94,7 @@ const CartOverview = () => {
             isLoading={auth.isLoading}
             deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
           />
-        )} */}
+        )}
       </GridCol>
     </Grid>
   );

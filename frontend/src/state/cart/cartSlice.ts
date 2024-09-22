@@ -89,13 +89,10 @@ export const cartApi = apiSlice.injectEndpoints({
         method: "PATCH",
         headers: {
           Authorization: localStorage.getItem("accessToken") ?? undefined,
-          "Content-Type": "application/json",
         },
         body: updatedItem,
       }),
-      invalidatesTags: (result, error, arg) => [
-        { type: "CartItem", id: arg.updatedItem._id },
-      ],
+      invalidatesTags: () => [{ type: "CartItem", id: "LIST" }],
     }),
     deleteCartItem: build.mutation<CartState, DeleteCartItemQuery>({
       query: ({ userId, itemId }) => ({

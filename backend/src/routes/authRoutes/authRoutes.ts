@@ -70,8 +70,7 @@ router.post('/login', async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found', errorCode: 'USER_NOT_FOUND' });
     }
-    console.log(req.body.password);
-    console.log(user.passwordHash);
+
     const isPasswordValid = await user.validPassword(req.body.password);
 
     if (!isPasswordValid) {
