@@ -15,11 +15,6 @@ export interface AuthorizedRequest extends Request {
 userRouter.get('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const userId = req.params.userId;
-
-    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
-
     const user = await User.findById(userId);
 
     if (!user) {
@@ -37,10 +32,6 @@ userRouter.put('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const newUserDetails = req.body;
     const userId = req.params.userId;
-
-    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
 
     const updatedUser = await User.findByIdAndUpdate(userId, { $set: newUserDetails }, { new: true });
 
@@ -61,11 +52,6 @@ userRouter.put('/', async (req: AuthorizedRequest, res: Response) => {
 userRouter.delete('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const userId = req.params.userId;
-
-    if (!req.user || typeof req.user === 'string' || userId !== req.user.userId) {
-      return res.status(403).json({ success: false, error: 'You do not have permission to access this resource.', errorCode: 'FORBIDDEN_ACCESS' });
-    }
-
     User.deleteOne({ id: userId });
 
     return res.status(201).json({ success: true, message: 'User deleted successfully' });

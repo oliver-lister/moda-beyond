@@ -30,8 +30,8 @@ const CartOverview = () => {
 
   // Cart Totalling Functions
 
-  const cartTotalQuantity = useCartTotalQuantity(cart);
-  const cartSum = useCartSum(cart);
+  const cartTotalQuantity = useCartTotalQuantity(cart ? cart : []);
+  const cartSum = useCartSum(cart ? cart : []);
   const deliveryFee = deliveryData[delivery as keyof DeliveryData].fee;
   const cartSumWithDelivery = cartSum + deliveryFee;
 
@@ -41,7 +41,7 @@ const CartOverview = () => {
         <Stack className={styles.cart}>
           <Title order={2}>Shopping Cart</Title>
           <Stack gap="xs" className={styles.grid}>
-            {!isLoading && cart.length === 0 ? (
+            {!isLoading && cart && cart.length === 0 ? (
               <Center style={{ height: "40vh" }}>
                 <Stack>
                   <Text>You have no items in your shopping cart.</Text>
@@ -97,15 +97,17 @@ const CartOverview = () => {
         </Stack>
       </GridCol>
       <GridCol span={{ base: 12, lg: 4 }}>
-        {cart.length === 0 ? null : (
-          <OrderSummary
-            cartSum={cartSum}
-            cartSumWithDelivery={cartSumWithDelivery}
-            cartTotalQuantity={cartTotalQuantity}
-            roundToTwoDec={roundToTwoDec}
-            deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
-          />
-        )}
+        {cart ? (
+          cart.length === 0 ? null : (
+            <OrderSummary
+              cartSum={cartSum}
+              cartSumWithDelivery={cartSumWithDelivery}
+              cartTotalQuantity={cartTotalQuantity}
+              roundToTwoDec={roundToTwoDec}
+              deliveryFee={deliveryData[delivery as keyof DeliveryData].fee}
+            />
+          )
+        ) : null}
       </GridCol>
     </Grid>
   );

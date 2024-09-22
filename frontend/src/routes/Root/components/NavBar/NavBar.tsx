@@ -29,7 +29,8 @@ const navMenu = [
 const NavBar = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
-  const { cart } = useCart();
+  const { cart, isSuccess } = useCart();
+
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -143,7 +144,11 @@ const NavBar = () => {
                 aria-label="Click to view cart"
               >
                 <ShoppingCartButton
-                  cartTotal={cart.reduce((acc, item) => acc + item.quantity, 0)}
+                  cartTotal={
+                    isSuccess && cart
+                      ? cart.reduce((acc, item) => acc + item.quantity, 0)
+                      : 0
+                  }
                 />
               </Link>
             </Group>

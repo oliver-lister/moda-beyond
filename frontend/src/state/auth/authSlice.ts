@@ -27,6 +27,10 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.isAuthenticated = true;
       })
+      .addMatcher(authApi.endpoints.signup.matchFulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+      })
       .addMatcher(
         authApi.endpoints.getSession.matchFulfilled,
         (state, action) => {
@@ -34,10 +38,10 @@ const authSlice = createSlice({
           state.isAuthenticated = true;
         }
       )
-      .addMatcher(
-        authApi.endpoints.getSession.matchRejected,
-        () => initialState
-      )
+      .addMatcher(authApi.endpoints.getSession.matchRejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+      })
       .addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
@@ -60,6 +64,7 @@ export const authApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["Auth"],
     }),
+
     getUser: build.query<UserResponse, { userId: string }>({
       query: ({ userId }) => ({
         url: `/user/${userId}`,
@@ -67,6 +72,7 @@ export const authApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+
     login: build.mutation({
       query: (loginDetails) => ({
         url: "/auth/login",
@@ -79,14 +85,7 @@ export const authApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Auth"],
     }),
-    logout: build.mutation({
-      query: () => ({
-        url: "/auth/logout",
-        method: "POST",
-        credentials: "include",
-      }),
-      invalidatesTags: ["Auth"],
-    }),
+
     signup: build.mutation({
       query: (signUpDetails) => ({
         url: "/auth/signup",
@@ -98,6 +97,15 @@ export const authApi = apiSlice.injectEndpoints({
         body: JSON.stringify(signUpDetails),
       }),
       invalidatesTags: ["Auth"],
+    }),
+
+    logout: build.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+        credentials: "include",
+      }),
+      invalidatesTags: ["Auth", { type: "CartItem", id: "LIST" }],
     }),
   }),
 });

@@ -2,9 +2,7 @@ import { Container } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import styles from "./cart.module.css";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store";
-import { useCart } from "../../state/hooks";
+import { useAppSelector, useCart } from "../../state/hooks";
 
 export type DeliveryData = {
   standard: {
@@ -29,9 +27,8 @@ const deliveryData: DeliveryData = {
 };
 
 const Cart = () => {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = useAppSelector((state) => state.auth.user);
   const { cart, isLoading } = useCart();
-  const localCart = localStorage.getItem("cart");
 
   const [delivery, setDelivery] = useState<string>("standard");
 
@@ -44,7 +41,7 @@ const Cart = () => {
       <Container size="xl">
         <Outlet
           context={{
-            cart: cart ? cart : localCart,
+            cart,
             isLoading,
             delivery,
             handleDeliveryChange,

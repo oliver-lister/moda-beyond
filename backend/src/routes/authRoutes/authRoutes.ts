@@ -70,9 +70,7 @@ router.post('/login', async (req: Request, res: Response) => {
     await newSession.save();
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
-    const userId = String(user._id);
-
-    return res.status(200).json({ success: true, message: 'Login successful', userId });
+    return res.status(200).json({ success: true, message: 'Login successful', user });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
@@ -130,9 +128,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     await newSession.save();
     res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
-    const userId = String(newUser._id);
-
-    return res.status(200).json({ success: true, message: 'User registered successfully.', accessToken, refreshToken, userId });
+    return res.status(200).json({ success: true, message: 'User registered successfully.', user: newUser });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

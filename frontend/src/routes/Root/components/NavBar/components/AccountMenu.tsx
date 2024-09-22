@@ -32,6 +32,12 @@ const accountMenuLinks = [
 const AccountMenu = ({ user }: { user: User }) => {
   const [logout] = useLogoutMutation();
 
+  const handleLogout = () => {
+    logout({});
+    // Force a full page refresh after navigating to the homepage
+    window.location.href = "/";
+  };
+
   return (
     <Menu>
       <Menu.Target>
@@ -63,7 +69,7 @@ const AccountMenu = ({ user }: { user: User }) => {
                 leftSection={
                   <IconLogout style={{ width: rem(16), height: rem(16) }} />
                 }
-                onClick={logout}
+                onClick={handleLogout}
                 c="red"
               >
                 Logout
