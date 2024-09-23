@@ -2,7 +2,8 @@ import { Container } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import styles from "./cart.module.css";
 import { useState } from "react";
-import { useAppSelector, useCart } from "../../state/hooks";
+import { useAppSelector } from "../../state/hooks";
+import { useCart } from "../../state/cart/hooks/useCart";
 
 export type DeliveryData = {
   standard: {

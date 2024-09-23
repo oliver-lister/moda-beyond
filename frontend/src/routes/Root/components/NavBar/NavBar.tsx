@@ -9,7 +9,8 @@ import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
 import MobileNav from "./components/MobileNav/MobileNav.tsx";
 import { IconUserCircle } from "@tabler/icons-react";
 import AccountMenu from "./components/AccountMenu.tsx";
-import { useAppSelector, useCart } from "../../../../state/hooks.ts";
+import { useAppSelector } from "../../../../state/hooks.ts";
+import { useCart } from "../../../../state/cart/hooks/useCart.ts";
 
 const navMenu = [
   {
@@ -29,8 +30,7 @@ const navMenu = [
 const NavBar = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
-  const { cart, isSuccess } = useCart();
-
+  const { cartTotal } = useCart();
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -72,7 +72,6 @@ const NavBar = () => {
       setSearch({ ...search, text: "" });
     }
   };
-
   return (
     <nav className={styles.nav}>
       <Container size="xl">
@@ -143,13 +142,7 @@ const NavBar = () => {
                 onClick={() => opened && toggle()}
                 aria-label="Click to view cart"
               >
-                <ShoppingCartButton
-                  cartTotal={
-                    isSuccess && cart
-                      ? cart.reduce((acc, item) => acc + item.quantity, 0)
-                      : 0
-                  }
-                />
+                <ShoppingCartButton cartTotal={cartTotal} />
               </Link>
             </Group>
           </Flex>

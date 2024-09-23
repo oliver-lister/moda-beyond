@@ -33,8 +33,6 @@ userRouter.put('/', async (req: AuthorizedRequest, res: Response) => {
     const newUserDetails = req.body;
     const userId = req.params.userId;
 
-    console.log(req.body.newsletter);
-
     const { street, suburb, state, postcode } = newUserDetails;
     if (street || suburb || state || postcode) newUserDetails.address = { street, suburb, state, postcode };
 

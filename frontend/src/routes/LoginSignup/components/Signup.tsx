@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { object, string, boolean } from "yup";
 import { useRef, useState } from "react";
 import { SerializedError } from "@reduxjs/toolkit";
-import { CartItemProps } from "../../../types/UserProps.ts";
+import { CartItem } from "../../../types/UserProps.ts";
 
 const signupSchema = object().shape({
   email: string()
@@ -47,7 +47,7 @@ export interface SignupValues {
   dob: Date;
   newsletter: boolean;
   shoppingPreference: string;
-  cart?: CartItemProps[] | null;
+  cart?: CartItem[] | null;
 }
 
 const Signup = ({
@@ -82,6 +82,11 @@ const Signup = ({
       if (honeypotRef.current && honeypotRef.current.value !== "") {
         throw new Error("Bot detected");
       }
+
+      // if localStorage cart exists append this to the values object and pass to new user
+      const localCart = localStorage.getItem("cart");
+      if (localCart) values.cart = JSON.parse(localCart);
+
       await dispatchValues(values);
       form.reset();
       setIsLoading(false);

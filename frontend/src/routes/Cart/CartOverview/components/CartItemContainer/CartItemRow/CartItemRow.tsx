@@ -20,35 +20,91 @@ import {
   useUpdateCartItemMutation,
 } from "../../../../../../state/cart/cartSlice.ts";
 import { useAppSelector } from "../../../../../../state/hooks.ts";
+import { notifications } from "@mantine/notifications";
+import { updateCart } from "./functions/updateCart.ts";
 
 const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [deleteItem] = useDeleteCartItemMutation();
   const [updateItem] = useUpdateCartItemMutation();
-  const userId = useAppSelector((state) => state.auth.user?._id);
+  const user = useAppSelector((state) => state.auth.user);
+  const userId = String(user?._id);
 
   const handleRemoveFromCart = async (id: string) => {
-    await deleteItem({
-      userId,
-      itemId: id,
-    }).unwrap();
+    if (!id) return;
+    try {
+      await deleteItem({
+        userId,
+        itemId: id,
+      }).unwrap();
+    } catch (error) {
+      console.error("Error updating cart:", error);
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
   };
 
   const handleUpdateSize = async (value: string | null) => {
     if (!value) return;
-    await updateItem({
-      userId,
-      updatedItem: { _id, productId, color, quantity, size: value },
-    }).unwrap();
+    try {
+      if (!user) {
+        // Handle localStorage cart update for guest users
+        const savedLocalCart = localStorage.getItem("cart");
+        if (savedLocalCart) {
+          const localCart = JSON.parse(savedLocalCart);
+
+          const updatedCart = updateCart(localCart, _id, value, "size");
+
+          // Save the updated cart back to localStorage
+          localStorage.setItem("cart", JSON.stringify(updatedCart));
+        } else {
+          console.error("No cart found in localStorage");
+        }
+      } else {
+        // If the user is logged in, update the cart through the API
+        await updateItem({
+          userId,
+          updatedItem: { _id, productId, color, quantity, size: value },
+        }).unwrap();
+
+        console.log("Cart updated via API successfully");
+      }
+    } catch (error) {
+      console.error("Error updating cart:", error);
+
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
   };
 
   const handleUpdateQuantity = async (value: string | null) => {
     if (!value) return;
-    await updateItem({
-      userId,
-      updatedItem: { _id, productId, color, size, quantity: Number(value) },
-    }).unwrap();
+
+    // Add in logic to handle for localCart
+    try {
+      await updateItem({
+        userId,
+        updatedItem: { _id, productId, color, size, quantity: Number(value) },
+      }).unwrap();
+    } catch (error) {
+      console.error("Error updating cart:", error);
+
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
   };
 
   useEffect(() => {
@@ -170,5 +226,4 @@ const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
     </Grid>
   );
 };
-
 export default CartItemRow;
