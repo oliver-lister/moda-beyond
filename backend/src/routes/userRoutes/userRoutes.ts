@@ -1,7 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken';
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
-import { User } from '../../models/models';
+import { User, UserDocument } from '../../models/models';
 import cartRoutes from './cartRoutes/cartRoutes';
 
 const userRouter = express.Router({ mergeParams: true });
@@ -32,6 +32,11 @@ userRouter.put('/', async (req: AuthorizedRequest, res: Response) => {
   try {
     const newUserDetails = req.body;
     const userId = req.params.userId;
+
+    console.log(req.body.newsletter);
+
+    const { street, suburb, state, postcode } = newUserDetails;
+    if (street || suburb || state || postcode) newUserDetails.address = { street, suburb, state, postcode };
 
     const updatedUser = await User.findByIdAndUpdate(userId, { $set: newUserDetails }, { new: true });
 

@@ -116,7 +116,7 @@ export const authApi = apiSlice.injectEndpoints({
     // Update user details
     updateUser: build.mutation({
       query: ({ userId, newUserDetails }) => ({
-        url: `/users/${userId}`,
+        url: `/user/${userId}`,
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,7 @@ export const authApi = apiSlice.injectEndpoints({
     // Delete user account
     deleteUser: build.mutation({
       query: (userId) => ({
-        url: `/users/${userId}`,
+        url: `/user/${userId}`,
         method: "DELETE",
         credentials: "include",
       }),

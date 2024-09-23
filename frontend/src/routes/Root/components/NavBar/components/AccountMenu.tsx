@@ -50,6 +50,7 @@ const AccountMenu = ({ user }: { user: User }) => {
         <>
           {user ? (
             <>
+              <Menu.Label>{user.firstName + " " + user.lastName}</Menu.Label>
               {accountMenuLinks.map((link, index) => (
                 <Menu.Item
                   key={index}

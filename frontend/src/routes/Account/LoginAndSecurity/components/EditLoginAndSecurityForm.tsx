@@ -65,15 +65,12 @@ const EditLoginAndSecurityForm = ({
       if (newUserDetails.honeypot) {
         throw new Error("Bot detected");
       }
-
-      // delete newUserDetails.honeypot;
-      // if (newUserDetails.password === "") delete newUserDetails.password;
-
       const response = await updateUser({
         userId: String(user._id),
-        newUserDetails,
+        newUserDetails: newUserDetails,
       }).unwrap();
-      console.log("User updated successfully:", response);
+
+      if (response.error) throw response.error;
 
       form.reset();
       setIsLoading(false);

@@ -19,6 +19,7 @@ import { DateInput } from "@mantine/dates";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
 import { User } from "../../../../types/UserProps.ts";
+import { useUpdateUserMutation } from "../../../../state/auth/authSlice.ts";
 
 const editProfileSchema = object({
   honeypot: string(),
@@ -60,6 +61,7 @@ const EditProfileForm = ({
 }) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [updateUser] = useUpdateUserMutation();
 
   const formInitialValues: EditProfileValues = user
     ? {
@@ -99,7 +101,13 @@ const EditProfileForm = ({
       if (form.values.honeypot) {
         throw new Error("Bot detected");
       }
-      // update user here
+      const response = await updateUser({
+        userId: String(user._id),
+        newUserDetails: values,
+      }).unwrap();
+
+      if (response.error) throw response.error;
+
       form.reset();
       setIsLoading(false);
       toggleFormOpen();
@@ -135,7 +143,7 @@ const EditProfileForm = ({
           {/* Honeypot below */}
           <input
             name="honeypot"
-            placeholder="do not fill this"
+            placeholder="Do not fill this in"
             type="hidden"
             {...form.getInputProps("honeypot")}
           />
@@ -170,8 +178,13 @@ const EditProfileForm = ({
                 {...form.getInputProps("shoppingPreference")}
               />
               <Checkbox
+                id="newsletter"
+                name="newsletter"
                 label="Sign up for MØDA-BEYOND news and get a $20 voucher for your next purchase. You'll receive sales alerts, exclusive offers and the latest on styles & trends."
-                {...form.getInputProps("newsletter")}
+                checked={form.values.newsletter}
+                onChange={(event) =>
+                  form.setFieldValue("newsletter", event.currentTarget.checked)
+                }
               />
             </Stack>
           </Fieldset>
