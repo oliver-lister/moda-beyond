@@ -15,12 +15,12 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { IconCheck } from "@tabler/icons-react";
 import { StripeSessionData } from "./CheckoutReturnTypes.ts";
-import { useClearCartMutation } from "../../../../state/cart/cartSlice.ts";
+import { useCart } from "../../../../state/cart/hooks/useCart.ts";
 
 const CheckoutReturn = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("session_id");
-  const [clearCart] = useClearCartMutation();
+  const { clearCart } = useCart();
 
   const [session, setSession] = useState<StripeSessionData | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
@@ -47,7 +47,7 @@ const CheckoutReturn = () => {
         const { session } = responseData;
         setSession(session);
         setIsLoading(false);
-        await clearCart({}).unwrap();
+        await clearCart();
       } catch (err) {
         if (err instanceof Error) {
           console.log("Error: " + err.message);

@@ -1,5 +1,6 @@
 import {
   useAddCartItemMutation,
+  useClearCartMutation,
   useDeleteCartItemMutation,
   useGetCartQuery,
   useUpdateCartItemMutation,
@@ -13,7 +14,7 @@ import {
   updateItemInLocalCart,
 } from "../utils/cartUtils";
 import { v4 as uuidv4 } from "uuid";
-import { setLocalCart } from "../guestCartSlice";
+import { clearLocalCart, setLocalCart } from "../guestCartSlice";
 
 export const useCart = () => {
   const user = useAppSelector((state) => state.auth.user);
@@ -46,6 +47,7 @@ export const useCart = () => {
   const [addItemToServerCart] = useAddCartItemMutation();
   const [updateItemInServerCart] = useUpdateCartItemMutation();
   const [deleteItemFromServerCart] = useDeleteCartItemMutation();
+  const [clearServerCart] = useClearCartMutation();
 
   // For guests (not logged-in users), mutate localCart
   const addItemToCart = async (newItem: ShallowCartItem) => {
@@ -96,6 +98,18 @@ export const useCart = () => {
     }
   };
 
+  const clearCart = async () => {
+    if (userId) {
+      try {
+        await clearServerCart({ userId }).unwrap();
+      } catch (err) {
+        if (err instanceof Error) console.error(err.message);
+      }
+    } else {
+      dispatch(clearLocalCart());
+    }
+  };
+
   return {
     ...rest,
     isLoading,
@@ -104,5 +118,6 @@ export const useCart = () => {
     addItemToCart,
     updateItemInCart,
     removeItemFromCart,
+    clearCart,
   };
 };
