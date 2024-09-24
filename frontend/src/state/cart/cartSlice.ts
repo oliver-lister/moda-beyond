@@ -3,7 +3,7 @@ import { apiSlice } from "../api/apiSlice";
 import { CartItem } from "../../types/UserProps";
 
 const cartAdapter: EntityAdapter<CartItem, string> = createEntityAdapter({
-  selectId: (item) => item._id,
+  selectId: (item) => item.cartItemId,
   // Uncomment next two lines for sorting based on createdAt
   // sortComparer: (a: CartItem, b: CartItem) =>
   //   b.createdAt.localeCompare(a.createdAt),
@@ -18,27 +18,12 @@ interface CartQuery {
   userId: string | undefined;
 }
 
-interface NewCartItem {
-  productId: string;
-  color: string;
-  quantity: number;
-  size: string;
-}
-
-interface NonTimestampedCartItem {
-  _id: string;
-  productId: string;
-  color: string;
-  quantity: number;
-  size: string;
-}
-
 interface AddCartItemQuery extends CartQuery {
-  newItem: NewCartItem;
+  newItem: CartItem;
 }
 
 interface UpdateCartItemQuery extends CartQuery {
-  updatedItem: NonTimestampedCartItem;
+  updatedItem: CartItem;
 }
 
 interface DeleteCartItemQuery extends CartQuery {

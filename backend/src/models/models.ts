@@ -27,6 +27,7 @@ productSchema.index({ name: 'text', brand: 'text', description: 'text' });
 // Cart Item Schema
 const cartItemSchema = new mongoose.Schema(
   {
+    cartItemId: { type: String, required: true },
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
     size: { type: String, required: true },
     color: { type: String, required: true },

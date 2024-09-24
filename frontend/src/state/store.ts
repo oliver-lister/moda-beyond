@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/authSlice";
+import guestCartReducer from "./cart/guestCartSlice";
 import { apiSlice } from "./api/apiSlice";
 
 // Create the root reducer independently to obtain the RootState type
 const rootReducer = combineReducers({
   auth: authReducer,
+  guestCart: guestCartReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 

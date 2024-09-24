@@ -6,13 +6,14 @@ export interface Address {
 }
 
 export interface CartItem {
-  _id: string;
+  _id?: string;
+  cartItemId: string;
   productId: string;
   color: string;
   size: string;
   quantity: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface User {

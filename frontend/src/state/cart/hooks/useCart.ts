@@ -1,15 +1,28 @@
-import { useGetCartQuery } from "../../cart/cartSlice";
-import { useEffect, useState } from "react";
+import {
+  useAddCartItemMutation,
+  useDeleteCartItemMutation,
+  useGetCartQuery,
+  useUpdateCartItemMutation,
+} from "../cartSlice";
 import { CartItem } from "../../../types/UserProps";
-import { useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import {
+  addItemToLocalCart,
+  removeItemFromLocalCart,
+  ShallowCartItem,
+  updateItemInLocalCart,
+} from "../utils/cartUtils";
+import { v4 as uuidv4 } from "uuid";
+import { setLocalCart } from "../guestCartSlice";
 
-// Reusable useCart hook
 export const useCart = () => {
   const user = useAppSelector((state) => state.auth.user);
   const userId = user?._id;
+  const guestCart = useAppSelector((state) => state.guestCart);
+  const dispatch = useAppDispatch();
 
   const {
-    cart: userCart,
+    cart: serverCart,
     isLoading,
     ...rest
   } = useGetCartQuery(
@@ -23,28 +36,73 @@ export const useCart = () => {
     }
   );
 
-  const [localCart, setLocalCart] = useState<CartItem[]>([]);
+  // Calculate cart based on whether serverCart or localCart is available
+  const cart = serverCart || guestCart;
 
-  // Fetch localStorage cart if the user cart doesn't exist
-  useEffect(() => {
-    if (!userCart && !isLoading) {
-      const localCart = localStorage.getItem("cart");
-      if (localCart) {
-        setLocalCart(JSON.parse(localCart));
+  // Calculate total quantity of items in the active cart
+  const cartTotal = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  // For logged-in users, use RTK Query mutations
+  const [addItemToServerCart] = useAddCartItemMutation();
+  const [updateItemInServerCart] = useUpdateCartItemMutation();
+  const [deleteItemFromServerCart] = useDeleteCartItemMutation();
+
+  // For guests (not logged-in users), mutate localCart
+  const addItemToCart = async (newItem: ShallowCartItem) => {
+    if (userId) {
+      // Call RTK Query mutation if the user is logged in
+      try {
+        await addItemToServerCart({
+          userId,
+          newItem: { ...newItem, cartItemId: uuidv4() },
+        }).unwrap();
+      } catch (err) {
+        if (err instanceof Error) console.error(err.message);
       }
-    } else if (userCart) {
-      // Sync user cart to localStorage when available
-      localStorage.setItem("cart", JSON.stringify(userCart));
+    } else {
+      // Otherwise, modify the local cart
+      dispatch(setLocalCart(addItemToLocalCart(guestCart, newItem)));
     }
-  }, [userCart, isLoading]);
+  };
 
-  // Use user cart if available, otherwise use local cart
-  const cart = userCart || localCart;
+  const updateItemInCart = async (updatedItem: CartItem) => {
+    if (userId) {
+      // Use RTK Query mutation for logged-in users
+      try {
+        await updateItemInServerCart({
+          userId,
+          updatedItem,
+        }).unwrap();
+      } catch (err) {
+        if (err instanceof Error) console.error(err.message);
+      }
+    } else {
+      // Otherwise, update the local cart
+      dispatch(setLocalCart(updateItemInLocalCart(guestCart, updatedItem)));
+    }
+  };
 
-  // Calculate the total number of items in the cart
-  const cartTotal = cart
-    ? cart.reduce((acc, item) => acc + item.quantity, 0)
-    : 0;
+  const removeItemFromCart = async (itemId: string) => {
+    if (userId) {
+      // Use RTK Query mutation for logged-in users
+      try {
+        await deleteItemFromServerCart({ userId, itemId }).unwrap();
+      } catch (err) {
+        if (err instanceof Error) console.error(err.message);
+      }
+    } else {
+      // Otherwise, remove the item from the local cart
+      dispatch(setLocalCart(removeItemFromLocalCart(guestCart, itemId)));
+    }
+  };
 
-  return { ...rest, isLoading, cart, cartTotal };
+  return {
+    ...rest,
+    isLoading,
+    cart,
+    cartTotal,
+    addItemToCart,
+    updateItemInCart,
+    removeItemFromCart,
+  };
 };

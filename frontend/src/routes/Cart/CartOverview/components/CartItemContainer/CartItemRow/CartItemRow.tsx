@@ -15,65 +15,30 @@ import styles from "./cartitem.module.css";
 import { CartItem } from "../../../../../../types/UserProps.ts";
 import { useState, useEffect } from "react";
 import ProductProps from "../../../../../../types/ProductProps.ts";
-import {
-  useDeleteCartItemMutation,
-  useUpdateCartItemMutation,
-} from "../../../../../../state/cart/cartSlice.ts";
-import { useAppSelector } from "../../../../../../state/hooks.ts";
 import { notifications } from "@mantine/notifications";
-import { updateCart } from "./functions/updateCart.ts";
+import { useCart } from "../../../../../../state/cart/hooks/useCart.ts";
 
-const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
+const CartItemRow = ({
+  productId,
+  color,
+  size,
+  quantity,
+  cartItemId,
+}: CartItem) => {
   const [product, setProduct] = useState<ProductProps | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [deleteItem] = useDeleteCartItemMutation();
-  const [updateItem] = useUpdateCartItemMutation();
-  const user = useAppSelector((state) => state.auth.user);
-  const userId = String(user?._id);
-
-  const handleRemoveFromCart = async (id: string) => {
-    if (!id) return;
-    try {
-      await deleteItem({
-        userId,
-        itemId: id,
-      }).unwrap();
-    } catch (error) {
-      console.error("Error updating cart:", error);
-      notifications.show({
-        title: "Update failed",
-        message:
-          "We encountered an error while updating your cart. Please try again.",
-        color: "red",
-      });
-    }
-  };
+  const { removeItemFromCart, updateItemInCart } = useCart();
 
   const handleUpdateSize = async (value: string | null) => {
     if (!value) return;
     try {
-      if (!user) {
-        // Handle localStorage cart update for guest users
-        const savedLocalCart = localStorage.getItem("cart");
-        if (savedLocalCart) {
-          const localCart = JSON.parse(savedLocalCart);
-
-          const updatedCart = updateCart(localCart, _id, value, "size");
-
-          // Save the updated cart back to localStorage
-          localStorage.setItem("cart", JSON.stringify(updatedCart));
-        } else {
-          console.error("No cart found in localStorage");
-        }
-      } else {
-        // If the user is logged in, update the cart through the API
-        await updateItem({
-          userId,
-          updatedItem: { _id, productId, color, quantity, size: value },
-        }).unwrap();
-
-        console.log("Cart updated via API successfully");
-      }
+      await updateItemInCart({
+        productId,
+        color,
+        size: value,
+        quantity,
+        cartItemId,
+      });
     } catch (error) {
       console.error("Error updating cart:", error);
 
@@ -88,16 +53,33 @@ const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
 
   const handleUpdateQuantity = async (value: string | null) => {
     if (!value) return;
-
-    // Add in logic to handle for localCart
     try {
-      await updateItem({
-        userId,
-        updatedItem: { _id, productId, color, size, quantity: Number(value) },
-      }).unwrap();
+      await updateItemInCart({
+        productId,
+        color,
+        size,
+        quantity: Number(value),
+        cartItemId,
+      });
     } catch (error) {
       console.error("Error updating cart:", error);
 
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
+  };
+
+  const handleRemoveFromCart = async (cartItemId: string) => {
+    if (!cartItemId) return;
+    try {
+      await removeItemFromCart(cartItemId);
+    } catch (err) {
+      if (err instanceof Error)
+        console.error("Error updating cart:", err.message);
       notifications.show({
         title: "Update failed",
         message:
@@ -217,7 +199,7 @@ const CartItemRow = ({ _id, productId, color, size, quantity }: CartItem) => {
           </Text>
           <UnstyledButton
             className={styles.remove}
-            onClick={() => handleRemoveFromCart(_id)}
+            onClick={() => handleRemoveFromCart(cartItemId)}
           >
             <IconTrash />
           </UnstyledButton>

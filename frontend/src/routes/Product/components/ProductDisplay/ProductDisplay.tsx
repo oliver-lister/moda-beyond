@@ -17,12 +17,10 @@ import ProductForm from "./components/ProductForm.tsx";
 import { Link } from "react-router-dom";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { useAddCartItemMutation } from "../../../../state/cart/cartSlice.ts";
-import { useAppSelector } from "../../../../state/hooks.ts";
+import { useCart } from "../../../../state/cart/hooks/useCart.ts";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
-  const [addItemToCart, { error }] = useAddCartItemMutation();
-  const userId = useAppSelector((state) => state.auth.user?._id);
+  const { addItemToCart } = useCart();
 
   const handleAddToCart = async (
     quantity: number,
@@ -31,14 +29,11 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
   ) => {
     try {
       await addItemToCart({
-        userId,
-        newItem: {
-          productId: product._id,
-          color: color,
-          quantity: quantity,
-          size: size,
-        },
-      }).unwrap();
+        productId: product._id,
+        color: color,
+        quantity: quantity,
+        size: size,
+      });
 
       notifications.show({
         title: "Success! You've added an item to your cart.",
@@ -46,7 +41,8 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
         icon: <IconShoppingCart />,
       });
     } catch (err) {
-      console.log("Error adding product to cart:", error);
+      if (err instanceof Error)
+        console.error("Error adding product to cart:", err.message);
       notifications.show({
         title: "Error! Something went wrong.",
         message: "Please try again.",
