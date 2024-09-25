@@ -72,9 +72,10 @@ cartRouter.post('/', async (req: AuthorizedRequest, res: Response) => {
 // Update item in cart
 cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) => {
   try {
-    const userId = req.params.userId;
-    const cartItemId = req.params.cartItemId;
+    const { userId, cartItemId } = req.params;
     const updatedItem = req.body;
+
+    console.log(updatedItem);
 
     const user = await User.findById(userId);
 
@@ -82,9 +83,9 @@ cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) =
       return res.status(404).json({ success: false, error: 'User not found in database', errorCode: 'USER_NOT_FOUND' });
     }
 
-    const updatedCart = user.cart.map(({ _id, productId, size, color, quantity }: CartItem) => {
-      if (String(_id) === cartItemId) return { _id, productId, size, color, quantity, ...updatedItem };
-      return { _id, productId, size, color, quantity };
+    const updatedCart = user.cart.map((item: CartItem) => {
+      if (item.cartItemId === cartItemId) return updatedItem;
+      return item;
     });
 
     let consolidatedCart: CartItem[] = [];
@@ -126,7 +127,7 @@ cartRouter.delete('/:cartItemId', async (req: AuthorizedRequest, res: Response) 
     }
 
     // Filter out the cart item with the matching cartItemId
-    user.cart = user.cart.filter((item) => String(item._id) !== cartItemId);
+    user.cart = user.cart.filter((item) => item.cartItemId !== cartItemId);
 
     await user.save();
 

@@ -9,11 +9,11 @@ import { CartItem } from "../../../types/UserProps";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import {
   addItemToLocalCart,
+  generateId,
   removeItemFromLocalCart,
   ShallowCartItem,
   updateItemInLocalCart,
 } from "../utils/cartUtils";
-import { v4 as uuidv4 } from "uuid";
 import { clearLocalCart, setLocalCart } from "../guestCartSlice";
 
 export const useCart = () => {
@@ -56,7 +56,7 @@ export const useCart = () => {
       try {
         await addItemToServerCart({
           userId,
-          newItem: { ...newItem, cartItemId: uuidv4() },
+          newItem: { ...newItem, cartItemId: generateId() },
         }).unwrap();
       } catch (err) {
         if (err instanceof Error) console.error(err.message);
@@ -84,17 +84,17 @@ export const useCart = () => {
     }
   };
 
-  const removeItemFromCart = async (itemId: string) => {
+  const removeItemFromCart = async (cartItemId: string) => {
     if (userId) {
       // Use RTK Query mutation for logged-in users
       try {
-        await deleteItemFromServerCart({ userId, itemId }).unwrap();
+        await deleteItemFromServerCart({ userId, cartItemId }).unwrap();
       } catch (err) {
         if (err instanceof Error) console.error(err.message);
       }
     } else {
       // Otherwise, remove the item from the local cart
-      dispatch(setLocalCart(removeItemFromLocalCart(guestCart, itemId)));
+      dispatch(setLocalCart(removeItemFromLocalCart(guestCart, cartItemId)));
     }
   };
 

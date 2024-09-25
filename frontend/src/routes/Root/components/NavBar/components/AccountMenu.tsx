@@ -10,6 +10,7 @@ import {
 import { useLogoutMutation } from "../../../../../state/auth/authSlice.ts";
 import InitialsAvatar from "../../../../../components/InitialsAvatar/InitialsAvatar.tsx";
 import { User } from "../../../../../types/UserProps.ts";
+import { useCart } from "../../../../../state/cart/hooks/useCart.ts";
 
 const accountMenuLinks = [
   {
@@ -31,8 +32,10 @@ const accountMenuLinks = [
 
 const AccountMenu = ({ user }: { user: User }) => {
   const [logout] = useLogoutMutation();
+  const { clearCart } = useCart();
 
   const handleLogout = () => {
+    clearCart();
     logout({});
   };
 

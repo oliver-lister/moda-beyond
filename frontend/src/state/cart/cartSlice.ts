@@ -27,7 +27,7 @@ interface UpdateCartItemQuery extends CartQuery {
 }
 
 interface DeleteCartItemQuery extends CartQuery {
-  itemId: string;
+  cartItemId: string;
 }
 
 export const cartApi = apiSlice.injectEndpoints({
@@ -64,7 +64,7 @@ export const cartApi = apiSlice.injectEndpoints({
     }),
     updateCartItem: build.mutation<CartState, UpdateCartItemQuery>({
       query: ({ userId, updatedItem }) => ({
-        url: `/user/${userId}/cart/${updatedItem._id}`,
+        url: `/user/${userId}/cart/${updatedItem.cartItemId}`,
         method: "PATCH",
         credentials: "include",
         body: updatedItem,
@@ -72,13 +72,13 @@ export const cartApi = apiSlice.injectEndpoints({
       invalidatesTags: () => [{ type: "CartItem", id: "LIST" }],
     }),
     deleteCartItem: build.mutation<CartState, DeleteCartItemQuery>({
-      query: ({ userId, itemId }) => ({
-        url: `/user/${userId}/cart/${itemId}`,
+      query: ({ userId, cartItemId }) => ({
+        url: `/user/${userId}/cart/${cartItemId}`,
         method: "DELETE",
         credentials: "include",
       }),
       invalidatesTags: (result, error, arg) => [
-        { type: "CartItem", id: arg.itemId },
+        { type: "CartItem", id: arg.cartItemId },
       ],
     }),
     clearCart: build.mutation<CartState, CartQuery>({

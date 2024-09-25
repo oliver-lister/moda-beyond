@@ -10,6 +10,10 @@ export const saveGuestCart = (cart: CartItem[]) => {
   localStorage.setItem("guestCart", JSON.stringify(cart));
 };
 
+export const generateId = () => {
+  return uuidv4().split("-").join("").slice(0, 10);
+};
+
 export interface ShallowCartItem {
   productId: string;
   size: string;
@@ -41,7 +45,7 @@ export const addItemToLocalCart = (
     );
   }
 
-  return [...cart, { ...newItem, cartItemId: uuidv4() }];
+  return [...cart, { ...newItem, cartItemId: generateId() }];
 };
 
 export const updateItemInLocalCart = (

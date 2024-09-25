@@ -94,6 +94,7 @@ const sessionSchema = new mongoose.Schema(
 // TypeScript interfaces
 export interface CartItem {
   _id: mongoose.Schema.Types.ObjectId;
+  cartItemId: string;
   productId: mongoose.Schema.Types.ObjectId;
   size: string;
   color: string;
