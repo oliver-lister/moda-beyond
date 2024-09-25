@@ -5,6 +5,61 @@ import * as fs from 'fs';
 
 const router = express.Router();
 
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const { sortBy = 'createdAt', sortOrder = '-1', page = '1', search, pageSize = '12', ...filters } = req.query;
+
+    const parsedPageSize = Number(pageSize);
+    const parsedPage = Number(page);
+    const sort = { [sortBy as string]: parseInt(sortOrder as string, 10) as 1 | -1 };
+
+    let pipeline = [];
+
+    if (search) {
+      pipeline.push({
+        $search: {
+          index: 'SearchProducts',
+          text: { query: search, path: { wildcard: '*' } },
+        },
+      });
+    }
+
+    pipeline.push(
+      { $match: filters },
+      {
+        $facet: {
+          data: [
+            { $sort: sort },
+            ...(parsedPageSize > 0 ? [{ $skip: (parsedPage - 1) * parsedPageSize }, { $limit: parsedPageSize }] : []), // Apply pagination only if pageSize > 0
+          ],
+          metadata: [{ $count: 'totalCount' }],
+        },
+      },
+    );
+
+    const [{ data: products, metadata }] = await Product.aggregate(pipeline);
+    const totalCount = metadata[0]?.totalCount || 0;
+
+    return res.status(200).json({ success: true, products, totalCount });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}` });
+  }
+});
+
+router.get('/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
+    }
+    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
 router.post('/', tempUpload.array('productImg'), async (req: Request, res: Response) => {
   try {
     const newProductData = {
@@ -87,94 +142,6 @@ router.delete('/:productId', async (req: Request, res: Response) => {
     fs.rmSync(imageFolderPath, { recursive: true, force: true });
 
     return res.status(204).json({ success: true, message: `Product deleted: ${id}` });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
-  }
-});
-
-router.get('/', async (req: Request, res: Response) => {
-  try {
-    const sortBy = req.query.sortBy as string | undefined;
-    const sortOrder = parseInt(req.query.sortOrder as string) || 1;
-    const page = parseInt(req.query.page as string);
-    const pageSize = 12;
-    const search = req.query.search;
-
-    const query = req.query ? { ...req.query } : {};
-
-    delete query.sortBy;
-    delete query.sortOrder;
-    delete query.page;
-    delete query.search;
-
-    const sort = { [sortBy as string]: sortOrder as 1 | -1 };
-
-    let pipeline = [];
-
-    if (search) {
-      // if search query exists use it in the pipeline
-      pipeline = [
-        {
-          $search: {
-            index: 'SearchProducts',
-            text: {
-              query: search,
-              path: {
-                wildcard: '*',
-              },
-            },
-          },
-        },
-        { $match: query },
-        {
-          $facet: {
-            data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            metadata: [{ $count: 'totalCount' }],
-          },
-        },
-      ];
-    } else if (!page) {
-      // if there's no page queryParam, don't limit results (pagination)
-      pipeline = [
-        { $match: query },
-        {
-          $facet: {
-            data: [{ $sort: sort }],
-            metadata: [{ $count: 'totalCount' }],
-          },
-        },
-      ];
-    } else {
-      pipeline = [
-        { $match: query },
-        {
-          $facet: {
-            data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            metadata: [{ $count: 'totalCount' }],
-          },
-        },
-      ];
-    }
-
-    const [{ data: products, metadata }] = await Product.aggregate(pipeline);
-
-    const totalCount = metadata[0].totalCount || 0;
-
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
-  }
-});
-
-router.get('/:productId', async (req, res) => {
-  try {
-    const productId = req.params.productId;
-    const product = await Product.findById(productId);
-
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
-    }
-    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
