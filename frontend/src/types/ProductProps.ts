@@ -1,4 +1,4 @@
-export default interface ProductProps {
+export default interface Product {
   _id: string;
   name: string;
   category: "men" | "women" | "kids" | string;

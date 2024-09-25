@@ -1,8 +1,7 @@
 import { Skeleton, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import Item from "../Item/Item.tsx";
-import { useFetchProducts } from "../../hooks/useFetchProducts.ts";
-import React, { useEffect } from "react";
+import { useGetProductsQuery } from "../../state/productsSlice/productsSlice.ts";
 
 interface ProductCollectionTeaserProps {
   query: string;
@@ -13,15 +12,10 @@ const ProductCollectionTeaser: React.FC<ProductCollectionTeaserProps> = ({
   query,
   cap,
 }) => {
-  const [products, fetchProducts] = useFetchProducts();
-  const { data, isLoading, error } = products;
+  const { data: products, isLoading, error } = useGetProductsQuery(query);
 
-  useEffect(() => {
-    fetchProducts(query);
-  }, [query]);
-
-  if (!data && !isLoading) {
-    return <Text>{error}</Text>;
+  if (!products && !isLoading && error) {
+    return <Text>Error!</Text>;
   }
 
   const renderProductSlides = () => {
@@ -33,7 +27,7 @@ const ProductCollectionTeaser: React.FC<ProductCollectionTeaserProps> = ({
       ));
     }
 
-    return data?.slice(0, cap).map(({ _id, ...rest }) => (
+    return products?.slice(0, cap).map(({ _id, ...rest }) => (
       <Carousel.Slide key={_id}>
         <Item _id={_id} {...rest} />
       </Carousel.Slide>

@@ -156,11 +156,11 @@ router.get('/', async (req: Request, res: Response) => {
       ];
     }
 
-    const [{ data, metadata }] = await Product.aggregate(pipeline);
+    const [{ data: products, metadata }] = await Product.aggregate(pipeline);
 
     const totalCount = metadata[0].totalCount || 0;
 
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', data, totalCount });
+    return res.status(200).json({ success: true, message: 'Products fetched successfully', products, totalCount });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

@@ -13,8 +13,8 @@ import {
 import { useEffect, useState } from "react";
 import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
-import { useFetchProducts } from "../../hooks/useFetchProducts.ts";
 import ProductProps from "../../types/ProductProps.ts";
+import { useGetProductsQuery } from "../../state/productsSlice/productsSlice.ts";
 
 type SortOption = {
   sortBy: string;
@@ -28,12 +28,18 @@ const sortOptions: { [key: string]: SortOption } = {
 };
 
 const Shop = () => {
-  const [products, fetchProducts] = useFetchProducts();
-  const { data, totalCount, isLoading, error } = products;
   const [searchParams, setSearchParams] = useSearchParams();
+  const {
+    data: products,
+    isLoading,
+    isSuccess,
+    error,
+  } = useGetProductsQuery(searchParams.toString());
   const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
   const [sort, setSort] = useState<string>("date_new_to_old");
+
+  const totalCount = products?.length;
 
   useEffect(() => {
     // Set default parameters if they are not already set
@@ -81,8 +87,6 @@ const Shop = () => {
       searchParams.set("sortBy", "createdAt");
       searchParams.set("sortOrder", "-1");
     }
-
-    fetchProducts(searchParams.toString());
   }, [searchParams]);
 
   const handleChangeSort = (value: string | null) => {
@@ -138,8 +142,8 @@ const Shop = () => {
               style={{ textAlign: "center" }}
               data-testid="productcounter-container"
             >
-              {!isLoading && data ? (
-                <ProductCounter products={data} />
+              {!isLoading && products && isSuccess ? (
+                <ProductCounter products={products} />
               ) : (
                 <Text>Loading...</Text>
               )}
@@ -161,10 +165,14 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          <ItemContainer products={data} isLoading={isLoading} error={error} />
+          <ItemContainer
+            products={products}
+            isLoading={isLoading}
+            error={error}
+          />
           <Center>
             <Pagination
-              total={Math.ceil(totalCount / 12)}
+              total={Math.ceil(totalCount ? totalCount : 0 / 12)}
               value={activePage}
               onChange={handleChangePage}
             />

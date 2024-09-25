@@ -6,10 +6,12 @@ import Copyright from "./components/Copyright/Copyright.tsx";
 import BackendInfoModal from "./components/BackendInfoModal/BackendInfoModal.tsx";
 import { authApi } from "../../state/auth/authSlice.ts";
 import { useAppDispatch } from "../../state/hooks.ts";
+import { productsApi } from "../../state/productsSlice/productsSlice.ts";
 
 const Layout = () => {
   const dispatch = useAppDispatch();
   dispatch(authApi.endpoints.getSession.initiate());
+  dispatch(productsApi.endpoints.getProducts.initiate(""));
 
   return (
     <>
