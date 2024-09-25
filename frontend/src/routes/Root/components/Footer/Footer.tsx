@@ -25,15 +25,15 @@ import GradientButton from "../../../../components/GradientButton/GradientButton
 const navMenu = [
   {
     label: "Women",
-    path: "/shop?category=women&page=1&sortBy=createdAt&sortOrder=-1",
+    path: "/shop?category=women",
   },
   {
     label: "Men",
-    path: "/shop?category=men&page=1&sortBy=createdAt&sortOrder=-1",
+    path: "/shop?category=men",
   },
   {
     label: "Kids",
-    path: "/shop?category=kids&page=1&sortBy=createdAt&sortOrder=-1",
+    path: "/shop?category=kids",
   },
   { label: "Cart", path: "/cart" },
   { label: "Login / Signup", path: "/login" },

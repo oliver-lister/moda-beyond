@@ -9,17 +9,17 @@ import { useEffect } from "react";
 const categories = [
   {
     label: "Women",
-    link: "/shop?category=women&page=1&sortBy=createdAt&sortOrder=-1",
+    link: "/shop?category=women",
     image: women_category_card,
   },
   {
     label: "Men",
-    link: "/shop?category=men&page=1&sortBy=createdAt&sortOrder=-1",
+    link: "/shop?category=men",
     image: men_category_card,
   },
   {
     label: "Kids",
-    link: "/shop?category=kids&page=1&sortBy=createdAt&sortOrder=-1",
+    link: "/shop?category=kids",
     image: kids_category_card,
   },
 ];

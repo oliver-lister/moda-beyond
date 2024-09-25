@@ -9,12 +9,15 @@ import {
   Pagination,
   Center,
   Group,
+  Grid,
+  GridCol,
 } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
 import ProductCounter from "./components/ProductCounter.tsx";
 import { useGetProductsQuery } from "../../state/productsSlice/productsSlice.ts";
+import FilterForm from "./components/FilterForm.tsx";
 
 type SortOption = {
   sortBy: string;
@@ -134,11 +137,18 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          <ItemContainer
-            products={products}
-            isLoading={isLoading}
-            error={error}
-          />
+          <Grid>
+            <GridCol span={{ base: 12, md: 3 }}>
+              <FilterForm />
+            </GridCol>
+            <GridCol span={{ base: 12, md: 9 }}>
+              <ItemContainer
+                products={products}
+                isLoading={isLoading}
+                error={error}
+              />
+            </GridCol>
+          </Grid>
           <Center>
             <Pagination
               total={Math.ceil(totalCount / pageSize)}

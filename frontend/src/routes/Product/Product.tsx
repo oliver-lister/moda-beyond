@@ -24,15 +24,11 @@ const Product = () => {
   const breadcrumbItems = [
     {
       title: product && product.category && product.category.toUpperCase(),
-      href: `/shop?category=${
-        product && product.category
-      }&sortBy=createdAt&sortOrder=-1`,
+      href: `/shop?category=${product && product.category}`,
     },
     {
       title: product && product.brand && product.brand.toUpperCase(),
-      href: `/shop?brand=${
-        product && product.brand
-      }&sortBy=createdAt&sortOrder=-1`,
+      href: `/shop?brand=${product && product.brand}`,
     },
   ].map((item, index) => (
     <Anchor

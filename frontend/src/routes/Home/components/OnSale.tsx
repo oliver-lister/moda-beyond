@@ -6,10 +6,7 @@ const OnSale = () => {
     <section>
       <Stack>
         <Title order={3}>On Sale</Title>
-        <ProductCollectionTeaser
-          query="lastPrice[$exists]=true&sortBy=createdAt&sortOrder=-1"
-          cap={6}
-        />
+        <ProductCollectionTeaser query="lastPrice[$exists]=true" cap={6} />
       </Stack>
     </section>
   );
