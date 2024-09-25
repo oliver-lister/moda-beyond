@@ -12,7 +12,8 @@ const ProductCollectionTeaser: React.FC<ProductCollectionTeaserProps> = ({
   query,
   cap,
 }) => {
-  const { data: products, isLoading, error } = useGetProductsQuery(query);
+  const { data, isLoading, error } = useGetProductsQuery(query);
+  const products = data?.products || [];
 
   if (!products && !isLoading && error) {
     return <Text>Error!</Text>;

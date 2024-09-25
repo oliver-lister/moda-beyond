@@ -29,17 +29,14 @@ const sortOptions: { [key: string]: SortOption } = {
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const {
-    data: products,
-    isLoading,
-    isSuccess,
-    error,
-  } = useGetProductsQuery(searchParams.toString());
+  const { data, isLoading, error } = useGetProductsQuery(
+    searchParams.toString()
+  );
+  const products = data?.products || [];
+  const totalCount = data?.totalCount || 0;
   const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
   const [sort, setSort] = useState<string>("date_new_to_old");
-
-  const totalCount = products?.length;
 
   useEffect(() => {
     // Set default parameters if they are not already set
@@ -142,7 +139,7 @@ const Shop = () => {
               style={{ textAlign: "center" }}
               data-testid="productcounter-container"
             >
-              {!isLoading && products && isSuccess ? (
+              {products ? (
                 <ProductCounter products={products} />
               ) : (
                 <Text>Loading...</Text>
@@ -172,7 +169,7 @@ const Shop = () => {
           />
           <Center>
             <Pagination
-              total={Math.ceil(totalCount ? totalCount : 0 / 12)}
+              total={Math.ceil(totalCount / 12)}
               value={activePage}
               onChange={handleChangePage}
             />

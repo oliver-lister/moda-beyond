@@ -1,17 +1,30 @@
 import { apiSlice } from "../api/apiSlice";
 import Product from "../../types/ProductProps";
 
-// Initial state without EntityAdapter
-export const initialState: Product[] = [];
+// Updated initial state to include both products and totalCount
+interface ProductsState {
+  products: Product[];
+  totalCount: number;
+}
+
+export const initialState: ProductsState = {
+  products: [],
+  totalCount: 0,
+};
 
 export const productsApi = apiSlice.injectEndpoints({
   endpoints: (build) => ({
-    getProducts: build.query<Product[], string | undefined>({
+    getProducts: build.query<ProductsState, string | undefined>({
       query: (searchParams) => ({
         url: `/products/?${searchParams ? searchParams : ""}`,
       }),
-      transformResponse: (responseData: { products: Product[] }) =>
-        responseData.products,
+      transformResponse: (responseData: {
+        products: Product[];
+        totalCount: number;
+      }) => ({
+        products: responseData.products,
+        totalCount: responseData.totalCount,
+      }),
       providesTags: [{ type: "Product", id: "LIST" }],
     }),
     getProduct: build.query<Product, string | undefined>({

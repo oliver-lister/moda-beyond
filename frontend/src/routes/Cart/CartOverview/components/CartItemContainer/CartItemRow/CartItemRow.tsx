@@ -13,10 +13,9 @@ import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
 import { CartItem } from "../../../../../../types/UserProps.ts";
-import { useState, useEffect } from "react";
-import ProductProps from "../../../../../../types/ProductProps.ts";
 import { notifications } from "@mantine/notifications";
 import { useCart } from "../../../../../../state/cart/hooks/useCart.ts";
+import { useGetProductQuery } from "../../../../../../state/productsSlice/productsSlice.ts";
 
 const CartItemRow = ({
   productId,
@@ -25,8 +24,7 @@ const CartItemRow = ({
   quantity,
   cartItemId,
 }: CartItem) => {
-  const [product, setProduct] = useState<ProductProps | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { data: product, isLoading } = useGetProductQuery(productId);
   const { removeItemFromCart, updateItemInCart } = useCart();
 
   const handleUpdateSize = async (value: string | null) => {
@@ -88,34 +86,6 @@ const CartItemRow = ({
       });
     }
   };
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/${productId}`
-        );
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-        }
-
-        const { product } = responseData;
-
-        setProduct(product);
-        setIsLoading(false);
-      } catch (err) {
-        if (err instanceof Error)
-          console.log("Error fetching product: ", err.message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [productId]);
 
   if (!product && isLoading)
     return (
