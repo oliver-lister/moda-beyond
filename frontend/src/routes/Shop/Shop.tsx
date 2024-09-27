@@ -17,7 +17,7 @@ import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
 import ProductCounter from "./components/ProductCounter.tsx";
 import { useGetProductsQuery } from "../../state/productsSlice/productsSlice.ts";
-import FilterForm from "./components/FilterForm.tsx";
+import FilterForm from "./components/FilterForm/FilterForm.tsx";
 
 type SortOption = {
   sortBy: string;

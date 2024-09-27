@@ -7,11 +7,53 @@ const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const { sortBy = 'createdAt', sortOrder = '-1', page = '1', search, pageSize = '12', ...filters } = req.query;
+    const {
+      sortBy = 'createdAt',
+      sortOrder = '-1',
+      page = '1',
+      search,
+      pageSize = '12',
+      minPrice,
+      maxPrice,
+      onSale,
+      availableSizes,
+      brands,
+      ...filters
+    } = req.query;
 
     const parsedPageSize = Number(pageSize);
     const parsedPage = Number(page);
     const sort = { [sortBy as string]: parseInt(sortOrder as string, 10) as 1 | -1 };
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      const priceFilter: any = {};
+      if (minPrice) {
+        priceFilter.$gte = Number(minPrice);
+      }
+      if (maxPrice) {
+        priceFilter.$lte = Number(maxPrice);
+      }
+      filters.price = priceFilter;
+    }
+
+    // onSale filter (products where lastPrice > price)
+    if (onSale === 'true') {
+      filters.$expr = { $gt: ['$lastPrice', '$price'] };
+    }
+
+    // Available Sizes filter (filter products by selected sizes)
+    if (availableSizes) {
+      const sizesArray = Array.isArray(availableSizes) ? availableSizes : [availableSizes as string];
+      filters.availableSizes = { $all: sizesArray };
+    }
+
+    // Brand filter (filter products by selected brands)
+    if (brands) {
+      const brandArray = Array.isArray(brands) ? brands : [brands as string];
+
+      filters.brand = { $in: brandArray };
+    }
 
     let pipeline = [];
 
@@ -37,6 +79,7 @@ router.get('/', async (req: Request, res: Response) => {
       },
     );
 
+    // Execute the aggregation pipeline
     const [{ data: products, metadata }] = await Product.aggregate(pipeline);
     const totalCount = metadata[0]?.totalCount || 0;
 
