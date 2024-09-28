@@ -46,8 +46,8 @@ const cookieJWTAuth = async (req: AuthorizedRequest, res: Response, next: NextFu
       await newSession.save();
 
       // Set new tokens in cookies
-      res.cookie('accessToken', newAccessToken, { httpOnly: true });
-      res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+      res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, sameSite: 'none' });
+      res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'none' });
 
       // Attach new accessToken payload to req.user
       req.user = jwt.verify(newAccessToken, tokenSecret);

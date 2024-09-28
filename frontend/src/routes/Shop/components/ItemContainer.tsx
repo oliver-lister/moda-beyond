@@ -16,7 +16,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4, xl: 6 }}>
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }}>
         {Array.from({ length: 12 }).map((_, i) => (
           <Skeleton
             key={i}

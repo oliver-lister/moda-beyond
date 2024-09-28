@@ -63,12 +63,12 @@ router.post('/login', async (req: Request, res: Response) => {
 
     // Generate a JWT token for authentication
     const accessToken = generateAccessToken(String(user._id), '5m');
-    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'none' });
 
     const refreshToken = generateRefreshToken();
     const newSession = new Session({ userId: String(user._id), refreshToken: refreshToken });
     await newSession.save();
-    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none' });
 
     return res.status(200).json({ success: true, message: 'Login successful', user });
   } catch (err: any) {
@@ -121,12 +121,12 @@ router.post('/signup', async (req: Request, res: Response) => {
     await newUser.save();
 
     const accessToken = generateAccessToken(String(newUser._id), '1h');
-    res.cookie('accessToken', accessToken, { httpOnly: true });
+    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'none' });
 
     const refreshToken = generateRefreshToken();
     const newSession = new Session({ userId: String(newUser._id), refreshToken: refreshToken });
     await newSession.save();
-    res.cookie('refreshToken', refreshToken, { httpOnly: true });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none' });
 
     return res.status(200).json({ success: true, message: 'User registered successfully.', user: newUser });
   } catch (err: any) {
