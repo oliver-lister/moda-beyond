@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: "./vitest.setup.mjs",
+    setupFiles: ["./src/testing-utils/setupTests.ts"],
   },
   base: "/moda-beyond/",
 });

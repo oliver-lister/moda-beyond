@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import Signup from "./Signup";
 import { fireEvent, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "../../../testing-utils";
@@ -15,10 +15,6 @@ const validMockValues = {
 
 describe("Signup Component", () => {
   const mockDispatch = vi.fn();
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
 
   it("displays error text when user submits with invalid values", async () => {
     const { getByLabelText, getByTestId, queryByText } = renderWithProviders(
@@ -91,12 +87,16 @@ describe("Signup Component", () => {
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalledWith(validMockValues);
     });
-  });
 
+    vi.clearAllMocks();
+  });
   it("does not call dispatch when honeypot is filled in", async () => {
     const { getByLabelText, getByTestId } = renderWithProviders(
       <Signup dispatchValues={mockDispatch} />
     );
+
+    // Simulate honeypot being filled (bot behavior)
+    fireEvent.change(getByTestId("honeypot"), { target: { value: "hello" } });
 
     const { email, password, firstName, lastName, dob } = validMockValues;
 
@@ -116,11 +116,10 @@ describe("Signup Component", () => {
       target: { value: dob },
     });
 
-    fireEvent.change(getByTestId("honeypot"), { target: { value: "hello" } });
-
     fireEvent.click(getByTestId("signup-button"));
 
     await waitFor(() => {
+      // Assert that dispatch is NOT called
       expect(mockDispatch).not.toHaveBeenCalled();
     });
   });

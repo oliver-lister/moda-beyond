@@ -27,6 +27,7 @@ const SizeCheckboxes: React.FC<Props> = ({ sizeOptions, handleSizeChange }) => {
             <Checkbox
               key={size}
               label={size}
+              data-testid={`checkbox-${size}`} // Add test id for each checkbox
               checked={selectedSizes.includes(size)}
               onChange={(event) =>
                 handleSizeChange(size, event.currentTarget.checked)

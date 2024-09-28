@@ -18,7 +18,7 @@ describe("Item", () => {
         availableColors={[]}
         description={""}
         material={""}
-        date={new Date()}
+        createdAt={new Date()}
         available={false}
       />
     );
@@ -56,7 +56,7 @@ describe("Item", () => {
         availableColors={[]}
         description={""}
         material={""}
-        date={new Date()}
+        createdAt={new Date()}
         available={false}
       />
     );
