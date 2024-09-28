@@ -76,12 +76,15 @@ const Signup = ({
   });
 
   const handleSignupSubmit = async (values: SignupValues) => {
+    // Check if honeypot is filled
+    if (honeypotRef.current && honeypotRef.current.value !== "") {
+      console.log("Bot detected, form will not be submitted.");
+      return; // Early return
+    }
+
     try {
       setIsLoading(true);
       setIsError(false);
-      if (honeypotRef.current && honeypotRef.current.value !== "") {
-        throw new Error("Bot detected");
-      }
 
       // if localStorage cart exists append this to the values object and pass to new user
       const localCart = localStorage.getItem("cart");

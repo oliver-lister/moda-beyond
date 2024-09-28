@@ -28,7 +28,7 @@ export const mockedProducts = [
       "/images/6600defd2aba10678e7b127c/productImg_1711333117079_http___static.theiconic.com.au_p_adidas-originals-7668-5679302-5.webp",
     ],
     available: true,
-    date: new Date(),
+    createdAt: new Date(),
   },
   {
     _id: "660286b8d64e6c5891d1210e",
@@ -55,7 +55,7 @@ export const mockedProducts = [
       "/images/660286b8d64e6c5891d1210e/productImg_1711441592788_http___static.theiconic.com.au_p_adidas-performance-6793-5119822-6.webp",
     ],
     available: true,
-    date: new Date(),
+    createdAt: new Date(),
     lastPrice: 150,
   },
   {
@@ -82,6 +82,6 @@ export const mockedProducts = [
       "/images/66028a01d64e6c5891d12516/productImg_1711442433459_http___static.theiconic.com.au_p_adidas-originals-1812-0840402-5.webp",
     ],
     available: true,
-    date: new Date(),
+    createdAt: new Date(),
   },
 ];

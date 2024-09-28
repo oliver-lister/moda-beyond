@@ -25,8 +25,8 @@ const loginSchema = object({
     .email("Please enter a valid email address")
     .required("Email is required"),
   password: string()
-    .required("Password is required")
     .min(8, "Password must be at least 8 characters")
+    .required("Password is required")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
       "Please enter a valid password"
@@ -54,12 +54,15 @@ const Login = ({
   });
 
   const handleLoginSubmit = async (values: LoginValues) => {
+    // Check if honeypot is filled
+    if (honeypotRef.current && honeypotRef.current.value !== "") {
+      console.log("Bot detected, form will not be submitted."); // Debug message
+      return; // Early return
+    }
+
     try {
       setIsLoading(true);
       setIsError(false);
-      if (honeypotRef.current && honeypotRef.current.value !== "") {
-        throw new Error("Bot detected");
-      }
       await dispatchValues(values);
       form.reset();
       setIsLoading(false);

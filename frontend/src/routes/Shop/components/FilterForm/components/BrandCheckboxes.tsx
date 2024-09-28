@@ -29,6 +29,7 @@ const BrandCheckboxes: React.FC<Props> = ({
             <Checkbox
               key={brand}
               label={brand}
+              data-testid={`checkbox-${brand}`} // Add test id for each checkbox
               checked={selectedBrands.includes(brand)}
               onChange={(event) =>
                 handleBrandChange(brand, event.currentTarget.checked)
