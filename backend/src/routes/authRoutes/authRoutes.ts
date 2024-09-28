@@ -79,25 +79,38 @@ router.post('/login', async (req: Request, res: Response) => {
 // API for User Logout
 router.post('/logout', async (req: Request, res: Response) => {
   try {
+    console.log('Logout route hit');
+
+    // Log incoming cookies
+    console.log('Cookies:', req.cookies);
+
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
+      console.log('No refresh token provided');
       return res.status(400).json({ success: false, error: 'No refresh token provided', errorCode: 'NO_REFRESH_TOKEN' });
     }
 
+    console.log('Refresh token found:', refreshToken);
+
     // Remove the session associated with the refresh token from the database
     const deletedSession = await Session.findOneAndDelete({ refreshToken });
+    console.log('Deleted session:', deletedSession);
 
     if (!deletedSession) {
+      console.log('Session not found for refresh token');
       return res.status(404).json({ success: false, error: 'Session not found', errorCode: 'SESSION_NOT_FOUND' });
     }
 
     // Clear the cookies
+    console.log('Clearing cookies...');
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 
+    console.log('Logout successful');
     return res.status(200).json({ success: true, message: 'Logout successful' });
   } catch (err: any) {
+    console.error('Error during logout:', err.message);
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
