@@ -16,6 +16,7 @@ const BackendInfoModal = () => {
     }
   }, [hasSeenModal]);
 
+
   return (
     <Modal
       opened={showModal}
