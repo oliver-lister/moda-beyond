@@ -36,6 +36,7 @@ const AccountMenu = ({ user }: { user: User }) => {
 
   const handleLogout = () => {
     clearCart();
+    
     logout({});
   };
 

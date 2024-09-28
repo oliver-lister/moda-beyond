@@ -104,8 +104,8 @@ router.post('/logout', async (req: Request, res: Response) => {
 
     // Clear the cookies
     console.log('Clearing cookies...');
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    res.clearCookie('accessToken', { httpOnly: true, secure: true, sameSite: 'none' });
+    res.clearCookie('refreshToken', { httpOnly: true, secure: true, sameSite: 'none' });
 
     console.log('Logout successful');
     return res.status(200).json({ success: true, message: 'Logout successful' });

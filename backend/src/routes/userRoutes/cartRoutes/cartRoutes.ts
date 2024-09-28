@@ -75,8 +75,6 @@ cartRouter.patch('/:cartItemId', async (req: AuthorizedRequest, res: Response) =
     const { userId, cartItemId } = req.params;
     const updatedItem = req.body;
 
-    console.log(updatedItem);
-
     const user = await User.findById(userId);
 
     if (!user) {
