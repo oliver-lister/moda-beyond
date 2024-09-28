@@ -18,7 +18,7 @@ const BrandCheckboxes: React.FC<Props> = ({
 }) => {
   const [searchParams] = useSearchParams();
 
-  const selectedBrands = searchParams.getAll("brand");
+  const selectedBrands = searchParams.getAll("brands");
 
   return (
     <AccordionItem value="brand">

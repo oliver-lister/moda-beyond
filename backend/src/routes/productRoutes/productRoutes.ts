@@ -16,7 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
       minPrice,
       maxPrice,
       onSale,
-      availableSizes,
+      sizes,
       brands,
       ...filters
     } = req.query;
@@ -43,8 +43,8 @@ router.get('/', async (req: Request, res: Response) => {
     }
 
     // Available Sizes filter (filter products by selected sizes)
-    if (availableSizes) {
-      const sizesArray = Array.isArray(availableSizes) ? availableSizes : [availableSizes as string];
+    if (sizes) {
+      const sizesArray = Array.isArray(sizes) ? sizes : [sizes as string];
       filters.availableSizes = { $all: sizesArray };
     }
 
@@ -89,17 +89,28 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/:productId', async (req, res) => {
+router.get('/sizes', async (req: Request, res: Response) => {
   try {
-    const productId = req.params.productId;
-    const product = await Product.findById(productId);
+    const sizes = await Product.aggregate([
+      { $unwind: '$availableSizes' },
+      { $group: { _id: '$availableSizes' } },
+      { $sort: { _id: 1 } },
+      { $project: { _id: 0, size: '$_id' } },
+    ]);
 
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
-    }
-    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
+    res.status(200).json({ success: true, message: 'Sizes fetched successfully', sizes: sizes.map((s) => s.size) });
   } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+    res.status(500).json({ success: false, error: `Failed to get sizes: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.get('/brands', async (req: Request, res: Response) => {
+  try {
+    const brands = await Product.aggregate([{ $group: { _id: '$brand' } }, { $sort: { _id: 1 } }, { $project: { _id: 0, brand: '$_id' } }]);
+
+    res.status(200).json({ success: true, message: 'Brands fetched successfully', brands: brands.map((b) => b.brand) });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: `Failed to get brands: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }
 });
 
@@ -131,6 +142,20 @@ router.post('/', tempUpload.array('productImg'), async (req: Request, res: Respo
     await newProduct.save();
 
     return res.status(201).json({ success: true, message: 'Product added', product: newProduct });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.get('/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
+    }
+    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

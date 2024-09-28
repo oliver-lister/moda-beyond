@@ -1,7 +1,7 @@
 import { Skeleton, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import Item from "../Item/Item.tsx";
-import { useGetProductsQuery } from "../../state/productsSlice/productsSlice.ts";
+import { useGetProductsQuery } from "../../state/products/productsSlice.ts";
 
 interface ProductCollectionTeaserProps {
   query: string;

@@ -35,7 +35,28 @@ export const productsApi = apiSlice.injectEndpoints({
         responseData.product,
       providesTags: (result, error, arg) => [{ type: "Product", id: arg }],
     }),
+    getAllSizes: build.query<string[], void>({
+      query: () => ({
+        url: `/products/sizes`,
+      }),
+      transformResponse: (responseData: { sizes: string[] }) =>
+        responseData.sizes,
+      providesTags: ["Size"],
+    }),
+    getAllBrands: build.query<string[], void>({
+      query: () => ({
+        url: `/products/brands`,
+      }),
+      transformResponse: (responseData: { brands: string[] }) =>
+        responseData.brands,
+      providesTags: ["Brand"],
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useGetProductQuery } = productsApi;
+export const {
+  useGetProductsQuery,
+  useGetProductQuery,
+  useGetAllBrandsQuery,
+  useGetAllSizesQuery,
+} = productsApi;

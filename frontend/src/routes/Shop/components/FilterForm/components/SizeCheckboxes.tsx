@@ -16,7 +16,7 @@ const SizeCheckboxes: React.FC<Props> = ({ sizeOptions, handleSizeChange }) => {
   const [searchParams] = useSearchParams();
 
   // Get selected sizes from URL
-  const selectedSizes = searchParams.getAll("size");
+  const selectedSizes = searchParams.getAll("sizes");
 
   return (
     <AccordionItem value="size">

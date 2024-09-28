@@ -15,7 +15,7 @@ import styles from "./cartitem.module.css";
 import { CartItem } from "../../../../../../types/UserProps.ts";
 import { notifications } from "@mantine/notifications";
 import { useCart } from "../../../../../../state/cart/hooks/useCart.ts";
-import { useGetProductQuery } from "../../../../../../state/productsSlice/productsSlice.ts";
+import { useGetProductQuery } from "../../../../../../state/products/productsSlice.ts";
 
 const CartItemRow = ({
   productId,

@@ -5,7 +5,12 @@ import SaleOnlySwitch from "./components/SaleOnlySwitch";
 import SizeCheckboxes from "./components/SizeCheckboxes";
 import BrandCheckboxes from "./components/BrandCheckboxes";
 
-const FilterForm = () => {
+type Props = {
+  sizeOptions: string[];
+  brandOptions: string[];
+};
+
+const FilterForm: React.FC<Props> = ({ sizeOptions, brandOptions }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Handle changes in price range finder
@@ -28,32 +33,32 @@ const FilterForm = () => {
   };
 
   // Handle changes to Size checkboxes
-  const sizeOptions = ["INTL S", "INTL M", "INTL L", "INTL XL"];
   const handleSizeChange = (size: string, isChecked: boolean) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
 
     if (isChecked) {
-      newSearchParams.append("size", size); // Add size to URL
+      newSearchParams.append("sizes", size);
     } else {
-      const sizes = newSearchParams.getAll("size").filter((s) => s !== size);
-      newSearchParams.delete("size"); // Clear all sizes
-      sizes.forEach((s) => newSearchParams.append("size", s)); // Add back remaining sizes
+      const sizes = newSearchParams.getAll("sizes").filter((s) => s !== size);
+      newSearchParams.delete("sizes");
+      sizes.forEach((s) => newSearchParams.append("sizes", s)); // Add back remaining sizes
     }
 
     setSearchParams(newSearchParams);
   };
 
   // Handle changes to Brand checkboxes
-  const brandOptions = ["Brand A", "Brand B", "Brand C"];
   const handleBrandChange = (brand: string, isChecked: boolean) => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
 
     if (isChecked) {
-      newSearchParams.append("brand", brand); // Add brand to URL
+      newSearchParams.append("brands", brand);
     } else {
-      const brands = newSearchParams.getAll("brand").filter((b) => b !== brand);
-      newSearchParams.delete("brand"); // Clear all brands
-      brands.forEach((b) => newSearchParams.append("brand", b)); // Add back remaining brands
+      const brands = newSearchParams
+        .getAll("brands")
+        .filter((b) => b !== brand);
+      newSearchParams.delete("brands");
+      brands.forEach((b) => newSearchParams.append("brands", b));
     }
 
     setSearchParams(newSearchParams);
@@ -65,8 +70,8 @@ const FilterForm = () => {
     newSearchParams.delete("minPrice");
     newSearchParams.delete("maxPrice");
     newSearchParams.delete("onSale");
-    newSearchParams.delete("size");
-    newSearchParams.delete("brand");
+    newSearchParams.delete("sizes");
+    newSearchParams.delete("brands");
     setSearchParams(newSearchParams);
   };
 

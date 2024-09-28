@@ -16,7 +16,7 @@ const PriceRange: React.FC<Props> = ({ handlePriceChange }) => {
   const [searchParams] = useSearchParams();
 
   const minPrice = Number(searchParams.get("minPrice")) || 0;
-  const maxPrice = Number(searchParams.get("maxPrice")) || 2000;
+  const maxPrice = Number(searchParams.get("maxPrice")) || 500;
 
   return (
     <AccordionItem value="price">

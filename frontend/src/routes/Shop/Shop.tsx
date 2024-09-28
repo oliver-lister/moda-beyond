@@ -16,7 +16,11 @@ import { useCallback, useEffect, useState } from "react";
 import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
 import ProductCounter from "./components/ProductCounter.tsx";
-import { useGetProductsQuery } from "../../state/productsSlice/productsSlice.ts";
+import {
+  useGetAllBrandsQuery,
+  useGetAllSizesQuery,
+  useGetProductsQuery,
+} from "../../state/products/productsSlice.ts";
 import FilterForm from "./components/FilterForm/FilterForm.tsx";
 
 type SortOption = {
@@ -94,6 +98,11 @@ const Shop = () => {
     });
   };
 
+  const { data: sizeOptions, isLoading: isSizesLoading } =
+    useGetAllSizesQuery();
+  const { data: brandOptions, isLoading: isBrandsLoading } =
+    useGetAllBrandsQuery();
+
   return (
     <section style={{ padding: "1rem 0" }}>
       <Container size="xl">
@@ -139,7 +148,15 @@ const Shop = () => {
           </SimpleGrid>
           <Grid>
             <GridCol span={{ base: 12, md: 3 }}>
-              <FilterForm />
+              {sizeOptions &&
+              brandOptions &&
+              !isSizesLoading &&
+              !isBrandsLoading ? (
+                <FilterForm
+                  sizeOptions={sizeOptions}
+                  brandOptions={brandOptions}
+                />
+              ) : null}
             </GridCol>
             <GridCol span={{ base: 12, md: 9 }}>
               <ItemContainer

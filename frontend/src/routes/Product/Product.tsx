@@ -11,7 +11,7 @@ import {
 import styles from "./product.module.css";
 import ProductDisplay from "./components/ProductDisplay/ProductDisplay.tsx";
 import SimilarProducts from "./components/SimilarProducts/SimilarProducts.tsx";
-import { useGetProductQuery } from "../../state/productsSlice/productsSlice.ts";
+import { useGetProductQuery } from "../../state/products/productsSlice.ts";
 
 const Product = () => {
   const { productId } = useParams();
