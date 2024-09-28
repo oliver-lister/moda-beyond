@@ -24,7 +24,9 @@ const Item = ({ _id, images, name, brand, price, lastPrice }: ProductProps) => {
         </div>
         <div className={styles.content}>
           <p className={styles.brand}>{brand}</p>
-          <p className={styles.name}>{name}</p>
+          <p className={styles.name} data-testid="product-name">
+            {name}
+          </p>
           <Stack gap="xs">
             <Group gap="xs" className={styles.prices}>
               {lastPrice && lastPrice > price && (

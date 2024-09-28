@@ -1,39 +1,39 @@
 import { Skeleton, Text } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import Item from "../Item/Item.tsx";
-import { useFetchProducts } from "../../hooks/useFetchProducts.ts";
-import { useEffect } from "react";
+import { useGetProductsQuery } from "../../state/products/productsSlice.ts";
 
-const ProductCollectionTeaser = ({
-  query,
-  cap,
-}: {
+interface ProductCollectionTeaserProps {
   query: string;
   cap: number;
+}
+
+const ProductCollectionTeaser: React.FC<ProductCollectionTeaserProps> = ({
+  query,
+  cap,
 }) => {
-  const [products, fetchProducts] = useFetchProducts();
-  const { data, isLoading, error } = products;
+  const { data, isLoading, error } = useGetProductsQuery(query);
+  const products = data?.products || [];
 
-  useEffect(() => {
-    fetchProducts(query);
-  }, [query]);
-
-  if (!data && !isLoading) {
-    return <Text>{error}</Text>;
+  if (!products && !isLoading && error) {
+    return <Text>Error!</Text>;
   }
 
-  const productSlides = !isLoading
-    ? data &&
-      data.slice(0, cap).map(({ _id, ...rest }) => (
-        <Carousel.Slide key={_id}>
-          <Item _id={_id} {...rest} />
-        </Carousel.Slide>
-      ))
-    : Array.from({ length: 6 }).map((_, i) => (
+  const renderProductSlides = () => {
+    if (isLoading) {
+      return Array.from({ length: 6 }).map((_, i) => (
         <Carousel.Slide key={i}>
           <Skeleton width="100%" height="370" />
         </Carousel.Slide>
       ));
+    }
+
+    return products?.slice(0, cap).map(({ _id, ...rest }) => (
+      <Carousel.Slide key={_id}>
+        <Item _id={_id} {...rest} />
+      </Carousel.Slide>
+    ));
+  };
 
   return (
     <Carousel
@@ -44,7 +44,7 @@ const ProductCollectionTeaser = ({
       skipSnaps={true}
       containScroll="keepSnaps"
     >
-      {productSlides}
+      {renderProductSlides()}
     </Carousel>
   );
 };

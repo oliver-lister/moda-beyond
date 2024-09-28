@@ -9,7 +9,7 @@ import {
 import ProductDisplay from "./ProductDisplay";
 import ProductProps from "../../../../types/ProductProps";
 import { setupStore } from "../../../../state/store";
-import { CartItemProps } from "../../../../types/UserProps";
+import { CartItem } from "../../../../types/UserProps";
 import ProductForm from "./components/ProductForm";
 
 const mockProduct: ProductProps = {
@@ -23,7 +23,7 @@ const mockProduct: ProductProps = {
   category: "men",
   description: "",
   material: "",
-  date: new Date(),
+  createdAt: new Date(),
   available: true,
 };
 
@@ -84,10 +84,9 @@ describe("ProductDisplay", () => {
       "Please pick a size."
     );
 
-    const mockCartItem: CartItemProps = {
+    const mockCartItem: CartItem = {
       cartItemId: "23",
       productId: "231382",
-      price: 32,
       color: "Velvet",
       size: "UK 13",
       quantity: 1,

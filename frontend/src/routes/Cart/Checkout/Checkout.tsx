@@ -17,7 +17,7 @@ const Checkout = () => {
         </Button>
       </Group>
       <EmbeddedCheckoutForm
-        items={cart.items}
+        items={cart}
         selectedDelivery={{
           fee: deliveryData[delivery as keyof DeliveryData].fee,
           label: deliveryData[delivery as keyof DeliveryData].label,

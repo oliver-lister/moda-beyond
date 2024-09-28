@@ -1,10 +1,12 @@
-import ProductProps from "../../../types/ProductProps.ts";
+import Product from "../../../types/ProductProps.ts";
 import Item from "../../../components/Item/Item.tsx";
 import { SimpleGrid, Center, Text, Skeleton } from "@mantine/core";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { SerializedError } from "@reduxjs/toolkit";
 interface ItemContainerProps {
-  products: ProductProps[];
+  products: Product[] | undefined;
   isLoading: boolean;
-  error: string;
+  error: FetchBaseQueryError | SerializedError | undefined;
 }
 
 const ItemContainer: React.FC<ItemContainerProps> = ({
@@ -14,7 +16,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4, xl: 6 }}>
         {Array.from({ length: 12 }).map((_, i) => (
           <Skeleton
             key={i}
@@ -31,7 +33,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
   if (!isLoading && error) {
     return (
       <Center h="60vh">
-        <Text fw={600}>{error}</Text>
+        <Text fw={600}>Error!</Text>
       </Center>
     );
   }
@@ -45,7 +47,7 @@ const ItemContainer: React.FC<ItemContainerProps> = ({
   }
 
   return (
-    <SimpleGrid cols={{ base: 1, xs: 2, sm: 4, md: 4, lg: 5, xl: 6 }}>
+    <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }}>
       {products &&
         products.map(({ _id, ...rest }) => (
           <Item key={_id} _id={_id} {...rest} />

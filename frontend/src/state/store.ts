@@ -1,18 +1,20 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/authSlice";
-import cartReducer from "./cart/cartSlice";
-import userReducer from "./user/userSlice";
+import guestCartReducer from "./cart/guestCartSlice";
+import { apiSlice } from "./api/apiSlice";
 
 // Create the root reducer independently to obtain the RootState type
 const rootReducer = combineReducers({
   auth: authReducer,
-  cart: cartReducer,
-  user: userReducer,
+  guestCart: guestCartReducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 export function setupStore(preloadedState?: Partial<RootState>) {
   return configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(apiSlice.middleware),
     preloadedState,
   });
 }

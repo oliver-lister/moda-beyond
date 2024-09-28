@@ -16,12 +16,10 @@ import { useState } from "react";
 import { useForm, yupResolver } from "@mantine/form";
 import { SerializedError } from "@reduxjs/toolkit";
 import { DateInput } from "@mantine/dates";
-import UserProps from "../../../../types/UserProps.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
-import { updateUserAsync } from "../../../../state/user/userSlice.ts";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
+import { User } from "../../../../types/UserProps.ts";
+import { useUpdateUserMutation } from "../../../../state/auth/authSlice.ts";
 
 const editProfileSchema = object({
   honeypot: string(),
@@ -58,12 +56,12 @@ const EditProfileForm = ({
   user,
   toggleFormOpen,
 }: {
-  user: UserProps;
+  user: User;
   toggleFormOpen: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [updateUser] = useUpdateUserMutation();
 
   const formInitialValues: EditProfileValues = user
     ? {
@@ -103,7 +101,13 @@ const EditProfileForm = ({
       if (form.values.honeypot) {
         throw new Error("Bot detected");
       }
-      await dispatch(updateUserAsync(values));
+      const response = await updateUser({
+        userId: String(user._id),
+        newUserDetails: values,
+      }).unwrap();
+
+      if (response.error) throw response.error;
+
       form.reset();
       setIsLoading(false);
       toggleFormOpen();
@@ -139,7 +143,7 @@ const EditProfileForm = ({
           {/* Honeypot below */}
           <input
             name="honeypot"
-            placeholder="do not fill this"
+            placeholder="Do not fill this in"
             type="hidden"
             {...form.getInputProps("honeypot")}
           />
@@ -174,8 +178,13 @@ const EditProfileForm = ({
                 {...form.getInputProps("shoppingPreference")}
               />
               <Checkbox
+                id="newsletter"
+                name="newsletter"
                 label="Sign up for MØDA-BEYOND news and get a $20 voucher for your next purchase. You'll receive sales alerts, exclusive offers and the latest on styles & trends."
-                {...form.getInputProps("newsletter")}
+                checked={form.values.newsletter}
+                onChange={(event) =>
+                  form.setFieldValue("newsletter", event.currentTarget.checked)
+                }
               />
             </Stack>
           </Fieldset>

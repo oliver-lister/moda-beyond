@@ -1,43 +1,36 @@
-import {
-  Container,
-  Flex,
-  Group,
-  Burger,
-  Box,
-  Stack,
-  rem,
-  Loader,
-} from "@mantine/core";
+import { Container, Flex, Group, Burger, Box, Stack, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./NavBar.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../state/store.ts";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
-import AccountMenu from "./components/AccountMenu.tsx";
 import SearchBox from "./components/SearchBox.tsx";
 import ShoppingCartButton from "./components/ShoppingCartButton.tsx";
 import MobileNav from "./components/MobileNav/MobileNav.tsx";
 import { IconUserCircle } from "@tabler/icons-react";
+import AccountMenu from "./components/AccountMenu.tsx";
+import { useAppSelector } from "../../../../state/hooks.ts";
+import { useCart } from "../../../../state/cart/hooks/useCart.ts";
 
 const navMenu = [
   {
     label: "Women",
-    path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=women",
   },
-  { label: "Men", path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1" },
+  {
+    label: "Men",
+    path: "/shop?category=men",
+  },
   {
     label: "Kids",
-    path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=kids",
   },
 ];
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = useSelector((state: RootState) => state.user);
-  const cart = useSelector((state: RootState) => state.cart);
+  const user = useAppSelector((state) => state.auth.user);
+  const { cartTotal } = useCart();
   const [opened, { toggle }] = useDisclosure();
   const { pathname } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,13 +61,14 @@ const NavBar = () => {
       setSearch({ ...search, text: "" });
     } else {
       setSearchParams(
-        { search: search.text, page: "1", sortBy: "date", sortOrder: "-1" },
+        {
+          search: search.text,
+        },
         { replace: true }
       );
       setSearch({ ...search, text: "" });
     }
   };
-
   return (
     <nav className={styles.nav}>
       <Container size="xl">
@@ -128,20 +122,16 @@ const NavBar = () => {
                   handleSearchValueChange={handleSearchValueChange}
                 />
               </Box>
-              {!auth.isLoading ? (
-                auth.userId && user.data ? (
-                  <AccountMenu auth={auth} user={user.data} />
-                ) : (
-                  <Box className={styles.profile}>
-                    <Link to="/login" aria-label="Click to login">
-                      <IconUserCircle
-                        style={{ width: rem(32), height: rem(32) }}
-                      />
-                    </Link>
-                  </Box>
-                )
+              {user ? (
+                <AccountMenu user={user} />
               ) : (
-                <Loader />
+                <Box className={styles.profile}>
+                  <Link to="/login" aria-label="Click to login">
+                    <IconUserCircle
+                      style={{ width: rem(32), height: rem(32) }}
+                    />
+                  </Link>
+                </Box>
               )}
               <Link
                 to="/cart"
@@ -149,7 +139,7 @@ const NavBar = () => {
                 onClick={() => opened && toggle()}
                 aria-label="Click to view cart"
               >
-                <ShoppingCartButton cartTotal={cart.totalItems} />
+                <ShoppingCartButton cartTotal={cartTotal} />
               </Link>
             </Group>
           </Flex>

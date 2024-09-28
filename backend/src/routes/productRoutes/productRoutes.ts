@@ -5,7 +5,116 @@ import * as fs from 'fs';
 
 const router = express.Router();
 
-router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const {
+      sortBy = 'createdAt',
+      sortOrder = '-1',
+      page = '1',
+      search,
+      pageSize = '12',
+      minPrice,
+      maxPrice,
+      onSale,
+      sizes,
+      brands,
+      ...filters
+    } = req.query;
+
+    const parsedPageSize = Number(pageSize);
+    const parsedPage = Number(page);
+    const sort = { [sortBy as string]: parseInt(sortOrder as string, 10) as 1 | -1 };
+
+    // Price range filter
+    if (minPrice || maxPrice) {
+      const priceFilter: any = {};
+      if (minPrice) {
+        priceFilter.$gte = Number(minPrice);
+      }
+      if (maxPrice) {
+        priceFilter.$lte = Number(maxPrice);
+      }
+      filters.price = priceFilter;
+    }
+
+    // onSale filter (products where lastPrice > price)
+    if (onSale === 'true') {
+      filters.$expr = { $gt: ['$lastPrice', '$price'] };
+    }
+
+    // Available Sizes filter (filter products by selected sizes)
+    if (sizes) {
+      const sizesArray = Array.isArray(sizes) ? sizes : [sizes as string];
+      filters.availableSizes = { $all: sizesArray };
+    }
+
+    // Brand filter (filter products by selected brands)
+    if (brands) {
+      const brandArray = Array.isArray(brands) ? brands : [brands as string];
+
+      filters.brand = { $in: brandArray };
+    }
+
+    let pipeline = [];
+
+    if (search) {
+      pipeline.push({
+        $search: {
+          index: 'SearchProducts',
+          text: { query: search, path: { wildcard: '*' } },
+        },
+      });
+    }
+
+    pipeline.push(
+      { $match: filters },
+      {
+        $facet: {
+          data: [
+            { $sort: sort },
+            ...(parsedPageSize > 0 ? [{ $skip: (parsedPage - 1) * parsedPageSize }, { $limit: parsedPageSize }] : []), // Apply pagination only if pageSize > 0
+          ],
+          metadata: [{ $count: 'totalCount' }],
+        },
+      },
+    );
+
+    // Execute the aggregation pipeline
+    const [{ data: products, metadata }] = await Product.aggregate(pipeline);
+    const totalCount = metadata[0]?.totalCount || 0;
+
+    return res.status(200).json({ success: true, products, totalCount });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}` });
+  }
+});
+
+router.get('/sizes', async (req: Request, res: Response) => {
+  try {
+    const sizes = await Product.aggregate([
+      { $unwind: '$availableSizes' },
+      { $group: { _id: '$availableSizes' } },
+      { $sort: { _id: 1 } },
+      { $project: { _id: 0, size: '$_id' } },
+    ]);
+
+    res.status(200).json({ success: true, message: 'Sizes fetched successfully', sizes: sizes.map((s) => s.size) });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: `Failed to get sizes: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.get('/brands', async (req: Request, res: Response) => {
+  try {
+    const brands = await Product.aggregate([{ $group: { _id: '$brand' } }, { $sort: { _id: 1 } }, { $project: { _id: 0, brand: '$_id' } }]);
+
+    res.status(200).json({ success: true, message: 'Brands fetched successfully', brands: brands.map((b) => b.brand) });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: `Failed to get brands: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.post('/', tempUpload.array('productImg'), async (req: Request, res: Response) => {
   try {
     const newProductData = {
       name: req.body.name,
@@ -38,7 +147,21 @@ router.post('/add', tempUpload.array('productImg'), async (req: Request, res: Re
   }
 });
 
-router.patch('/edit/:productId', async (req: Request, res: Response) => {
+router.get('/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
+    }
+    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
+  }
+});
+
+router.patch('/:productId', async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
     if (!productId) return res.status(404).json({ success: false, error: 'Product ID not supplied', errorCode: 'NO_PRODUCT_ID' });
@@ -53,7 +176,6 @@ router.patch('/edit/:productId', async (req: Request, res: Response) => {
       material: req.body.material,
       price: req.body.price,
     };
-    console.log(newProductData);
 
     const productToUpdate = await Product.findById(productId);
     if (!productToUpdate) return res.status(404).json({ success: false, error: 'Cannot find product to update', errorCode: 'PRODUCT_NOT_FOUND' });
@@ -77,7 +199,7 @@ router.patch('/edit/:productId', async (req: Request, res: Response) => {
   }
 });
 
-router.delete('/remove/:productId', async (req: Request, res: Response) => {
+router.delete('/:productId', async (req: Request, res: Response) => {
   try {
     const id = req.params.productId;
     await Product.findOneAndDelete({ _id: id });
@@ -88,94 +210,6 @@ router.delete('/remove/:productId', async (req: Request, res: Response) => {
     fs.rmSync(imageFolderPath, { recursive: true, force: true });
 
     return res.status(204).json({ success: true, message: `Product deleted: ${id}` });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
-  }
-});
-
-router.get('/fetch', async (req: Request, res: Response) => {
-  try {
-    const sortBy = req.query.sortBy as string | undefined;
-    const sortOrder = parseInt(req.query.sortOrder as string) || 1;
-    const page = parseInt(req.query.page as string);
-    const pageSize = 12;
-    const search = req.query.search;
-
-    const query = req.query ? { ...req.query } : {};
-
-    delete query.sortBy;
-    delete query.sortOrder;
-    delete query.page;
-    delete query.search;
-
-    const sort = { [sortBy as string]: sortOrder as 1 | -1 };
-
-    let pipeline = [];
-
-    if (search) {
-      // if search query exists use it in the pipeline
-      pipeline = [
-        {
-          $search: {
-            index: 'SearchProducts',
-            text: {
-              query: search,
-              path: {
-                wildcard: '*',
-              },
-            },
-          },
-        },
-        { $match: query },
-        {
-          $facet: {
-            data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            metadata: [{ $count: 'totalCount' }],
-          },
-        },
-      ];
-    } else if (!page) {
-      // if there's no page queryParam, don't limit results (pagination)
-      pipeline = [
-        { $match: query },
-        {
-          $facet: {
-            data: [{ $sort: sort }],
-            metadata: [{ $count: 'totalCount' }],
-          },
-        },
-      ];
-    } else {
-      pipeline = [
-        { $match: query },
-        {
-          $facet: {
-            data: [{ $sort: sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-            metadata: [{ $count: 'totalCount' }],
-          },
-        },
-      ];
-    }
-
-    const [{ data, metadata }] = await Product.aggregate(pipeline);
-
-    const totalCount = metadata[0].totalCount || 0;
-
-    return res.status(200).json({ success: true, message: 'Products fetched successfully', data, totalCount });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
-  }
-});
-
-router.get('/fetchproductbyid/:productId', async (req, res) => {
-  try {
-    const productId = req.params.productId;
-    const product = await Product.findById(productId);
-
-    if (!product) {
-      return res.status(404).json({ success: false, error: 'Product not found', errorCode: 'PRODUCT_NOT_FOUND' });
-    }
-    res.status(200).json({ success: true, message: 'Product fetched successfully', product });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: `Internal Server Error: ${err.message}`, errorCode: 'INTERNAL_SERVER_ERROR' });
   }

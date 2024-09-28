@@ -1,4 +1,4 @@
-import { Link, useParams, Params } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Breadcrumbs,
   Anchor,
@@ -11,44 +11,11 @@ import {
 import styles from "./product.module.css";
 import ProductDisplay from "./components/ProductDisplay/ProductDisplay.tsx";
 import SimilarProducts from "./components/SimilarProducts/SimilarProducts.tsx";
-import { useEffect, useState } from "react";
-import ProductProps from "../../types/ProductProps.ts";
+import { useGetProductQuery } from "../../state/products/productsSlice.ts";
 
 const Product = () => {
-  const { productId }: Readonly<Params<string>> | undefined = useParams();
-  const [product, setProduct] = useState<ProductProps | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    // Fetch products from backend
-    const fetchProduct = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_HOST
-          }/products/fetchproductbyid/${productId}`,
-          {
-            method: "GET",
-          }
-        );
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-        }
-
-        const { product } = responseData;
-        setProduct(product);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setIsLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [productId]);
+  const { productId } = useParams();
+  const { data: product, isLoading } = useGetProductQuery(productId);
 
   if (!productId) {
     return <div>Please search for a product</div>;
@@ -57,13 +24,11 @@ const Product = () => {
   const breadcrumbItems = [
     {
       title: product && product.category && product.category.toUpperCase(),
-      href: `/shop?category=${
-        product && product.category
-      }&sortBy=date&sortOrder=-1`,
+      href: `/shop?category=${product && product.category}`,
     },
     {
       title: product && product.brand && product.brand.toUpperCase(),
-      href: `/shop?brand=${product && product.brand}&sortBy=date&sortOrder=-1`,
+      href: `/shop?brand=${product && product.brand}`,
     },
   ].map((item, index) => (
     <Anchor

@@ -17,10 +17,7 @@ const Layout = () => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_HOST}/products/fetch`,
-          {
-            method: "GET",
-          }
+          `${import.meta.env.VITE_BACKEND_HOST}/products/`
         );
         const responseData = await response.json();
 
@@ -28,9 +25,9 @@ const Layout = () => {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
 
-        const { data } = responseData;
+        const { products } = responseData;
 
-        setProducts(data);
+        setProducts(products);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);

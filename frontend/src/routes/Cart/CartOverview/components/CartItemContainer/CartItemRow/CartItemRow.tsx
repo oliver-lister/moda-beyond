@@ -12,78 +12,80 @@ import {
 import { Link } from "react-router-dom";
 import { IconTrash } from "@tabler/icons-react";
 import styles from "./cartitem.module.css";
-import { CartItemProps } from "../../../../../../types/UserProps.ts";
-import { useState, useEffect } from "react";
-import ProductProps from "../../../../../../types/ProductProps.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../../../state/store.ts";
-import {
-  removeItemFromCart,
-  updateQuantity,
-  updateSize,
-} from "../../../../../../state/cart/cartSlice.ts";
+import { CartItem } from "../../../../../../types/UserProps.ts";
+import { notifications } from "@mantine/notifications";
+import { useCart } from "../../../../../../state/cart/hooks/useCart.ts";
+import { useGetProductQuery } from "../../../../../../state/products/productsSlice.ts";
 
-const CartItem = ({
-  cartItemId,
+const CartItemRow = ({
   productId,
   color,
   size,
   quantity,
-}: CartItemProps) => {
-  const [product, setProduct] = useState<ProductProps | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const dispatch = useDispatch<AppDispatch>();
+  cartItemId,
+}: CartItem) => {
+  const { data: product, isLoading } = useGetProductQuery(productId);
+  const { removeItemFromCart, updateItemInCart } = useCart();
 
-  const handleRemoveFromCart = () => {
-    dispatch(removeItemFromCart(cartItemId));
-  };
-
-  const handleUpdateSize = (value: string | null) => {
+  const handleUpdateSize = async (value: string | null) => {
     if (!value) return;
-    dispatch(updateSize({ cartItemId: cartItemId, newSize: value }));
+    try {
+      await updateItemInCart({
+        productId,
+        color,
+        size: value,
+        quantity,
+        cartItemId,
+      });
+    } catch (error) {
+      console.error("Error updating cart:", error);
+
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
   };
 
-  const handleUpdateQuantity = (value: string | null) => {
+  const handleUpdateQuantity = async (value: string | null) => {
     if (!value) return;
-    dispatch(
-      updateQuantity({
-        cartItemId: cartItemId,
-        newQuantity: Number(value),
-      })
-    );
+    try {
+      await updateItemInCart({
+        productId,
+        color,
+        size,
+        quantity: Number(value),
+        cartItemId,
+      });
+    } catch (error) {
+      console.error("Error updating cart:", error);
+
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
   };
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_HOST
-          }/products/fetchproductbyid/${productId}`,
-          {
-            method: "GET",
-          }
-        );
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(`${responseData.error}, ${responseData.errorCode}`);
-        }
-
-        const { product } = responseData;
-        setProduct(product);
-        setIsLoading(false);
-      } catch (err) {
-        if (err instanceof Error)
-          console.log("Error fetching product: ", err.message);
-        setIsLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [productId]);
+  const handleRemoveFromCart = async (cartItemId: string) => {
+    if (!cartItemId) return;
+    try {
+      await removeItemFromCart(cartItemId);
+    } catch (err) {
+      if (err instanceof Error)
+        console.error("Error updating cart:", err.message);
+      notifications.show({
+        title: "Update failed",
+        message:
+          "We encountered an error while updating your cart. Please try again.",
+        color: "red",
+      });
+    }
+  };
 
   if (!product && isLoading)
     return (
@@ -118,16 +120,7 @@ const CartItem = ({
           span={{ base: 12, md: 4 }}
           order={{ base: 3, md: 2 }}
         ></GridCol>
-        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}>
-          <Stack align="flex-end">
-            <UnstyledButton
-              className={styles.remove}
-              onClick={handleRemoveFromCart}
-            >
-              <IconTrash />
-            </UnstyledButton>
-          </Stack>
-        </GridCol>
+        <GridCol span={{ base: 2, md: 1 }} order={{ base: 2, md: 3 }}></GridCol>
       </Grid>
     );
   }
@@ -176,7 +169,7 @@ const CartItem = ({
           </Text>
           <UnstyledButton
             className={styles.remove}
-            onClick={handleRemoveFromCart}
+            onClick={() => handleRemoveFromCart(cartItemId)}
           >
             <IconTrash />
           </UnstyledButton>
@@ -185,5 +178,4 @@ const CartItem = ({
     </Grid>
   );
 };
-
-export default CartItem;
+export default CartItemRow;

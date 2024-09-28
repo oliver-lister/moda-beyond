@@ -1,31 +1,18 @@
-import {
-  Stack,
-  Group,
-  Center,
-  Loader,
-  Title,
-  Text,
-  Button,
-} from "@mantine/core";
+import { Stack, Group, Title, Text, Button } from "@mantine/core";
 import styles from "./ordersummary.module.css";
 import { Link } from "react-router-dom";
-import { AuthState } from "../../../../../state/auth/authSlice";
 
 const OrderSummary = ({
   cartSumWithDelivery,
   cartTotalQuantity,
   cartSum,
   deliveryFee,
-  isLoading,
-  auth,
   roundToTwoDec,
 }: {
   cartSumWithDelivery: number;
   cartTotalQuantity: number;
   cartSum: number;
   deliveryFee: number;
-  isLoading: boolean;
-  auth: AuthState;
   roundToTwoDec: (num: number) => number;
 }) => {
   return (
@@ -35,33 +22,23 @@ const OrderSummary = ({
       </Text>
       <Stack className={styles.summary}>
         <Title order={2}>Order Summary</Title>
-        {isLoading ? (
-          <Center>
-            <Loader />
-          </Center>
-        ) : (
-          <>
-            <Group justify="space-between">
-              <Text>{`Product Total (${cartTotalQuantity})`}</Text>
-              <Text>${cartSum}</Text>
-            </Group>
-            <Group justify="space-between">
-              <Text>Delivery</Text>
-              <Text>${deliveryFee}</Text>
-            </Group>
-            <Group justify="space-between" className={styles.total}>
-              <Text>Total</Text>
-              <Text>${roundToTwoDec(cartSumWithDelivery)}</Text>
-            </Group>
-            <Button
-              component={Link}
-              disabled={auth.isLoading}
-              to="/cart/checkout"
-            >
-              Checkout
-            </Button>
-          </>
-        )}
+
+        <Group justify="space-between">
+          <Text>{`Product Total (${cartTotalQuantity})`}</Text>
+          <Text>${cartSum}</Text>
+        </Group>
+        <Group justify="space-between">
+          <Text>Delivery</Text>
+          <Text>${deliveryFee}</Text>
+        </Group>
+        <Group justify="space-between" className={styles.total}>
+          <Text>Total</Text>
+          <Text>${roundToTwoDec(cartSumWithDelivery)}</Text>
+        </Group>
+        <Button component={Link} to="/cart/checkout">
+          Checkout
+        </Button>
+
         <Text fz="0.7rem" fw={400}>
           By checking out, you are agreeing to our Terms and Conditions and to
           receive marketing communications from us that you can unsubscribe from

@@ -1,25 +1,27 @@
 import Signup, { SignupValues } from "./components/Signup.tsx";
 import Login, { LoginValues } from "./components/Login.tsx";
 import { Box, Center } from "@mantine/core";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../state/store";
-import { loginAsync, signupAsync } from "../../state/auth/authSlice.ts";
+import {
+  useLoginMutation,
+  useSignupMutation,
+} from "../../state/auth/authSlice.ts";
 import { SerializedError } from "@reduxjs/toolkit";
 
 const LoginSignup = ({ type }: { type: string }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const [login] = useLoginMutation();
+  const [signup] = useSignupMutation();
 
   const dispatchValues = async (values: LoginValues | SignupValues) => {
     if (type === "login") {
       try {
-        await dispatch(loginAsync(values as LoginValues)).unwrap();
+        await login(values as LoginValues).unwrap();
       } catch (err) {
         console.log("Error submitting form:", (err as SerializedError).message);
         throw err;
       }
     } else if (type === "signup") {
       try {
-        await dispatch(signupAsync(values as SignupValues)).unwrap();
+        await signup(values as SignupValues).unwrap();
       } catch (err) {
         console.log("Error submitting form:", (err as SerializedError).message);
         throw err;

@@ -9,12 +9,19 @@ import {
   Pagination,
   Center,
   Group,
+  Grid,
+  GridCol,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ItemContainer from "./components/ItemContainer.tsx";
 import { useSearchParams } from "react-router-dom";
-import { useFetchProducts } from "../../hooks/useFetchProducts.ts";
-import ProductProps from "../../types/ProductProps.ts";
+import ProductCounter from "./components/ProductCounter.tsx";
+import {
+  useGetAllBrandsQuery,
+  useGetAllSizesQuery,
+  useGetProductsQuery,
+} from "../../state/products/productsSlice.ts";
+import FilterForm from "./components/FilterForm/FilterForm.tsx";
 
 type SortOption = {
   sortBy: string;
@@ -24,55 +31,51 @@ type SortOption = {
 const sortOptions: { [key: string]: SortOption } = {
   price_low_to_high: { sortBy: "price", sortOrder: 1 },
   price_high_to_low: { sortBy: "price", sortOrder: -1 },
-  date_new_to_old: { sortBy: "date", sortOrder: -1 },
+  date_new_to_old: { sortBy: "createdAt", sortOrder: -1 },
 };
 
+const pageSize = 12;
+
 const Shop = () => {
-  const [products, fetchProducts] = useFetchProducts();
-  const { data, totalCount, isLoading, error } = products;
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchingFor, setSearchingFor] = useState<string>("");
   const [activePage, setPage] = useState<number>(1);
   const [sort, setSort] = useState<string>("date_new_to_old");
 
-  useEffect(() => {
-    // set 'Searching For' title based on searchParams
+  const getSearchingFor = () => {
     const category = searchParams.get("category");
     const brand = searchParams.get("brand");
     const searchTerm = searchParams.get("search");
+
     if (category) {
-      setSearchingFor(category.toUpperCase());
+      return category.toUpperCase();
     } else if (brand) {
-      setSearchingFor(brand.toUpperCase());
+      return brand.toUpperCase();
     } else if (searchTerm) {
-      setSearchingFor(`Searching for '${searchTerm}'`);
+      return `Searching for '${searchTerm}'`;
     }
+    return "";
+  };
 
-    // set Page based on searchParams
-    const pageNum = Number(searchParams.get("page"));
-    if (pageNum) setPage(pageNum);
+  // Generate the correct query params dynamically from the state
+  const getUpdatedSearchParams = useCallback(() => {
+    const params = new URLSearchParams(searchParams);
+    params.set("sortBy", sortOptions[sort].sortBy);
+    params.set("sortOrder", sortOptions[sort].sortOrder.toString());
+    params.set("page", activePage.toString());
+    params.set("pageSize", String(pageSize));
+    return params.toString();
+  }, [searchParams, sort, activePage]);
 
-    // set Sort Option based on searchParams
-    const sortBy = searchParams.get("sortBy");
-    const sortOrder = Number(searchParams.get("sortOrder"));
+  useEffect(() => {
+    // Update URL search params when sort or page changes
+    setSearchParams(getUpdatedSearchParams());
+  }, [sort, activePage]);
 
-    if (sortBy && sortOrder) {
-      const newSort = Object.keys(sortOptions).find((key) => {
-        const option = sortOptions[key];
-        return option.sortBy === sortBy && option.sortOrder === sortOrder;
-      });
-      if (newSort) {
-        setSort(newSort);
-      }
-    }
-    if (searchParams.toString() === "") {
-      searchParams.set("page", "1");
-      searchParams.set("sortBy", "date");
-      searchParams.set("sortOrder", "-1");
-    }
-
-    fetchProducts(searchParams.toString());
-  }, [searchParams]);
+  const { data, isLoading, error } = useGetProductsQuery(
+    getUpdatedSearchParams()
+  );
+  const products = data?.products || [];
+  const totalCount = data?.totalCount || 0;
 
   const handleChangeSort = (value: string | null) => {
     if (value) {
@@ -95,22 +98,10 @@ const Shop = () => {
     });
   };
 
-  const ProductCounter = ({ products }: { products: ProductProps[] }) => {
-    return (
-      <Text data-testid="productcounter-text">
-        <span style={{ fontWeight: "600" }}>
-          Showing{" "}
-          {products.length > 0
-            ? activePage > 1
-              ? (activePage - 1) * 12 + 1
-              : 1
-            : 0}
-          -{(activePage > 1 ? (activePage - 1) * 12 : 0) + products.length}
-        </span>{" "}
-        out of {totalCount} products.
-      </Text>
-    );
-  };
+  const { data: sizeOptions, isLoading: isSizesLoading } =
+    useGetAllSizesQuery();
+  const { data: brandOptions, isLoading: isBrandsLoading } =
+    useGetAllBrandsQuery();
 
   return (
     <section style={{ padding: "1rem 0" }}>
@@ -121,14 +112,19 @@ const Shop = () => {
             style={{ alignItems: "center" }}
           >
             <Title order={1} size="1rem" ta={{ base: "center", md: "left" }}>
-              {searchingFor}
+              {getSearchingFor()}
             </Title>
             <Box
               style={{ textAlign: "center" }}
               data-testid="productcounter-container"
             >
-              {!isLoading && data ? (
-                <ProductCounter products={data} />
+              {products ? (
+                <ProductCounter
+                  pageCount={products.length}
+                  activePage={activePage}
+                  pageSize={pageSize}
+                  totalCount={totalCount}
+                />
               ) : (
                 <Text>Loading...</Text>
               )}
@@ -150,10 +146,29 @@ const Shop = () => {
               />
             </Group>
           </SimpleGrid>
-          <ItemContainer products={data} isLoading={isLoading} error={error} />
+          <Grid>
+            <GridCol span={{ base: 12, md: 3 }}>
+              {sizeOptions &&
+              brandOptions &&
+              !isSizesLoading &&
+              !isBrandsLoading ? (
+                <FilterForm
+                  sizeOptions={sizeOptions}
+                  brandOptions={brandOptions}
+                />
+              ) : null}
+            </GridCol>
+            <GridCol span={{ base: 12, md: 9 }}>
+              <ItemContainer
+                products={products}
+                isLoading={isLoading}
+                error={error}
+              />
+            </GridCol>
+          </Grid>
           <Center>
             <Pagination
-              total={Math.ceil(totalCount / 12)}
+              total={Math.ceil(totalCount / pageSize)}
               value={activePage}
               onChange={handleChangePage}
             />

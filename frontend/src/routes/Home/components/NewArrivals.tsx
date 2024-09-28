@@ -6,7 +6,7 @@ const NewArrivals = () => {
     <section>
       <Stack>
         <Title order={3}>New Arrivals</Title>
-        <ProductCollectionTeaser query="sortBy=date&sortOrder=-1" cap={6} />
+        <ProductCollectionTeaser query="sortBy=createdAt&sortOrder=-1" cap={6} />
       </Stack>
     </section>
   );

@@ -25,15 +25,15 @@ import GradientButton from "../../../../components/GradientButton/GradientButton
 const navMenu = [
   {
     label: "Women",
-    path: "/shop?category=women&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=women",
   },
   {
     label: "Men",
-    path: "/shop?category=men&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=men",
   },
   {
     label: "Kids",
-    path: "/shop?category=kids&page=1&sortBy=date&sortOrder=-1",
+    path: "/shop?category=kids",
   },
   { label: "Cart", path: "/cart" },
   { label: "Login / Signup", path: "/login" },
@@ -43,27 +43,27 @@ const socials = [
   {
     label: "Facebook",
     path: "https://www.facebook.com/",
-    icon: <IconBrandFacebook size={15} />,
+    icon: IconBrandFacebook,
   },
   {
     label: "Twitter",
     path: "https://www.twitter.com/",
-    icon: <IconBrandTwitter size={15} />,
+    icon: IconBrandTwitter,
   },
   {
     label: "Instagram",
     path: "https://www.instagram.com/",
-    icon: <IconBrandInstagram size={15} />,
+    icon: IconBrandInstagram,
   },
   {
     label: "Pinterest",
     path: "https://www.pinterest.com/",
-    icon: <IconBrandPinterest size={15} />,
+    icon: IconBrandPinterest,
   },
   {
     label: "Youtube",
     path: "https://www.youtube.com/",
-    icon: <IconBrandYoutube size={15} />,
+    icon: IconBrandYoutube,
   },
 ];
 
@@ -120,7 +120,7 @@ const Footer = () => {
                           href={link.path}
                           className={styles.link}
                         >
-                          {link.icon}
+                          <link.icon size={15} />
                           {link.label}
                         </a>
                       </li>

@@ -5,38 +5,32 @@ import AccountPage from "../components/AccountPage";
 import { format } from "date-fns";
 import { useState } from "react";
 import EditProfileForm from "./components/EditProfileForm";
-import { useUser } from "../../../hooks/useUser";
+import { useUser } from "../hooks/useUser";
 
 const Profile = () => {
-  const user = useUser();
+  const { user } = useUser();
   const [isFormOpen, SetFormOpen] = useState<boolean>(false);
 
   const toggleFormOpen = () => {
     SetFormOpen((prev) => !prev);
   };
 
-  if (!user.data) {
-    return;
-  }
-
   const fullName = `${
-    user.data.firstName.charAt(0).toUpperCase() + user.data.firstName.slice(1)
-  } ${
-    user.data.lastName.charAt(0).toUpperCase() + user.data.lastName.slice(1)
-  }`;
+    user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
+  } ${user.lastName.charAt(0).toUpperCase() + user.lastName.slice(1)}`;
 
   const isAddressValid =
-    user.data.address &&
-    user.data.address.street &&
-    user.data.address.suburb &&
-    user.data.address.postcode &&
-    user.data.address.state;
+    user.address &&
+    user.address.street &&
+    user.address.suburb &&
+    user.address.postcode &&
+    user.address.state;
 
   return (
     <AccountPage title="Profile">
       <InfoCard>
         {isFormOpen ? (
-          <EditProfileForm toggleFormOpen={toggleFormOpen} user={user.data} />
+          <EditProfileForm toggleFormOpen={toggleFormOpen} user={user} />
         ) : (
           <Stack>
             <Box>
@@ -44,13 +38,13 @@ const Profile = () => {
                 {fullName}
               </Text>
             </Box>
-            {user.data.address && isAddressValid ? (
+            {user.address && isAddressValid ? (
               <Box>
                 <Text size="lg" fw={600} c="violet">
                   Address:
                 </Text>
                 <Text size="md">
-                  {`${user.data.address.street}, ${user.data.address.suburb}, ${user.data.address.state} ${user.data.address.postcode}`}
+                  {`${user.address.street}, ${user.address.suburb}, ${user.address.state} ${user.address.postcode}`}
                 </Text>
               </Box>
             ) : null}
@@ -59,14 +53,14 @@ const Profile = () => {
                 Birthday:
               </Text>
               <Text size="md">
-                {user.data.dob && format(user.data.dob, "dd/MM/yyyy")}
+                {user.dob && format(user.dob, "dd/MM/yyyy")}
               </Text>
             </Box>
             <Box>
               <Text size="lg" fw={600} c="violet">
                 Shopping Preference:
               </Text>
-              <Text size="md">{user.data.shoppingPreference}</Text>
+              <Text size="md">{user.shoppingPreference}</Text>
             </Box>
             <Button
               leftSection={<IconEdit size={20} />}

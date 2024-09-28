@@ -12,12 +12,10 @@ import { object, string } from "yup";
 import { useState } from "react";
 import { useForm, yupResolver } from "@mantine/form";
 import { SerializedError } from "@reduxjs/toolkit";
-import UserProps from "../../../../types/UserProps.ts";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
-import { updateUserSecurityAsync } from "../../../../state/user/userSlice.ts";
+import { User } from "../../../../types/UserProps.ts";
 import { notifications } from "@mantine/notifications";
 import { IconUser } from "@tabler/icons-react";
+import { useUpdateUserMutation } from "../../../../state/auth/authSlice.ts";
 
 const EditLoginAndSecuritySchema = object({
   email: string()
@@ -42,11 +40,12 @@ const EditLoginAndSecurityForm = ({
   user,
   toggleFormOpen,
 }: {
-  user: UserProps;
+  user: User;
   toggleFormOpen: () => void;
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
   const [isError, setIsError] = useState<boolean>(false);
+  const [updateUser] = useUpdateUserMutation();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const formInitialValues: EditLoginAndSecurityValues = {
     honeypot: "",
@@ -59,14 +58,20 @@ const EditLoginAndSecurityForm = ({
     validate: yupResolver(EditLoginAndSecuritySchema),
   });
 
-  const handleSubmit = async (values: EditLoginAndSecurityValues) => {
+  const handleSubmit = async (newUserDetails: EditLoginAndSecurityValues) => {
     try {
       setIsLoading(true);
       setIsError(false);
-      if (form.values.honeypot) {
+      if (newUserDetails.honeypot) {
         throw new Error("Bot detected");
       }
-      await dispatch(updateUserSecurityAsync(values));
+      const response = await updateUser({
+        userId: String(user._id),
+        newUserDetails: newUserDetails,
+      }).unwrap();
+
+      if (response.error) throw response.error;
+
       form.reset();
       setIsLoading(false);
       toggleFormOpen();
@@ -76,7 +81,7 @@ const EditLoginAndSecurityForm = ({
         icon: <IconUser />,
       });
     } catch (err) {
-      console.log("Error submitting form:", (err as SerializedError).message);
+      console.error("Error submitting form:", (err as SerializedError).message);
       setIsError(true);
       setIsLoading(false);
     }

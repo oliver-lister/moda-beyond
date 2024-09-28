@@ -15,13 +15,14 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Outlet } from "react-router-dom";
 import { accountNavLinks } from "./data/accountNavLinks.ts";
+import { useGetSessionQuery } from "../../state/auth/authSlice.ts";
 
 const AccountLayout = () => {
   const auth = useSelector((state: RootState) => state.auth);
-  const user = useSelector((state: RootState) => state.user);
+  const { isLoading } = useGetSessionQuery();
   const { pathname } = useLocation();
 
-  if (!auth.isLoading && !auth.userId) {
+  if (!auth.isAuthenticated && !isLoading) {
     return <Navigate to="/login" />;
   }
 
@@ -59,8 +60,8 @@ const AccountLayout = () => {
             </Stack>
           </GridCol>
           <GridCol span={{ base: 12, md: 9 }}>
-            {!auth.isLoading || user.isLoading ? (
-              <Outlet context={user} />
+            {auth.user ? (
+              <Outlet context={{ user: auth.user }} />
             ) : (
               <Center mih="60vh">
                 <Loader />

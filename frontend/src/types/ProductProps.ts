@@ -1,4 +1,4 @@
-export default interface ProductProps {
+export default interface Product {
   _id: string;
   name: string;
   category: "men" | "women" | "kids" | string;
@@ -10,6 +10,6 @@ export default interface ProductProps {
   price: number;
   lastPrice?: number;
   images: string[];
-  date: Date;
+  createdAt: Date;
   available: boolean;
 }

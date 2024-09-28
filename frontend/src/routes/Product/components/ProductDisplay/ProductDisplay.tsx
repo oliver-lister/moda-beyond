@@ -16,15 +16,11 @@ import ProductPhotos from "./components/ProductPhotos.tsx";
 import ProductForm from "./components/ProductForm.tsx";
 import { Link } from "react-router-dom";
 import { IconShoppingCart, IconX } from "@tabler/icons-react";
-import { SerializedError } from "@reduxjs/toolkit";
-import { addItemToCart } from "../../../../state/cart/cartSlice.ts";
-import { v4 as uuidv4 } from "uuid";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../../state/store.ts";
 import { notifications } from "@mantine/notifications";
+import { useCart } from "../../../../state/cart/hooks/useCart.ts";
 
 const ProductDisplay = ({ product }: { product: ProductProps }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const { addItemToCart } = useCart();
 
   const handleAddToCart = async (
     quantity: number,
@@ -32,16 +28,12 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
     color: string
   ) => {
     try {
-      dispatch(
-        addItemToCart({
-          cartItemId: uuidv4(),
-          productId: product._id,
-          color: color,
-          quantity: quantity,
-          size: size,
-          price: product.price,
-        })
-      );
+      await addItemToCart({
+        productId: product._id,
+        color: color,
+        quantity: quantity,
+        size: size,
+      });
 
       notifications.show({
         title: "Success! You've added an item to your cart.",
@@ -49,10 +41,8 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
         icon: <IconShoppingCart />,
       });
     } catch (err) {
-      console.log(
-        "Error adding product to cart:",
-        (err as SerializedError).message
-      );
+      if (err instanceof Error)
+        console.error("Error adding product to cart:", err.message);
       notifications.show({
         title: "Error! Something went wrong.",
         message: "Please try again.",
@@ -76,7 +66,7 @@ const ProductDisplay = ({ product }: { product: ProductProps }) => {
               <Title order={2} fw={400} fz="1rem">
                 <Anchor
                   component={Link}
-                  to={`/shop?brand=${product.brand}&sortBy=date&sortOrder=-1`}
+                  to={`/shop?brand=${product.brand}`}
                   data-testid="product-brand"
                 >
                   {product.brand}
