@@ -25,9 +25,9 @@ const Layout = () => {
           throw new Error(`${responseData.error}, ${responseData.errorCode}`);
         }
 
-        const { data } = responseData;
+        const { products } = responseData;
 
-        setProducts(data);
+        setProducts(products);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);

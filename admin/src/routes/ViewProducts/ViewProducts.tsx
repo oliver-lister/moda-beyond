@@ -8,9 +8,6 @@ import {
   GridCol,
   Center,
   Loader,
-  TextInput,
-  Group,
-  Button,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { Carousel } from "@mantine/carousel";
@@ -18,7 +15,6 @@ import { ProductProps } from "../AddProduct/components/AddProductForm";
 import GridHeader from "./components/GridHeader";
 import GridRow from "./components/GridRow";
 import { useProducts } from "../../hooks/useProducts";
-import { IconSearch } from "@tabler/icons-react";
 
 const ViewProducts = () => {
   const { products, isLoading } = useProducts();
@@ -70,13 +66,7 @@ const ViewProducts = () => {
         <Title>View Products</Title>
         <Text c="gray.8">Review products in the MongoDB Database</Text>
       </Box>
-      <Box>
-        <Group grow justify="flex-start" align="flex-end" gap={0}>
-          <TextInput label="Search the Database" leftSection={<IconSearch />} />
-          <Button>Search</Button>
-        </Group>
-        <Text>Searching for: </Text>
-      </Box>
+
       <Box>
         <Grid
           align="center"
