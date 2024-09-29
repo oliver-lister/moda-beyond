@@ -10,7 +10,7 @@ commerical use. All Stripe payments are run in test mode and no money will be
 charged.
 
 <a href="https://www.oliver-lister.github.io/moda-beyond/">
-  <img alt="MØDA-BEYOND" src="https://www.oliver-lister.github.io/moda-beyond/moda-beyond.webp">
+  <img alt="MØDA-BEYOND" src="https://oliver-lister.github.io/moda-beyond/moda-beyond.webp">
   <h1 align="center">Oliver Lister's Portfolio & Blog </h1>
 </a>
 
