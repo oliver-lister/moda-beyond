@@ -62,8 +62,8 @@ const cookieJWTAuth = async (req: AuthorizedRequest, res: Response, next: NextFu
   } catch (err: any) {
     console.log('Session could not be retrieved...');
     // Clear cookies if tokens are invalid or expired
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    res.clearCookie('accessToken', { httpOnly: true, secure: true, sameSite: 'none' });
+    res.clearCookie('refreshToken', { httpOnly: true, secure: true, sameSite: 'none' });
     return res.status(403).json({ success: false, error: `Access denied, invalid token: ${err.message}`, errorCode: 'INVALID_TOKEN' });
   }
 };

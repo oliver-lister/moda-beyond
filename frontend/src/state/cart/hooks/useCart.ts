@@ -41,7 +41,10 @@ export const useCart = () => {
   const cart = serverCart || guestCart;
 
   // Calculate total quantity of items in the active cart
-  const cartTotal = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const cartTotal = cart.reduce(
+    (acc: number, item: CartItem) => acc + item.quantity,
+    0
+  );
 
   // For logged-in users, use RTK Query mutations
   const [addItemToServerCart] = useAddCartItemMutation();
