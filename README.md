@@ -1,5 +1,5 @@
 <a href="https://oliver-lister.github.io/moda-beyond/">
-  <img alt="MØDA-BEYOND" src="https://oliver-lister.github.io/moda-beyond/moda-beyond.webp">
+  <img alt="MØDA-BEYOND" src="./frontend/public/moda-beyond.webp">
   <h1 align="center">MØDA-BEYOND</h1>
 </a>
 
